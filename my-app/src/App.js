@@ -7,6 +7,7 @@ import HomePage from './components/HomePage'
 import SettingsPage from './components/SettingsPage'
 import ContactUsPage from './components/ContactUsPage'
 import LoginAuthenticate from './components/LoginAuthenticate'
+import SearchSubmit from './components/SearchSubmit'
 //Test
 
 // Imports from react-router
@@ -17,7 +18,6 @@ import {
   Link,
   Redirect
 } from "react-router-dom";
-// import NavButtons from './components/NavButtons';
 
 export default class App extends Component {
   constructor(props){
@@ -25,12 +25,26 @@ export default class App extends Component {
       this.state = {
           email: '',
           password: '',
-          isAuthenticated: false
+          isAuthenticated: true,
+          isValidSubmit: true,
+          platformSelector: 'Select',
+          hashTags: '',
+          locations: '',
+          phrases: '',
+          startDate: '',
+          endDate: '',
       };
 
       this.handleLogin = this.handleLogin.bind(this);
       this.handleEmailChange = this.handleEmailChange.bind(this);
       this.handlePasswordChange = this.handlePasswordChange.bind(this);
+      this.handleHashTagsInput = this.handleHashTagsInput.bind(this);
+      this.handleLocationsInput = this.handleLocationsInput.bind(this);
+      this.handlePhrasesInput = this.handlePhrasesInput.bind(this);
+      this.handleStartDateInput = this.handleStartDateInput.bind(this);
+      this.handleEndDateInput = this.handleEndDateInput.bind(this);
+      this.handleSearch = this.handleSearch.bind(this);
+      this.handleSelection = this.handleSelection.bind(this);
     }
   handleLogin(event){
     const fetchUrl = '/api/loginUser/';
@@ -60,7 +74,6 @@ export default class App extends Component {
             // Redirect them to the LoginPage
             console.log("Redirecting to LoginPage");
             this.setState({isAuthenticated: true});
-            <Redirect to='/LoginAuthenticated'></Redirect>
             return(
               <LoginAuthenticate logged={this.state.isAuthenticated}></LoginAuthenticate>
             )
@@ -79,22 +92,107 @@ export default class App extends Component {
     this.setState({password: event.target.value});
   }
 
+  handleSelection(newPlatform){
+    this.setState({platformSelector: newPlatform.target.value});
+    
+    if(newPlatform.target.value == "Twitter"){
+        this.setState({fetchURL: '/api/scrapeTwitter/'});
+    }
+    else{
+        this.setState({fetchURL: '/api/scrapeInstagram/'});
+    }
+  }
+  handleHashTagsInput(newHashTags){
+      this.setState({hashTags: newHashTags});
+  }
+  handleLocationsInput(newLocations){
+      this.setState({locations: newLocations});
+  }
+  handlePhrasesInput(newPhrases){
+      this.setState({phrases: newPhrases});
+  }
+  handleStartDateInput(newStartDate){
+      this.setState({startDate: newStartDate});
+  }
+  handleEndDateInput(newEndDate){
+      this.setState({endDate: newEndDate});
+  }
+
+  handleSearch(event){
+
+      if (this.state.platformSelector == 'Twitter'){
+          fetch(this.state.fetchURL, {
+              method: 'POST',
+              body: JSON.stringify({
+                  hashTags: this.state.hashTags,
+                  locations: this.state.locations,
+                  phrases: this.state.phrases,
+                  earliestDate: '',
+                  latestDate: ''
+              })
+          })
+          .then(() => {
+              }
+          )
+      }
+      else {
+          fetch(this.state.fetchURL, {
+              method: 'POST',
+              body: JSON.stringify({
+                  searchTerm: this.state.hashTags,
+                  searchCategory: 'hashtag'
+              })
+          })
+          .then(() => {
+              }
+          )
+      }
+  }
+
   render(){
   return (
     <div className="App">
       <Router>
         <Switch>
           <Route exact path = '/LoginPage'>
-            <LoginPage title = 'Log In' email = {this.state.email} password = {this.state.password} handleEmailChange = {this.handleEmailChange} handlePasswordChange = {this.handlePasswordChange} handleLogin = {this.handleLogin} />
+            <LoginPage 
+              title = 'Log In' 
+              email = {this.state.email} 
+              password = {this.state.password} 
+              handleEmailChange = {this.handleEmailChange} 
+              handlePasswordChange = {this.handlePasswordChange} 
+              handleLogin = {this.handleLogin} 
+            />
           </Route>
           <Route exact path = '/HomePage'>
             <HomePage title = 'HomePage' />
           </Route>
           <Route exact path = '/SearchCriteriaPage'>
-            <SearchCriteriaPage title = 'Search Criteria' />
+            <SearchCriteriaPage 
+              title = 'Search Criteria'
+              platformSelector = {this.state.platformSelector}
+              hashTags = {this.state.hashTags}
+              locations = {this.state.locations}
+              phrases = {this.state.phrases}
+              startDate = {this.state.startDate}
+              endDate = {this.state.endDate}
+              handleSelection = {this.handleSelection}
+              handleHashTagsInput = {this.handleHashTagsInput}
+              handleLocationsInput = {this.handleLocationsInput}
+              handlePhrasesInput = {this.handlePhrasesInput}
+              handleStartDateInput = {this.handleStartDateInput}
+              handleEndDateInput = {this.handleEndDateInput}
+              handleSearch = {this.handleSearch}
+            />
           </Route>
           <Route exact path = '/SearchingPage'>
-            <SearchingPage title = 'Searching' />
+            <SearchingPage 
+              title = 'Searching'
+              user = 'James West'
+              hashTags = { this.state.hashTags }
+              locations = 'N/A'
+              phrases = 'N/A'
+            />
           </Route>
           <Route exact path = '/SettingsPage'>
             <SettingsPage title = 'Settings' />
@@ -104,6 +202,11 @@ export default class App extends Component {
           </Route>
           <Route exact path = '/LoginAuthenticate'>
             <LoginAuthenticate logged={this.state.isAuthenticated}></LoginAuthenticate>
+          </Route>
+          <Route exact path = '/SearchSubmitPage'>
+            <SearchSubmit 
+              isValidSubmit = { this.state.isValidSubmit }
+            />
           </Route>
         </Switch>
       </Router>

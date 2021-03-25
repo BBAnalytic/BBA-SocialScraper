@@ -15,7 +15,7 @@ export default class SearchingPage extends Component {
     constructor(props){
         super(props);
         this.state = {
-            scraped: '3200'  // Number of units that the API has scraped
+            scraped: 'Searching and Collecting Data...'  // Number of units that the API has scraped
         }
         
         this.handleScrapeUpdate = this.handleScrapeUpdate.bind(this);
@@ -52,7 +52,9 @@ export default class SearchingPage extends Component {
             })
         })
     }
+    
     handleNewSearch(){
+        //
 
     }
 
@@ -73,7 +75,7 @@ export default class SearchingPage extends Component {
                         <SearchingDataContent title="Phrase(s):" data={this.props.phrases}></SearchingDataContent>
                     </div>
                     <div className="searchingScrapeDataContent">
-                        <text>{this.state.scraped} {this.props.platform} Found</text>
+                        <text>{this.state.scraped}</text>
                     </div>
                 </div>
                 <div className="searchingButtonsContainer">

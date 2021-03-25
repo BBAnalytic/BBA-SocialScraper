@@ -173,9 +173,10 @@ def scrapeInstagram():
    # Get the user information. JSON body: {"search_term": "hashtag/person/location", "search_category": "hashtag or location"}
    request_data = json.loads(request.data)
 
-   search_term = request_data['search_term']
-   search_category = request_data['search_category']
+   search_term = request_data['searchTerm']
+   search_category = request_data['searchCategory']
 
+   print ("Search Term:" + search_term)
    v_url_extractor(s_search = search_term, s_category = search_category)
    v_read_to_queue()
    return jsonify({'result': 'Instagram Query Complete'})
