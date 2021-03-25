@@ -1,4 +1,7 @@
 .settingsButton{
+    position: absolute;
+    top: 2vh;
+    right: 2vw;
     font-family: Arial Black;
     font-style: normal;
     font-weight: 900;

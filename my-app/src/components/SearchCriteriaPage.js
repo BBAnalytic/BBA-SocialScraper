@@ -21,7 +21,7 @@ export default class SearchCriteriaPage extends Component {
                     </label>
                 </div>
                 <div className="searchCriteriaPlatformSelectionContainer">
-                    <SettingsButton className="navButtons"></SettingsButtons>
+                    <SettingsButton className="navButtons"></SettingsButton>
                     <div className="platformSearchContentContainer">
                         <div className="platformSelectionContainer">
                             <text className="platformLabel">

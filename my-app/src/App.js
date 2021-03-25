@@ -25,8 +25,8 @@ export default class App extends Component {
       this.state = {
           email: '',
           password: '',
-          isAuthenticated: true,
-          isValidSubmit: true,
+          isAuthenticated: false,
+          isValidSubmit: false,
           platformSelector: 'Select',
           hashTags: '',
           locations: '',
@@ -48,9 +48,7 @@ export default class App extends Component {
     }
   handleLogin(event){
     const fetchUrl = '/api/loginUser/';
-    console.log("Attempting POST");
-    console.log(this.state.email);
-    console.log(this.state.password);
+    console.log("Handling Login...")
     fetch(fetchUrl, {
         method: 'POST',
         body: JSON.stringify({
@@ -59,14 +57,16 @@ export default class App extends Component {
         })
     })
     .then((response) => response.json())
-    .then(function(data) {
-        if(data.result == 'OK')
+    .then((data) => {
+        if(data.result == 'OK Email/Password Validated')
             {
             // Redirect them to the Homepage
             console.log("Redirecting to HomePage");
             this.setState({isAuthenticated: true});
-            return(
-              <Link to='/LoginAuthenticated'></Link>
+            return (
+              <div>
+                  <Redirect to='/HomePage'></Redirect>
+              </div>
             )
             }
         else
@@ -74,9 +74,6 @@ export default class App extends Component {
             // Redirect them to the LoginPage
             console.log("Redirecting to LoginPage");
             this.setState({isAuthenticated: true});
-            return(
-              <LoginAuthenticate logged={this.state.isAuthenticated}></LoginAuthenticate>
-            )
             }
         })
         .catch(function(error) {
@@ -104,6 +101,10 @@ export default class App extends Component {
   }
   handleHashTagsInput(newHashTags){
       this.setState({hashTags: newHashTags});
+
+      if (this.state.platformSelector != 'Select'){
+        this.setState({isValidSubmit: true});
+      }
   }
   handleLocationsInput(newLocations){
       this.setState({locations: newLocations});
@@ -119,6 +120,9 @@ export default class App extends Component {
   }
 
   handleSearch(event){
+  //Handles search POST function
+  //If Twitter Platform selected, POST Twitter info
+  //Else Instagram Platform selected, POST Instagram info
 
       if (this.state.platformSelector == 'Twitter'){
           fetch(this.state.fetchURL, {
@@ -131,9 +135,6 @@ export default class App extends Component {
                   latestDate: ''
               })
           })
-          .then(() => {
-              }
-          )
       }
       else {
           fetch(this.state.fetchURL, {
@@ -143,9 +144,6 @@ export default class App extends Component {
                   searchCategory: 'hashtag'
               })
           })
-          .then(() => {
-              }
-          )
       }
   }
 
@@ -201,7 +199,11 @@ export default class App extends Component {
             <ContactUsPage title='Contact Us'></ContactUsPage>
           </Route>
           <Route exact path = '/LoginAuthenticate'>
-            <LoginAuthenticate logged={this.state.isAuthenticated}></LoginAuthenticate>
+            <LoginAuthenticate 
+              isAuthenticated={this.state.isAuthenticated}
+              email = {this.state.email}
+              password = {this.state.email}
+            />
           </Route>
           <Route exact path = '/SearchSubmitPage'>
             <SearchSubmit 

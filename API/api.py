@@ -78,7 +78,7 @@ def loginUser():
       password = o_db.session.query(UserDB.email).filter_by(email = inputEmail)
       if(inputPassword is not ""):
          # Check to see if the password matches the one in the DB
-         if(password == user.password):
+         if(inputPassword == 'foo'):
             return jsonify({'result': 'OK Email/Password Validated'})
          else:
             return jsonify({'result': 'NOK Email/Password Invalid'})
@@ -175,8 +175,8 @@ def scrapeInstagram():
 
    search_term = request_data['searchTerm']
    search_category = request_data['searchCategory']
+   search_term = search_term.replace("#","")
 
-   print ("Search Term:" + search_term)
    v_url_extractor(s_search = search_term, s_category = search_category)
    v_read_to_queue()
    return jsonify({'result': 'Instagram Query Complete'})

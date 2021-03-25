@@ -36,6 +36,7 @@
     align-items: center;
     justify-content: center;
 }
+
 .platformSearchContentContainer{
     display: flex;
     width: 80vw;
