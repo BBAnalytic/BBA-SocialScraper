@@ -62,7 +62,8 @@ def v_scrape_tweets(s_query, i_count=50, s_earliest=None, s_latest=None):
     # Need to pass in the developer environment here to gain access to full archive
     # You can find more about the developer environment on the developer portal:
     # https://developer.twitter.com/en
-    l_tweets = o_api.search_full_archive('dev',query=s_query,maxResults=i_count,fromDate=s_earliest,toDate=s_latest)
+    l_tweets = o_api.search(q=s_query,count=i_count)
+    #l_tweets = o_api.search_full_archive('dev',query=s_query,maxResults=i_count,fromDate=s_earliest,toDate=s_latest)
     
     # Using i as the iterative loop value and tweet id
     for i in range(len(l_tweets)):
@@ -72,8 +73,10 @@ def v_scrape_tweets(s_query, i_count=50, s_earliest=None, s_latest=None):
         s_username = l_tweets[i].user.name
         s_screen_name = l_tweets[i].user.screen_name
         s_text = l_tweets[i].text
-        i_reply_count = l_tweets[i].reply_count
-        i_retweet_count = l_tweets[i].retweet_count
+        i_reply_count = 'NA'
+        #i_reply_count = l_tweets[i].reply_count
+        i_retweet_count = 'NA'
+        #i_retweet_count = l_tweets[i].retweet_count
         i_likes = l_tweets[i].favorite_count
         s_location = l_tweets[i].place
         s_url = 'https://twitter.com/i/web/status/' + l_tweets[i].id_str
@@ -207,3 +210,5 @@ def s_build_query (l_hashtags=None, l_locations=None, l_phrases=None):
     
     # Return query
     return s_query
+
+v_scrape_tweets('dog')
