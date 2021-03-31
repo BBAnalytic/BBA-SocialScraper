@@ -82,21 +82,16 @@ def v_url_extractor(s_search, i_num_posts_wanted = 100, s_category = 'hashtag'):
     o_login_button = o_browser.find_element_by_xpath("//button[@type='submit']")
     o_login_button.click()
 
-    # This should only be here temporarily. Is needed so an error isn't thrown.
-    # Need to find a way to wait till page is loaded
-    #sleep(5)
-
-
-    delay = .1
+    # This while loop tests to make sure the page has loaded before proceding
+    # If page doesn't get loaded, program ends up leaving the page before login in, causing problems later.
+    # While true, keep testing to find search box on page, once found, break from loop
+    i_delay = 0.1
     while (True):
-        o_browser.save_screenshot("screenshot.png")
         try:
-            page_loaded = WebDriverWait(o_browser, delay).until(EC.presence_of_element_located((By.XPATH, "//input[@placeholder='Search']")))
+            WebDriverWait(o_browser, i_delay).until(EC.presence_of_element_located((By.XPATH, "//input[@placeholder='Search']")))
             break
         except TimeoutException:
-            print(1)
             pass
-
 
     # Load explore page to be scraped
     o_browser.get(s_explore_page)
