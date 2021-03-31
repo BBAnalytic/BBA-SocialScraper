@@ -10,6 +10,9 @@ from time import sleep
 from selenium import webdriver
 from selenium.webdriver.chrome.options import Options
 from selenium.webdriver.common.by import By
+from selenium.webdriver.support.ui import WebDriverWait
+from selenium.webdriver.support import expected_conditions as EC
+from selenium.common.exceptions import TimeoutException
 import re
 from InstagramConfig import s_insta_username, s_insta_password, s_path_to_driver, d_headers
 
@@ -81,7 +84,19 @@ def v_url_extractor(s_search, i_num_posts_wanted = 100, s_category = 'hashtag'):
 
     # This should only be here temporarily. Is needed so an error isn't thrown.
     # Need to find a way to wait till page is loaded
-    sleep(5)
+    #sleep(5)
+
+
+    delay = .1
+    while (True):
+        o_browser.save_screenshot("screenshot.png")
+        try:
+            page_loaded = WebDriverWait(o_browser, delay).until(EC.presence_of_element_located((By.XPATH, "//input[@placeholder='Search']")))
+            break
+        except TimeoutException:
+            print(1)
+            pass
+
 
     # Load explore page to be scraped
     o_browser.get(s_explore_page)
@@ -122,3 +137,6 @@ def v_url_extractor(s_search, i_num_posts_wanted = 100, s_category = 'hashtag'):
     # Close f_frontier and O_browser
     f_frontier.close()
     o_browser.close()
+
+
+v_url_extractor("monday")
