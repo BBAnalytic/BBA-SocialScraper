@@ -1,3 +1,9 @@
+"""
+Created by: Abdul Karim
+Created on: Feb 2021
+Version: 1.0
+Description: File contains the database schema for the user database as well as endpoints that can be used to access backend processes and the database.
+"""
 from flask import Flask, jsonify, request, json
 from flask_sqlalchemy import SQLAlchemy
 import sys
@@ -13,68 +19,53 @@ m_app = Flask(__name__)
 m_app.config["SQLALCHEMY_DATABASE_URI"] = "sqlite:///userInfo.db"
 o_db = SQLAlchemy(m_app)
 
-################################################################################
-#
-#
-# DATABASE LOGIC
-#
-#
-################################################################################
-# Creat a model
+"""
+Name: Abdul Karim
+Date Created: 03/31/21
+Version: 1.0
+Description: The database schema we'll be using to create our user table.
+"""
 class UserDB(o_db.Model):
-   email = o_db.Column(o_db.Text, nullable = False, primary_key = True)
-   password = o_db.Column(o_db.Text, nullable = False)
-   first = o_db.Column(o_db.Text, nullable = False)
-   last = o_db.Column(o_db.Text, nullable = False)
-   admin = o_db.Column(o_db.Boolean, nullable = False)
-   approved = o_db.Column(o_db.Boolean, nullable = False)
+   # All of these show the columns of the table in our database.
+   s_email = o_db.Column(o_db.Text, nullable = False, primary_key = True)
+   s_password = o_db.Column(o_db.Text, nullable = False)
+   s_first = o_db.Column(o_db.Text, nullable = False)
+   s_last = o_db.Column(o_db.Text, nullable = False)
+   b_admin = o_db.Column(o_db.Boolean, nullable = False)
+   b_approved = o_db.Column(o_db.Boolean, nullable = False)
    # todo: PendingAccount colum = True/False
    # todo: Need to add last x searches for search histroy functionality
 
    def __str__(self):
       return f'{self.id} {self.content}'
 
-# DONE
-def user_serializer(user):
-   return {
-      'email': user.email,
-      'password': user.password,
-      'first_name': user.first,
-      'last_name': user.last,
-      'admin': user.admin,
-      'account_approved': user.approved
-   }
-
-################################################################################
-#
-#
-# DATABASE ENDPOINTS
-#
-#
-################################################################################
-# DONE
-# Shows us everything in the database. Upgrade to admin-only functionaklity later.
-@m_app.route('/api', methods=['GET'])
-def index():
-   users = UserDB.query.all()
-   return jsonify([*map(user_serializer, UserDB.query.all())])
-
-# DONE
-#User is trying to login. Check to see if the email and password are correct.
 @m_app.route('/api/loginUser/', methods = ['POST'])
-def loginUser():
-   # Get the login information. JSON Body: {"email": "email@email.com", "password": "password"}
-   request_data = json.loads(request.data)
-   inputEmail = request_data['email']
-   inputPassword = request_data['password']
+def json_loginUser():
+   """
+   Description: Allows a frontend process to validate if user credentials are correct.
+   Arguements: Non, but json body requested needs to look like this:
+               {
+                  "email": "email@email.com",
+                  "password": "password"
+               }
+   Outputs: JSON body signaling whether or not the information has been validated.    
+            Looks like this:
+            {
+               "result": "OK/NOK followed by a message."
+            }
+   """
+   # Grabbing input information
+   json_request_data = json.loads(request.data)
+   s_inputEmail = json_request_data['email']
+   s_inputPassword = json_request_data['password']
 
    # Check if the information is within the database
-   user = o_db.session.query(UserDB).filter_by(email = inputEmail).first()
-   if(user != None):
+   o_user = o_db.session.query(UserDB).filter_by(s_email = s_inputEmail).first()
+   if(o_user != None):
       # Check to see if the password is the empty
-      if(inputPassword != ""):
+      if(s_inputPassword != ""):
          # Check to see if the password matches the one in the DB
-         if(inputPassword == user.password):
+         if(s_inputPassword == o_user.password):
             return jsonify({'result': 'OK Email/Password Validated'})
          else:
             return jsonify({'result': 'NOK Email/Password Invalid'})
@@ -83,46 +74,59 @@ def loginUser():
    else:
       return jsonify({'result': 'NOK User Not Found'})
 
-# DONE
 # User creation is happening. Check to see if the email is already in use and if not,
 # Create a new user entry.
 @m_app.route('/api/createUser/', methods = ['POST'])
 def createUser():   
-   # Get the user information. JSON Body: {"email": "email@email.com", "name": "First Last", "password": "password", "admin": True, "approved": False}
-   request_data = json.loads(request.data)
-
+   """
+   Description: Allows a frontend process to create a user and store that user in the database.
+   Arguements: Non, but json body requested needs to look like this:
+               {
+                  "email": "email@email.com",
+                  "name": "First Last",
+                  "password": "password",
+                  "admin": True,
+                  "approved": False
+               }
+   Outputs: JSON body signaling whether or not the information has been validated.    
+            Looks like this:
+            {
+               "result": "OK/NOK followed by a message."
+            }
+   """
    # Grab all inputs
-   inputEmail = request_data['email']
-   inputPassword = request_data['password']
-   inputFirstName = ''
-   inputLastName = ''
-   inputAdmin = request_data['admin']
-   inputApproved = request_data['approved']
+   json_request_data = json.loads(request.data)
+
+   s_input_email = json_request_data['email']
+   s_input_password = json_request_data['password']
+   s_input_first_name = ""
+   s_input_last_name = ""
+   b_input_admin = json_request_data['admin']
+   b_input_approved = json_request_data['approved']
 
    # Special logic to split the name that is passed in.
-   splitNames = request_data['name'].split(" ")
-   if(len(splitNames) > 2):
+   l_split_names = json_request_data['name'].split(" ")
+   if(len(l_split_names) > 2):
       return jsonify({'result': "NOK Too Many Names Passed In"})
-   elif(len(splitNames) < 2):
+   elif(len(l_split_names) < 2):
       return jsonify({'result': "NOK Too Few Names Passed In"})
    else:
-      # splitNames = ['deemo', 'deech']
-      inputFirstName = splitNames[0]
-      inputLastName = splitNames[1]
+      s_input_first_name = l_split_names[0]
+      s_input_last_name = l_split_names[1]
 
    #This needs to be better handled to return a list of what input fields are empty.
-   if(inputEmail != ""):
-      if(inputPassword != ""):
-         if(inputFirstName != ""):
-            if(inputLastName != ""):
+   if(s_input_email != ""):
+      if(s_input_password != ""):
+         if(s_input_first_name != ""):
+            if(s_input_last_name != ""):
                # Build out a user to put into the DB
-               user = UserDB(email = inputEmail, first = inputFirstName, last = inputLastName, password = inputPassword, admin = inputAdmin, approved = inputApproved)
+               o_user = UserDB(s_email = s_input_email, s_first = s_input_first_name, s_last = s_input_last_name, s_password = s_input_password, b_admin = b_input_admin, b_approved = b_input_approved)
 
                # Check the user database before creating the user.
-               exists = o_db.session.query(UserDB.email).filter_by(email=user.email).first()
-               if(exists is None):
+               o_exists = o_db.session.query(UserDB.email).filter_by(s_email = user.email).first()
+               if(o_exists is None):
                   # Store the user in the User DB
-                  o_db.session.add(user)
+                  o_db.session.add(o_user)
                   o_db.session.commit()
                   return jsonify({'result': 'OK User Created'})  
                else:
@@ -140,21 +144,22 @@ def createUser():
 @m_app.route('/api/deleteUser/', methods=['POST'])
 def delete():
    # Get the user information. JSON Body: {"email": "email@email.com"}
-   request_data = json.loads(request.data)
-   inputEmail = request_data['email'] 
+   json_request_data = json.loads(request.data)
+   s_inputEmail = json_request_data['email'] 
    
    # Check to see if the user exists
    # exists = o_db.session.query(UserDB.email).filter_by(email=inputEmail).first()
-   if(o_db.session.query(UserDB.email).filter_by(email = inputEmail).delete()):
+   if(o_db.session.query(UserDB.s_email).filter_by(s_email = s_inputEmail).delete()):
       o_db.session.commit()
       return jsonify({'result': 'OK User deleted'})
    else:
       return jsonify({'result': 'NOK User does not exist'})
 
-# Edit a user DO AFTER PRESENTATION DEADLINE
-@m_app.route('/api/editUser/', methods=['POST'])
-def edit():
-   pass
+# This needs to go
+# # Edit a user DO AFTER PRESENTATION DEADLINE
+# @m_app.route('/api/editUser/', methods=['POST'])
+# def edit():
+#    pass
 
 ################################################################################
 #
@@ -167,15 +172,14 @@ def edit():
 @m_app.route('/api/scrapeInstagram/', methods =['POST'])
 def scrapeInstagram():
    # Get the user information. JSON body: {"search_term": "hashtag/person/location", "search_category": "hashtag or location"}
-   request_data = json.loads(request.data)
+   json_request_data = json.loads(request.data)
 
-   search_term = request_data['search_term']
-   search_category = request_data['search_category']
+   s_search_term = json_request_data['search_term']
+   s_search_category = json_request_data['search_category']
 
-   v_url_extractor(s_search = search_term, s_category = search_category)
+   v_url_extractor(s_search = s_search_term, s_category = s_search_category)
    v_read_to_queue()
    return jsonify({'result': 'Instagram Query Complete'})
-
 
 ################################################################################
 #
@@ -189,44 +193,41 @@ def scrapeInstagram():
 # Done
 @m_app.route('/api/scrapeTwitter/', methods=['POST'])
 def scrapeTwitter():
-   # Get the user information. All lists are comma-serparated. JSON body: {"#hashTags": "list,of,tags", "locations": "list,of,locations", "phrases": "list,of,phrases", "earliestDate": "yyyyMMddHHmm", "latestDate": "yyyyMMddHHmm"}
-   request_data = json.loads(request.data)
+   # Get the user information. All lists are comma-serparated. JSON body: {"#hashTags": "#list#of#tags", "locations": "#list#of#locations", "phrases": "#list#of#phrases", "earliestDate": "yyyyMMddHHmm", "latestDate": "yyyyMMddHHmm"}
+   json_request_data = json.loads(request.data)
 
    # Fix this so that we don't have .split(",")
-   hashTags = request_data['hashTags'].split(",")
-   hashTags = hashTags[0].split("#")
-   hashTags.pop(0)
-   locations = request_data['locations'].split(",")
-   locations = locations[0].split("#")
-   locations.pop(0)
-   phrases = request_data['phrases'].split(",")
-   phrases = phrases[0].split("#")
-   phrases.pop(0)
-   earliestDate = None
-   latestDate = None  
+   l_hashTags = json_request_data['hashTags'].split("#")
+   l_hashTags.pop(0)
+   l_locations = json_request_data['locations'].split("#")
+   l_locations.pop(0)
+   l_phrases = json_request_data['phrases'].split("#")
+   l_phrases.pop(0)
+   b_earliest_date = None
+   b_latest_date = None  
 
-   if(request_data['earliestDate'] != "" and request_data['latestDate'] != ""):
-      earliestDate = request_data['earliestDate']
-      latestdate = request_data['latestDate']
+   if(json_request_data['earliestDate'] != "" and json_request_data['latestDate'] != ""):
+      b_earliest_date = json_request_data['earliestDate']
+      b_latest_date = json_request_data['latestDate']
 
    # Set empty lists ([]) to None
-   if (len(hashTags) <= 0):
-      hashTags = None
-   elif (len(locations) <= 0):
-      locations = None
-   elif (len(phrases) <= 0):
-      phrases = None
+   if (len(l_hashTags) <= 0):
+      l_hashTags = None
+   elif (len(l_locations) <= 0):
+      l_locations = None
+   elif (len(l_phrases) <= 0):
+      l_phrases = None
 
-   query = s_build_query(hashTags, locations, phrases)
-   v_scrape_tweets(s_query = query, s_earliest = earliestDate, s_latest = latestDate)
+   s_query = s_build_query(l_hashTags, l_locations, l_phrases)
+   v_scrape_tweets(s_query = s_query, s_earliest = b_earliest_date, s_latest = b_latest_date)
 
    return jsonify({'result': 'Twitter Query Complete'})
 
 # todo: Must return what date range the uses can select from so the calendar can be generated with that information.
 # todo: m_app.route to send email
-@m_app.route('/api/getTwitterDateRange', methods=['GET'])
-def getEarlyLateRange():
-   pass
+# @m_app.route('/api/getTwitterDateRange', methods=['GET'])
+# def getEarlyLateRange():
+#    pass
 
 ################################################################################
 #
