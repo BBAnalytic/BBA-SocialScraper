@@ -19,6 +19,10 @@ m_app = Flask(__name__)
 m_app.config["SQLALCHEMY_DATABASE_URI"] = "sqlite:///userInfo.db"
 o_db = SQLAlchemy(m_app)
 
+user = UserDB(s_email = "")
+
+user = UserDB(s_email = “a@a.a”, s_password = "foo", s_first = "bar", s_last = "pie", b_admin = True, b_approved = True)
+
 """
 Name: Abdul Karim
 Date Created: 03/31/21
@@ -33,13 +37,23 @@ class UserDB(o_db.Model):
    s_last = o_db.Column(o_db.Text, nullable = False)
    b_admin = o_db.Column(o_db.Boolean, nullable = False)
    b_approved = o_db.Column(o_db.Boolean, nullable = False)
-   # todo: PendingAccount colum = True/False
+   # col1
+   # col2
+   # col3
+   # col4
+   # col5
+   # # todo: PendingAccount colum = True/False
    # todo: Need to add last x searches for search histroy functionality
-
+# getScrapehistoy
+# {
+#    col1: foo
+#    col2: bar
+#    ...
+# }
    def __str__(self):
       return f'{self.id} {self.content}'
 
-@m_app.route('/api/loginUser/', methods = ['POST'])
+@m_app.route('/api/loginUser/', methods = ['GET','POST'])
 def _json_login_user():
    """
    Description: Allows a frontend process to validate if user credentials are correct.
@@ -74,7 +88,7 @@ def _json_login_user():
    else:
       return jsonify({'result': 'NOK User Not Found'})
 
-@m_app.route('/api/createUser/', methods = ['POST'])
+@m_app.route('/api/createUser/', methods = ['GET','POST'])
 def _json_create_user():   
    """
    Description: Allows a frontend process to create a user and store that user in the database.
@@ -120,7 +134,7 @@ def _json_create_user():
                # Build out a user to put into the DB
                o_user = UserDB(s_email = s_input_email, s_first = s_input_first_name, s_last = s_input_last_name, s_password = s_input_password, b_admin = b_input_admin, b_approved = b_input_approved)
 
-               # Check the user database before creating the user.
+               # Check if the user is in the database before creating the user.
                o_exists = o_db.session.query(UserDB.email).filter_by(s_email = user.email).first()
                if(o_exists is None):
                   # Store the user in the User DB
@@ -138,7 +152,7 @@ def _json_create_user():
    else:
       return jsonify({'result': 'NOK No Email Input'})
 
-@m_app.route('/api/deleteUser/', methods=['POST'])
+@m_app.route('/api/deleteUser/', methods=['GET','POST'])
 def _json_delete_user():
    """
    Description: Allows a frontend process to access the database and delete a user.
@@ -163,7 +177,7 @@ def _json_delete_user():
    else:
       return jsonify({'result': 'NOK User does not exist'})
 
-@m_app.route('/api/scrapeInstagram/', methods =['POST'])
+@m_app.route('/api/scrapeInstagram/', methods =['GET','POST'])
 def _json_scrape_instagram():
    """
    Description: Allows a frontend process to process a request to scrape instagram, given inputs.
@@ -171,6 +185,7 @@ def _json_scrape_instagram():
                {
                   "search_term": "#hashtag#stuff OR locationurl",
                   "search_category": "the word: hashtag or the word: location"
+                  "email": "a@a.a"
                }
    Outputs: JSON body signaling whether or not the information has been validated.    
             Looks like this:
@@ -188,9 +203,15 @@ def _json_scrape_instagram():
    v_url_extractor(s_search = s_search_term, s_category = s_search_category)
    v_read_to_queue()
 
+   # have a try catch that returns true or false based on if we can scrape or not. Based on the S_OK value,
+   # we do read_to_queue and we also return jsonify OK or NOK
+
+   # an email, the criteria. Then we'd put it into the database.
+   # make a foreign key per user that links to that database.
+
    return jsonify({'result': 'OK Instagram Query Complete'})
 
-@m_app.route('/api/scrapeTwitter/', methods=['POST'])
+@m_app.route('/api/scrapeTwitter/', methods=['GET','POST'])
 def _json_scrape_twitter():
    """
    Description: Allows a frontend process to process a request to scrape instagram, given inputs.
@@ -237,6 +258,32 @@ def _json_scrape_twitter():
    v_scrape_tweets(s_query = s_query, s_earliest = b_earliest_date, s_latest = b_latest_date)
 
    return jsonify({'result': 'OK Twitter Query Complete'})
+
+
+# DONE
+def user_serializer(user):
+   return {
+      'email': user.email,
+      'password': user.password,
+      'first_name': user.first,
+      'last_name': user.last,
+      'admin': user.admin,
+      'account_approved': user.approved
+   }
+
+################################################################################
+#
+#
+# DATABASE ENDPOINTS
+#
+#
+################################################################################
+# DONE
+# Shows us everything in the database. Upgrade to admin-only functionaklity later.
+@m_app.route('/api', methods=['GET'])
+def index():
+   users = UserDB.query.all()
+   return jsonify([*map(user_serializer, UserDB.query.all())])
 
 # Starts the application when this function is started.
 if __name__ == '__main__':
