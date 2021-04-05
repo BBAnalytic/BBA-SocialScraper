@@ -8,8 +8,8 @@ api and scraping the data and getting to ready for archiving.
 """
 import csv,os,pickle,re,requests,tweepy
 from datetime import datetime as o_datetime
-from TwitterConfig import s_consumer_key, s_consumer_secret_key
-from ScrapeHelper import ScrapeHelper
+from twitter.TwitterConfig import s_consumer_key, s_consumer_secret_key
+from twitter.ScrapeHelper import ScrapeHelper
 
 def v_query_api(o_scrape_helper):
     """
@@ -131,5 +131,5 @@ def v_scrape_tweets(i_pickles,o_scrape_helper):
 
                     i_media_count += 1
 
-o_scrape_helper = ScrapeHelper('griffin','twitter',l_hashtags=['eggs'])
-v_query_api(o_scrape_helper)
+#o_scrape_helper = ScrapeHelper('griffin','twitter',l_hashtags=['eggs'])
+#v_query_api(o_scrape_helper)

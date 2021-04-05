@@ -7,14 +7,14 @@ scraping process by allowing access to essential variables needed for a scrape.
 """
 import tweepy
 from datetime import datetime
-from TwitterConfig import s_consumer_key, s_consumer_secret_key
-from QueryBuilder import s_build_query
+from twitter.TwitterConfig import s_consumer_key, s_consumer_secret_key
+from twitter.QueryBuilder import s_build_query
 
 class ScrapeHelper:
     def __init__(self, s_user, s_platform, **kwargs):
         """
         """
-        self.o_user = s_user
+        self.s_user = s_user
         self.s_platform = s_platform
         if self.s_platform == 'twitter':
             self._v_make_api_connection()
