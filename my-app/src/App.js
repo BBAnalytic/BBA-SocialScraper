@@ -6,6 +6,7 @@ import SearchingPage from './components/SearchingPage';
 import HomePage from './components/HomePage'
 import SettingsPage from './components/SettingsPage'
 import ContactUsPage from './components/ContactUsPage'
+import AdminSettingsPage from '/components/AdminSettingsPage'
 //Test
 
 // Imports from react-router
@@ -39,6 +40,9 @@ function App() {
           </Route>
           <Route exact path = '/ContactUsPage'>
             <ContactUsPage title='Contact Us'></ContactUsPage>
+          </Route>
+          <Route exact path = '/AdminSettingsPage'>
+            <AdminSettingsPage title='Admin Settings'></AdminSettingsPage>
           </Route>
         </Switch>
       </Router>
