@@ -50,7 +50,7 @@ export default class SettingsPage extends Component {
 		return(
 			<div className="adminSettingsPageContent">
 				<div className="settingsPageTitleContainer">
-					<label className="contactUsPageTitle">
+					<label className="settingsPageTitle">
 						{this.props.title}
 					</label>
 				</div>
@@ -63,9 +63,9 @@ export default class SettingsPage extends Component {
 						<div className="emailDownloadContainer">
 							<form className="emailDownloadForm">
 								<div className="formContainer">
-									<div className="emailContainer">
-										<label className="emailText">Email: </label>
-										<input type="email" className="emailInputBox" placeholder="first.last@email.com"></input>
+									<div className="emailContainerS">
+										<label className="emailTextS">Email: </label>
+										<input type="email" className="emailInputBoxS" placeholder="first.last@email.com"></input>
 									</div>
 									<div className="downloadContainer">
 										<label className="downloadText">Download Location: </label>
