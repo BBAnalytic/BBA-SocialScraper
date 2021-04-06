@@ -13,10 +13,13 @@ from selenium.webdriver.common.by import By
 from selenium.webdriver.support.ui import WebDriverWait
 from selenium.webdriver.support import expected_conditions as EC
 from selenium.common.exceptions import TimeoutException
+from selenium.common.exceptions import NoSuchElementException
 import re
 from InstagramConfig import s_insta_username, s_insta_password, s_path_to_driver, d_headers
 
-def v_url_extractor(s_search, i_num_posts_wanted = 30, s_category = 'hashtag'):
+
+
+def v_url_extractor(s_search, i_num_posts_wanted = 1000, s_category = 'hashtag'):
     """ InstagramURLExtractor - 
     
     Scrapes links to instagram posts of the internet using selenium and compiles them into a text document 
@@ -41,7 +44,8 @@ def v_url_extractor(s_search, i_num_posts_wanted = 30, s_category = 'hashtag'):
     i_window_width = 1920     # Width of headless chrome window in pixles
     i_window_height = 1080    # Height of headless chrome window in pixles
     i_wait = 5                # Number of seconds to implicitly wait
-    i_scroll_pixels = 1080   # Number of pixels to scroll down
+    i_scroll_pixels = 1080    # Number of pixels to scroll down
+
 
     # Build link to explore page based of if searching hashtag or location
     if(s_category == 'hashtag'):
@@ -94,18 +98,25 @@ def v_url_extractor(s_search, i_num_posts_wanted = 30, s_category = 'hashtag'):
 
     # Load explore page to be scraped
     o_browser.get(s_explore_page)
-    # Grab number of posts from explore page -- Nervous about "g47SY", afraid this might change
-    i_post_count = int(o_browser.find_element(By.CLASS_NAME, "g47SY").text.replace(',',''))
-    
+
+    # Grab number of posts from explore page if it's there
+    try:
+        # g47SY is the class name of div that holds number of posts on page
+        i_post_count = int(o_browser.find_element(By.CLASS_NAME, "g47SY").text.replace(',',''))
+    except NoSuchElementException:
+        pass
+
     l_post_buffer = []         # Buffer of the past 15 posts scraped to make sure we don't scrape duplicates
     i_num_scraped_posts = 0    # Number of posts that have been scrped
     i_buffer_size = 15         # Size of post buffer to make sure we're not rescraping links
+    b_not_bottom = True        # Is browser at bottom of page
+    i_old_height = 0             # last iteration height of browser
     #Open URLFrontier file
     f_frontier = open("URLFrontier.txt", "w", encoding= 'utf-8')
 
     # add escape if global variable ticked into this logic, eventually remove i_num_posts_wanted
-    # While number of scraped posts is less than number of posts wanted and number of posts on page 
-    while(i_num_scraped_posts < i_post_count and i_num_scraped_posts < i_num_posts_wanted):
+    # While number of scraped posts is less than number of posts wanted and number of posts on page and not at bottom of page
+    while(i_num_scraped_posts < i_post_count and i_num_scraped_posts < i_num_posts_wanted and b_not_bottom):
         l_explore_links = o_browser.find_elements_by_xpath("//a[@href]")
 
         # Try catch because sometimes posts haven't loaded yet 
@@ -115,10 +126,10 @@ def v_url_extractor(s_search, i_num_posts_wanted = 30, s_category = 'hashtag'):
                 # If link not in buffer and matches regex
                 if o_explore_link.get_attribute("href") not in l_post_buffer and re_valid_link.match(o_explore_link.get_attribute("href")) != None:
                     # If buffer not full, add link to buffer
-                    if(len(l_post_buffer) < 15):
+                    if(len(l_post_buffer) < i_buffer_size):
                         l_post_buffer.append(o_explore_link.get_attribute("href"))
                     # If buffer full, remove oldest link, add newest link to buffer
-                    elif (len(l_post_buffer) == 15):
+                    elif (len(l_post_buffer) == i_buffer_size):
                         l_post_buffer.append(o_explore_link.get_attribute("href"))
                         l_post_buffer.pop(0)
 
@@ -129,7 +140,20 @@ def v_url_extractor(s_search, i_num_posts_wanted = 30, s_category = 'hashtag'):
         # If we did get an error, just pass, hopefully page has loaded by next iteration
         except:
             pass
+        if (s_category == 'location'):
+            i_height = o_browser.execute_script("return document.body.scrollHeight")  # Current browser height
 
+            # Try to find loading div on page
+            try:
+                # By4na is class name of div with loading text in it
+                WebDriverWait(o_browser, .01).until(EC.visibility_of_element_located((By.CLASS_NAME, "By4nA")))
+
+            # If load div not found and page height hasn't changed, set bottom of page to true
+            except TimeoutException:
+                if(i_old_height == i_height):
+                    b_not_bottom = False
+                i_old_height = i_height
+        
         # Scroll page down
         o_browser.execute_script("window.scrollBy(0, " + str(i_scroll_pixels) + ")")
 
@@ -137,4 +161,5 @@ def v_url_extractor(s_search, i_num_posts_wanted = 30, s_category = 'hashtag'):
     f_frontier.close()
     o_browser.close()
 
-#v_url_extractor("minecraft")
+#v_url_extractor("https://www.instagram.com/michelleobama/", s_category = "location")
+#v_url_extractor("tacos")
