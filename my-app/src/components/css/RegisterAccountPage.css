@@ -1,0 +1,121 @@
+.registerAccountPageTitleContainer{
+	position:absolute;
+	top: 3vh;
+	left: 15vw;
+	box-sizing: content-box;
+	background-color: #FFFFFF;
+	z-index: 1;
+	width: 10vw;
+	height: 5vh;
+}
+
+.registerAccountPageTitle{
+	font-family: Arial Black;
+    font-style: normal;
+    font-weight: 900;
+    font-size: 16px;
+	width: 20vw;
+	height: 5vh;
+}
+
+.emailContainerR{
+	display: flex;
+	flex-direction: row;
+	height: 10vh;
+	margin-top: 10vh;
+}
+.nameContainer{
+	display: flex;
+	flex-direction: row;
+	height: 10vh;
+}
+.passwordContainer{
+	display: flex;
+	flex-direction: row;
+	height: 10vh;
+}
+.passwordConfirmContainer{
+	display: flex;
+	flex-direction: row;
+	height: 10vh;
+}
+
+.emailTextR{
+	font-family: Arial Black;
+    font-style: normal;
+    font-weight: 900;
+    font-size: 16px;
+	width: 120px;
+	margin-right: 30px;
+}
+.nameText{
+	font-family: Arial Black;
+    font-style: normal;
+    font-weight: 900;
+    font-size: 16px;
+	width: 120px;
+	margin-right: 30px;
+}
+.passwordText{
+	font-family: Arial Black;
+    font-style: normal;
+    font-weight: 900;
+    font-size: 16px;
+	width: 120px;
+	margin-right: 30px;
+}
+.passwordConfirmText{
+	font-family: Arial Black;
+    font-style: normal;
+    font-weight: 900;
+    font-size: 16px;
+	width: 120px;
+	margin-right: 30px;
+}
+
+.emailInputBoxR{
+	width: 300px;
+	height: 30px;
+}
+.nameInputBoxR{
+	width: 300px;
+	height: 30px;
+}
+.passwordInputBox{
+	width: 300px;
+	height: 30px;
+}
+.passwordConfirmInputBox{
+	width: 300px;
+	height: 30px;
+}
+
+.createAccountButtonContainer{
+	width: 20vw;
+	height: 15vh;
+	margin-top: 200px;
+	margin-left: 35vw;
+}
+.createAccountButton{
+	font-family: Arial Black;
+    font-style: normal;
+	font-weight: 800;
+    font-size: 15px;
+    width: 150px;
+    height: 50px;
+    text-align: center;
+    color: #FFFFFF;
+    background: #0094FF;
+    border: 1px solid #000000;
+    box-sizing: border-box;
+	margin-left: 1vw;
+	margin-right: 1vw;
+	margin-bottom: 0vh;
+	margin-top: 0vh;
+	justify-content: center;
+	align-items: center;
+	padding-bottom: 20px;
+}
+.createAccountButton:hover{
+	transform: scale(1.1);
+}
