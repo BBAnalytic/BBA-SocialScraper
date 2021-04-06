@@ -6,7 +6,7 @@ import SearchingPage from './components/SearchingPage';
 import HomePage from './components/HomePage'
 import SettingsPage from './components/SettingsPage'
 import ContactUsPage from './components/ContactUsPage'
-import AdminSettingsPage from '/components/AdminSettingsPage'
+import AdminSettingsPage from './components/AdminSettingsPage'
 //Test
 
 // Imports from react-router
@@ -42,7 +42,7 @@ function App() {
             <ContactUsPage title='Contact Us'></ContactUsPage>
           </Route>
           <Route exact path = '/AdminSettingsPage'>
-            <AdminSettingsPage title='Admin Settings'></AdminSettingsPage>
+            <AdminSettingsPage title='Admin Settings'/>
           </Route>
         </Switch>
       </Router>
