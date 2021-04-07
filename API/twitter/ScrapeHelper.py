@@ -16,6 +16,7 @@ class ScrapeHelper:
         """
         self.s_user = s_user
         self.s_platform = s_platform
+        self.i_posts_scraped = 0
         if self.s_platform == 'twitter':
             self._v_make_api_connection()
             l_hashtags = kwargs.get('l_hashtags')
@@ -48,3 +49,7 @@ class ScrapeHelper:
         if self.s_platform == 'twitter':
             self.s_pickle_directory = f'{self.s_top_directory}pickles/'
         self.s_media_directory = f'{self.s_top_directory}media/'
+
+    def v_increment(self):
+        pass
+#to do add post counter, getter and setter
