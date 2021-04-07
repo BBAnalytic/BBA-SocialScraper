@@ -32,7 +32,7 @@ export default class App extends Component {
           locations: '',
           phrases: '',
           startDate: '',
-          endDate: '',
+          endDate: ''
       };
 
       this.handleLogin = this.handleLogin.bind(this);

@@ -27,6 +27,11 @@ export default class LoginAuthenticate extends Component {
                 // console.log(this.state.isAuthenticated)
                 let isAuthenticatedVar = true;
                 console.log("Attempting to LOGIN")
+                return (
+                    <div>
+                        <Redirect to='/HomePage'></Redirect>
+                    </div>
+                )
             }
             else{
                 return (
@@ -36,20 +41,16 @@ export default class LoginAuthenticate extends Component {
                 )
             }
         })
-        if (isAuthenticatedVar){
-            return (
-                <div>
-                    <Redirect to='/HomePage'></Redirect>
-                </div>
-            )
-        }
-        else{
-            console.log("Login Failed: " + isAuthenticatedVar)
-            return (
-                <div>
-                    <Redirect to='/LoginPage'></Redirect>
-                </div>
-            )
-        }
+        // if (isAuthenticatedVar){
+            
+        // }
+        // else{
+        //     console.log("Login Failed: " + isAuthenticatedVar)
+        //     return (
+        //         <div>
+        //             <Redirect to='/LoginPage'></Redirect>
+        //         </div>
+        //     )
+        // }
     }
 }
