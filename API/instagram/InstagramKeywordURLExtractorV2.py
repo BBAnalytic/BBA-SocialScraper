@@ -19,7 +19,7 @@ from InstagramConfig import s_insta_username, s_insta_password, s_path_to_driver
 
 
 
-def v_url_extractor(s_search, i_num_posts_wanted = 1000, s_category = 'hashtag'):
+def b_url_extractor(s_search, i_num_posts_wanted = 1000, s_category = 'hashtag'):
     """ InstagramURLExtractor - 
     
     Scrapes links to instagram posts of the internet using selenium and compiles them into a text document 
@@ -37,8 +37,11 @@ def v_url_extractor(s_search, i_num_posts_wanted = 1000, s_category = 'hashtag')
                            - default s_category is "hashtag"
 
     Output: 
-        The function does not return anything, but does create a text document titled "URLFrontier.txt"
-        which contains all of the links that were scraped, each link appearing on it's own line in the text file
+        The function returns a boolean value. If False is returned, that means there was invalid input 
+        and the scrape couldn't finish, usually because there is no instagram page associated with the input. 
+        If True is returned, that means there was valid input for the scrape. The function also creates a 
+        text document titled "URLFrontier.txt" which contains all of the links that were scraped, each 
+        link appearing on it's own line in the text file
     """
 
     i_window_width = 1920     # Width of headless chrome window in pixles
@@ -51,7 +54,16 @@ def v_url_extractor(s_search, i_num_posts_wanted = 1000, s_category = 'hashtag')
     if(s_category == 'hashtag'):
         s_explore_page = 'https://www.instagram.com/explore/tags/' + s_search + '/'
     elif (s_category == 'location'):
-        s_explore_page = s_search
+        # Regex for location link triming off everything after number in link
+        # If match, set equal to s_explore_page, else return false
+        re_valid_location = re.compile(r'(https:\/\/www\.instagram\.com\/explore\/locations\/)(\d)+').match(s_search)
+        if re_valid_location:
+            s_explore_page = re_valid_location.group(0)
+        else:
+            return False
+    else:
+        # Bad input, return False
+        return False
 
     # Building a regex used to match instaggram links to posts 
     re_valid_link = re.compile(r'(https:\/\/www\.instagram\.com\/p\/)(\w|_){11}(\/)')
@@ -88,7 +100,7 @@ def v_url_extractor(s_search, i_num_posts_wanted = 1000, s_category = 'hashtag')
     # This while loop tests to make sure the page has loaded before proceding
     # If page doesn't get loaded, program ends up leaving the page before login in, causing problems later.
     # While true, keep testing to find search box on page, once found, break from loop
-    i_delay = 0.1
+    i_delay = 0         # Delay of WebDriverWait calls in seconds
     while (True):
         try:
             WebDriverWait(o_browser, i_delay).until(EC.presence_of_element_located((By.XPATH, "//input[@placeholder='Search']")))
@@ -99,18 +111,29 @@ def v_url_extractor(s_search, i_num_posts_wanted = 1000, s_category = 'hashtag')
     # Load explore page to be scraped
     o_browser.get(s_explore_page)
 
+    # Try to find "Sorry, this page isn't available."
+    # If found, bad input, return False
+    try:
+        s_bad_page = o_browser.find_element(By.CLASS_NAME, "_7UhW9").text
+        if(s_bad_page == "Sorry, this page isn't available."):
+            return False
+    except NoSuchElementException:
+        pass
+
     # Grab number of posts from explore page if it's there
     try:
         # g47SY is the class name of div that holds number of posts on page
         i_post_count = int(o_browser.find_element(By.CLASS_NAME, "g47SY").text.replace(',',''))
     except NoSuchElementException:
-        pass
+        # Just set to a really high number that'll never be reached
+        i_post_count = 10000000000
 
     l_post_buffer = []         # Buffer of the past 15 posts scraped to make sure we don't scrape duplicates
     i_num_scraped_posts = 0    # Number of posts that have been scrped
     i_buffer_size = 15         # Size of post buffer to make sure we're not rescraping links
     b_not_bottom = True        # Is browser at bottom of page
-    i_old_height = 0             # last iteration height of browser
+    i_old_height = 0           # last iteration height of browser
+
     #Open URLFrontier file
     f_frontier = open("URLFrontier.txt", "w", encoding= 'utf-8')
 
@@ -124,7 +147,7 @@ def v_url_extractor(s_search, i_num_posts_wanted = 1000, s_category = 'hashtag')
             # For each link on page
             for o_explore_link in l_explore_links:
                 # If link not in buffer and matches regex
-                if o_explore_link.get_attribute("href") not in l_post_buffer and re_valid_link.match(o_explore_link.get_attribute("href")) != None:
+                if o_explore_link.get_attribute("href") not in l_post_buffer and re_valid_link.fullmatch(o_explore_link.get_attribute("href")) != None:
                     # If buffer not full, add link to buffer
                     if(len(l_post_buffer) < i_buffer_size):
                         l_post_buffer.append(o_explore_link.get_attribute("href"))
@@ -140,13 +163,14 @@ def v_url_extractor(s_search, i_num_posts_wanted = 1000, s_category = 'hashtag')
         # If we did get an error, just pass, hopefully page has loaded by next iteration
         except:
             pass
+
         if (s_category == 'location'):
             i_height = o_browser.execute_script("return document.body.scrollHeight")  # Current browser height
 
             # Try to find loading div on page
             try:
                 # By4na is class name of div with loading text in it
-                WebDriverWait(o_browser, .01).until(EC.visibility_of_element_located((By.CLASS_NAME, "By4nA")))
+                WebDriverWait(o_browser, i_delay).until(EC.visibility_of_element_located((By.CLASS_NAME, "By4nA")))
 
             # If load div not found and page height hasn't changed, set bottom of page to true
             except TimeoutException:
@@ -161,5 +185,7 @@ def v_url_extractor(s_search, i_num_posts_wanted = 1000, s_category = 'hashtag')
     f_frontier.close()
     o_browser.close()
 
-#v_url_extractor("https://www.instagram.com/michelleobama/", s_category = "location")
-#v_url_extractor("tacos")
+    return True
+
+#print(b_url_extractor("https://www.instagram.com/explore/locations/222655914/washington-dc-nations-capitol/", s_category = "location"))
+#print(b_url_extractor("no"))
