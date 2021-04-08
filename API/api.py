@@ -20,7 +20,6 @@ m_app.config["SQLALCHEMY_DATABASE_URI"] = "sqlite:///userInfo.db"
 o_db = SQLAlchemy(m_app)
 
 user = UserDB(s_email = "")
-
 user = UserDB(s_email = “a@a.a”, s_password = "foo", s_first = "bar", s_last = "pie", b_admin = True, b_approved = True)
 
 """
@@ -287,4 +286,4 @@ def index():
 
 # Starts the application when this function is started.
 if __name__ == '__main__':
-   m_app.run(debug = True)
+   m_app.run(debug = True, host = '0.0.0.0')

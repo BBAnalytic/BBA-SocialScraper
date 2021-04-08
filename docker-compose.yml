@@ -1,0 +1,20 @@
+version: "3.9"
+services:
+  server:
+    build:  ./API
+    ports:
+    - "80:5000"
+    volumes:
+    - ./API:/app
+    environment:
+      FLASK_ENV: development
+    command: python3 api.py
+  web:
+    build: ./my-app
+    ports:
+      - "3000:3000"
+    volumes:
+      - ./my-app:/user/src/app
+    depends_on:
+      - server
+    command: npm start
