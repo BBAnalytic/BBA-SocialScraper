@@ -19,9 +19,6 @@ m_app = Flask(__name__)
 m_app.config["SQLALCHEMY_DATABASE_URI"] = "sqlite:///userInfo.db"
 o_db = SQLAlchemy(m_app)
 
-user = UserDB(s_email = "")
-user = UserDB(s_email = “a@a.a”, s_password = "foo", s_first = "bar", s_last = "pie", b_admin = True, b_approved = True)
-
 """
 Name: Abdul Karim
 Date Created: 03/31/21
@@ -36,19 +33,7 @@ class UserDB(o_db.Model):
    s_last = o_db.Column(o_db.Text, nullable = False)
    b_admin = o_db.Column(o_db.Boolean, nullable = False)
    b_approved = o_db.Column(o_db.Boolean, nullable = False)
-   # col1
-   # col2
-   # col3
-   # col4
-   # col5
-   # # todo: PendingAccount colum = True/False
-   # todo: Need to add last x searches for search histroy functionality
-# getScrapehistoy
-# {
-#    col1: foo
-#    col2: bar
-#    ...
-# }
+   
    def __str__(self):
       return f'{self.id} {self.content}'
 
@@ -258,31 +243,30 @@ def _json_scrape_twitter():
 
    return jsonify({'result': 'OK Twitter Query Complete'})
 
-
-# DONE
-def user_serializer(user):
+def _json_user_serializer(user):
+   """
+   Description: Prints out all of the files from the database.
+   Arguements: User - The user we're trying to scrape from the database.
+   Outputs: N/A
+   """
    return {
-      'email': user.email,
-      'password': user.password,
-      'first_name': user.first,
-      'last_name': user.last,
-      'admin': user.admin,
-      'account_approved': user.approved
+      'email': user.s_email,
+      'password': user.s_password,
+      'first_name': user.s_first,
+      'last_name': user.s_last,
+      'admin': user.b_admin,
+      'account_approved': user.b_approved
    }
 
-################################################################################
-#
-#
-# DATABASE ENDPOINTS
-#
-#
-################################################################################
-# DONE
-# Shows us everything in the database. Upgrade to admin-only functionaklity later.
 @m_app.route('/api', methods=['GET'])
-def index():
-   users = UserDB.query.all()
-   return jsonify([*map(user_serializer, UserDB.query.all())])
+def _json_userTable():
+   """
+   Description: Shows us everything in the database. Upgrade to admin-only functionaklity later.
+   Arguements: N/A
+   Outputs: N/A
+   """
+   _dict_user_records = UserDB.query.all()
+   return jsonify([*map(_json_user_serializer, UserDB.query.all())])
 
 # Starts the application when this function is started.
 if __name__ == '__main__':
