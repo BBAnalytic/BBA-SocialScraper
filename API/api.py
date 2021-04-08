@@ -222,12 +222,12 @@ def _json_scrape_twitter():
    l_locations.pop(0)
    l_phrases = json_request_data['phrases'].split("#")
    l_phrases.pop(0)
-   b_earliest_date = None
-   b_latest_date = None  
+   s_earliest_date = None
+   s_latest_date = None  
 
    if(json_request_data['earliestDate'] != "" and json_request_data['latestDate'] != ""):
-      b_earliest_date = json_request_data['earliestDate']
-      b_latest_date = json_request_data['latestDate']
+      s_earliest_date = json_request_data['earliestDate']
+      s_latest_date = json_request_data['latestDate']
 
    # Set empty lists ([]) to None
    if (len(l_hashTags) <= 0):
@@ -239,7 +239,7 @@ def _json_scrape_twitter():
 
    # Run a twitter scrape
    s_query = s_build_query(l_hashTags, l_locations, l_phrases)
-   v_scrape_tweets(s_query = s_query, s_earliest = b_earliest_date, s_latest = b_latest_date)
+   v_scrape_tweets(s_query = s_query, s_earliest = s_earliest_date, s_latest = s_latest_date)
 
    return jsonify({'result': 'OK Twitter Query Complete'})
 
