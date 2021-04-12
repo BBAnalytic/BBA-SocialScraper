@@ -1,5 +1,6 @@
 import React, { Component } from 'react'
 import { Link } from 'react-router-dom';
+import HomeButton from './HomeButton';
 import './css/SettingsPage.css'
 
 export default class AdminSettingsPage extends Component {
@@ -14,35 +15,16 @@ export default class AdminSettingsPage extends Component {
 			scrapeHistoryToggle: false,
 			advancedSearchToggle: false,
 			emailNotifToggle: false,
-			title: 'Settings'
+			title: 'Admin Settings',
+			link: '/LoginPage'
 		};
 
 		const emailRegex = /^[A-Za-z0-9._%+-]+@[A-Za-z0-9.-]+\.[a-z]{2,}$$/;
 
-		this.handleApproved = this.handleApproved.bind(this);
-		this.handleDeleted = this.handleDeleted.bind(this);
-		this.handleSaved = this.handleSaved.bind(this);
-		this.handleScrapeTog = this.handleScrapeTog.bind(this);
-		this.handleSearchTog = this.handleSearchTog.bind(this);
-		this.handleNotifTog = this.handleNotifTog.bind(this);
+		this.handleApproved = this.handleLogout.bind(this);
 	}
 
-	handleApproved(event){
-
-	}
-	handleDeleted(event){
-
-	}
-	handleNotifTog(event){
-
-	}
-	handleSaved(event){
-
-	}
-	handleScrapeTog(event){
-
-	}
-	handleSearchTog(event){
+	handleLogout(event){
 
 	}
 
@@ -56,9 +38,7 @@ export default class AdminSettingsPage extends Component {
 				</div>
 
 				<div className="settingsPageContainer">
-					<div className="homeButtonContainer">
-						<button className="homeButton">Home</button>
-					</div>
+					<HomeButton className="homeButtonAdmin"></HomeButton>
 					<div className="topButtonsContainer">
 						<button className="contactRequestButton">View Contact Requests</button>
 						<button className="editUsersButton">Edit Users</button>
@@ -112,7 +92,9 @@ export default class AdminSettingsPage extends Component {
 					</div>
 					<div className="bottomButtonsContainer">
 						<div className="logoutButtonContainer">
-							<button className="logoutButton">Logout</button>
+						<Link to='/LoginPage'>
+							<button className="logoutButton" onClick={this.handleLogout}>Logout</button>
+						</Link>
 						</div>
 						<div className="saveChangesButtonContainer">
 							<button className="saveChangesButton">Save Changes</button>
