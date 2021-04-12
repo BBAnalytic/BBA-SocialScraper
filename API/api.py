@@ -15,6 +15,7 @@ sys.path.insert(1, './instagram')
 from InstagramKeywordURLExtractor import v_url_extractor
 from PostExtractor import v_read_to_queue
 
+# Flask application initiation.
 m_app = Flask(__name__)
 m_app.config["SQLALCHEMY_DATABASE_URI"] = "sqlite:///userInfo.db"
 o_db = SQLAlchemy(m_app)
@@ -33,11 +34,13 @@ class UserDB(o_db.Model):
    s_last = o_db.Column(o_db.Text, nullable = False)
    b_admin = o_db.Column(o_db.Boolean, nullable = False)
    b_approved = o_db.Column(o_db.Boolean, nullable = False)
+   b_logged = o_db.Column(o_db.Boolean, nullable = False)
+
    
    def __str__(self):
       return f'{self.id} {self.content}'
 
-@m_app.route('/api/loginUser/', methods = ['GET','POST'])
+@m_app.route('/api/authenticateLogin/', methods = ['GET','POST'])
 def _json_login_user():
    """
    Description: Allows a frontend process to validate if user credentials are correct.
@@ -267,6 +270,191 @@ def _json_userTable():
    """
    _dict_user_records = UserDB.query.all()
    return jsonify([*map(_json_user_serializer, UserDB.query.all())])
+
+# /contact: ContactUsPage - Input an Email and Message (no longer than 140 characters) and outputs an email to the administrator account that contains the message body. 
+@m_app.route('/contact', methods=['GET', 'POST'])
+def _json_contact_form_submit():
+   """
+   Description: Allows the frontend process to send an email to the admin account with a contact request.
+   Arguements: None, but json body requested needs to look like this:
+               {
+                  "s_user_email": "a@a.a",
+                  "s_message": "Foo Bar Pie needs account approval?"
+               }
+   Outputs: JSON body signaling if the message was sent or not.  
+            Looks like this:
+            {
+               "result": "OK/NOK based on if the message was sent to the specified admin account."
+            }
+   """
+   #todo
+   _dict_user_records = UserDB.query.all()
+   return jsonify([*map(_json_user_serializer, UserDB.query.all())])
+
+# /recentSearches: HomePage - Queries the DB for 5 columns each containing a record of the most recent searches. 
+@m_app.route('/recentSearches', methods=['GET', 'POST'])
+def _json_get_recent_searches():
+   """
+   Description: Queries the database's columns for a specific user and returns the 5 most recent searches.
+                This information is stored in the database with the following format: platform,mm/dd/yyyy,#keyword#string,-location-string,~phrase~string
+   Arguements: None, but json body requested needs to look like this:
+               {
+                  "s_user_email": "a@a.a",
+               }
+   Outputs: A deserialized version of the 5 most recent scrapes from the database. If a piece of information
+            relating to a scrape doesn't exist, that return value will be empty.
+            The output looks like this (note: this returns an empty list if there is no recent search,
+            and an abbreviated list if there are less than 5 searches):
+            [
+               {
+                  "s_platform": "One of these two: Instagram OR Twitter",
+                  "s_date_scraped": "mm/dd/yyyy",
+                  "s_hashtags": "#keyword#string",
+                  "s_location": "-location-string",
+                  "s_phrases": "~phrase~string"
+               },
+               ...
+            ]
+   """
+   _dict_user_records = UserDB.query.all()
+   return jsonify([*map(_json_user_serializer, UserDB.query.all())])
+
+# /saveSearch: HomePage - moves every other recent search down one column in our database and adds it to the front of the DB. Tracks the date and time associated with the search along with the platform and search keywords. Store as a serialized value, comma-separated. If any commas exist in the input, replace those with a \
+@m_app.route('/saveSearch', methods=['GET', 'POST'])
+def _json_contact_save_search():
+   """
+   Description: Takes the most recent search passed in and serializes it for storage. We can then move every other
+                search down a column in the user's database and chop off the oldest search query. This information 
+                is stored in the database with the following format: platform,mm/dd/yyyy,#keyword#string,
+                -location-string,~phrase~string. We also create the time constant
+                since it's easily done in the backend.
+
+   Arguements: None, but json body requested needs to look like this:
+               {
+                  "s_user_email": "a@a.a",
+                  "s_platform": "One of these two: Instagram OR Twitter",
+                  "s_hashtags": "#keyword#string",
+                  "s_location": "-location-string",
+                  "s_phrases": "~phrase~string"
+               }
+   Outputs: Puts a serialized version of the information into the userDB. Returns OK if user was found
+            and operation was a success. Else, returns NOK. Looks like this:
+            {
+               "result": "OK/NOK based on if the serialization was a success or not."
+            }
+   """
+   pass
+
+# /allAccounts: settingsPage - Returns all information from the userDB concerning 
+@m_app.route('/getAllAccounts', methods=['GET'])
+def _json_get_all_accounts():
+   """
+   Description: Takes all of the information per user and outputs it so that the front end system can
+                display them in the settings page as a list with options to approve/ban/admin/delete accounts.
+   Arguements: None
+   Outputs: A list of all users. User Account information is stored in each object (note: if there are no users,
+            an empty collection will be returned). Looks like this:
+            [
+               {
+                  "s_email" = "a@a.a"
+                  "s_first" = "Jane"
+                  "s_last" = "Doe"
+                  "b_admin" = True OR False
+                  "b_approved" = True OR False
+                  "b_logged" = True OR False
+               },
+               ...
+            ]
+   """
+   pass
+
+# /toggleBan: adminSettingsPage - Takes in an email and a boolean value. Sets the value of the banned column for that user, returning an OK for success and NOK if the email doesn't exist.
+@m_app.route('/toggleBan', methods=['GET', 'POST'])
+def _json_toggle_ban():
+   """
+   Description: Takes in an email and a boolean value. Sets the value of the banned column for that user, returning 
+                an OK for success and NOK if the email doesn't exist.
+   Arguements: None, but json body requested needs to look like this:
+               {
+                  "s_user_email": "a@a.a",
+                  "b_ban_value": "True OR False"
+               }
+   Outputs: An OK result message of the user was found and the value is changed and matches the input value.
+            An NOK if the email is not found and the value is not changed.
+            [
+               {
+                  "result": "OK/NOK based on if the user is found or not."
+               },
+               ...
+            ]
+   """
+   pass
+
+# /toggleApproval: adminSettingsPage - Takes in an email and a boolean value. Sets the value of the approved column for that user, returning an OK for success and NOK if the email doesn't exist.
+@m_app.route('/toggleApproval', methods=['GET', 'POST'])
+def _json_toggle_approved():
+   """
+   Description: Takes in an email and a boolean value. Sets the value of the approved column for that user, 
+                returning an OK for success and NOK if the email doesn't exist.
+   Arguements: None, but json body requested needs to look like this:
+               {
+                  "s_user_email": "a@a.a",
+                  "b_approval_value": "True OR False"
+               }
+   Outputs: An OK result message of the user was found and the value is changed and matches the input value.
+            An NOK if the email is not found and the value is not changed.
+            [
+               {
+                  "result": "OK/NOK based on if the user is found or not."
+               },
+               ...
+            ]
+   """
+   pass
+
+# /toggleAdmin: adminSettingsPage - Takes in an email and a boolean value. Sets the value of the admin column for that user, returning an OK for success and NOK if the email doesn't exist.
+@m_app.route('/toggleAdmin', methods=['GET', 'POST'])
+def _json_toggle_approved():
+   """
+   Description: Takes in an email and a boolean value. Sets the value of the admin column for that user, 
+                returning an OK for success and NOK if the email doesn't exist.
+   Arguements: None, but json body requested needs to look like this:
+               {
+                  "s_user_email": "a@a.a",
+                  "b_admin_value": "True OR False"
+               }
+   Outputs: An OK result message of the user was found and the value is changed and matches the input value.
+            An NOK if the email is not found and the value is not changed.
+            [
+               {
+                  "result": "OK/NOK based on if the user is found or not."
+               },
+               ...
+            ]
+   """
+   pass
+
+# /toggleLogged: settingsPage - Takes in an email and a boolean value. Sets the value of the loggedIn column for that user, returning an OK for success and NOK if the email doesn't exist.
+@m_app.route('/toggleLogged', methods=['GET', 'POST'])
+def _json_toggle_logged():
+   """
+   Description: Takes in an email and a boolean value. Sets the value of the logged column for that user, 
+                returning an OK for success and NOK if the email doesn't exist.
+   Arguements: None, but json body requested needs to look like this:
+               {
+                  "s_user_email": "a@a.a",
+                  "b_log_value": "True OR False"
+               }
+   Outputs: An OK result message of the user was found and the value is changed and matches the input value.
+            An NOK if the email is not found and the value is not changed.
+            [
+               {
+                  "result": "OK/NOK based on if the user is found or not."
+               },
+               ...
+            ]
+   """
+   pass
 
 # Starts the application when this function is started.
 if __name__ == '__main__':
