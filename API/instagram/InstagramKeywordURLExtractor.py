@@ -1,7 +1,7 @@
 """
 Created by: Ryan Handlon
 Date Created: Feb 2021
-Version: 1.0
+Version: 2.0
 Description: This file contains one function, which is used to build a frontier of posts to be scraped by navigate to instagram.com 
 and scraping links off the explore page.
 """
@@ -13,10 +13,13 @@ from selenium.webdriver.common.by import By
 from selenium.webdriver.support.ui import WebDriverWait
 from selenium.webdriver.support import expected_conditions as EC
 from selenium.common.exceptions import TimeoutException
+from selenium.common.exceptions import NoSuchElementException
 import re
 from InstagramConfig import s_insta_username, s_insta_password, s_path_to_driver, d_headers
 
-def v_url_extractor(s_search, i_num_posts_wanted = 100, s_category = 'hashtag'):
+
+
+def b_url_extractor(s_search, i_num_posts_wanted = 1000, s_category = 'hashtag'):
     """ InstagramURLExtractor - 
     
     Scrapes links to instagram posts of the internet using selenium and compiles them into a text document 
@@ -34,21 +37,33 @@ def v_url_extractor(s_search, i_num_posts_wanted = 100, s_category = 'hashtag'):
                            - default s_category is "hashtag"
 
     Output: 
-        The function does not return anything, but does create a text document titled "URLFrontier.txt"
-        which contains all of the links that were scraped, each link appearing on it's own line in the text file
+        The function returns a boolean value. If False is returned, that means there was invalid input 
+        and the scrape couldn't finish, usually because there is no instagram page associated with the input. 
+        If True is returned, that means there was valid input for the scrape. The function also creates a 
+        text document titled "URLFrontier.txt" which contains all of the links that were scraped, each 
+        link appearing on it's own line in the text file
     """
 
     i_window_width = 1920     # Width of headless chrome window in pixles
     i_window_height = 1080    # Height of headless chrome window in pixles
     i_wait = 5                # Number of seconds to implicitly wait
     i_scroll_pixels = 1080    # Number of pixels to scroll down
-    l_links_to_posts = []     # List of links being scraped
+
 
     # Build link to explore page based of if searching hashtag or location
     if(s_category == 'hashtag'):
         s_explore_page = 'https://www.instagram.com/explore/tags/' + s_search + '/'
     elif (s_category == 'location'):
-        s_explore_page = s_search
+        # Regex for location link triming off everything after number in link
+        # If match, set equal to s_explore_page, else return false
+        re_valid_location = re.compile(r'(https:\/\/www\.instagram\.com\/explore\/locations\/)(\d)+').match(s_search)
+        if re_valid_location:
+            s_explore_page = re_valid_location.group(0)
+        else:
+            return False
+    else:
+        # Bad input, return False
+        return False
 
     # Building a regex used to match instaggram links to posts 
     re_valid_link = re.compile(r'(https:\/\/www\.instagram\.com\/p\/)(\w|_){11}(\/)')
@@ -85,7 +100,7 @@ def v_url_extractor(s_search, i_num_posts_wanted = 100, s_category = 'hashtag'):
     # This while loop tests to make sure the page has loaded before proceding
     # If page doesn't get loaded, program ends up leaving the page before login in, causing problems later.
     # While true, keep testing to find search box on page, once found, break from loop
-    i_delay = 0.1
+    i_delay = 0         # Delay of WebDriverWait calls in seconds
     while (True):
         try:
             WebDriverWait(o_browser, i_delay).until(EC.presence_of_element_located((By.XPATH, "//input[@placeholder='Search']")))
@@ -96,42 +111,81 @@ def v_url_extractor(s_search, i_num_posts_wanted = 100, s_category = 'hashtag'):
     # Load explore page to be scraped
     o_browser.get(s_explore_page)
 
-    i_last_iteration_num_scraped_posts = 0
-    i_iterations_with_no_scrape = 0
-    i_num_scraped_posts = 0
-    # Iterate till requested # of posts scraped
-    while(i_num_scraped_posts < i_num_posts_wanted):
-        # Scroll down page by i_scroll_pixles and grab all links on page
-        o_browser.execute_script("window.scrollBy(0, " + str(i_scroll_pixels) + ")")
+    # Try to find "Sorry, this page isn't available."
+    # If found, bad input, return False
+    try:
+        s_bad_page = o_browser.find_element(By.CLASS_NAME, "_7UhW9").text
+        if(s_bad_page == "Sorry, this page isn't available."):
+            return False
+    except NoSuchElementException:
+        pass
 
+    # Grab number of posts from explore page if it's there
+    try:
+        # g47SY is the class name of div that holds number of posts on page
+        i_post_count = int(o_browser.find_element(By.CLASS_NAME, "g47SY").text.replace(',',''))
+    except NoSuchElementException:
+        # Just set to a really high number that'll never be reached
+        i_post_count = 10000000000
+
+    l_post_buffer = []         # Buffer of the past 15 posts scraped to make sure we don't scrape duplicates
+    i_num_scraped_posts = 0    # Number of posts that have been scrped
+    i_buffer_size = 15         # Size of post buffer to make sure we're not rescraping links
+    b_not_bottom = True        # Is browser at bottom of page
+    i_old_height = 0           # last iteration height of browser
+
+    #Open URLFrontier file
+    f_frontier = open("URLFrontier.txt", "w", encoding= 'utf-8')
+
+    # add escape if global variable ticked into this logic, eventually remove i_num_posts_wanted
+    # While number of scraped posts is less than number of posts wanted and number of posts on page and not at bottom of page
+    while(i_num_scraped_posts < i_post_count and i_num_scraped_posts < i_num_posts_wanted and b_not_bottom):
         l_explore_links = o_browser.find_elements_by_xpath("//a[@href]")
 
-        # Sometimes theres an error where the page hasn't loaded yet, if so just pass for next iteration
+        # Try catch because sometimes posts haven't loaded yet 
         try:
-            # For each link, if its a link to a post and not been scraped yet, add it to the list
+            # For each link on page
             for o_explore_link in l_explore_links:
-                if o_explore_link.get_attribute("href") not in l_links_to_posts and re_valid_link.match(o_explore_link.get_attribute("href")) != None:
-                    l_links_to_posts.append(o_explore_link.get_attribute("href"))
+                # If link not in buffer and matches regex
+                if o_explore_link.get_attribute("href") not in l_post_buffer and re_valid_link.fullmatch(o_explore_link.get_attribute("href")) != None:
+                    # If buffer not full, add link to buffer
+                    if(len(l_post_buffer) < i_buffer_size):
+                        l_post_buffer.append(o_explore_link.get_attribute("href"))
+                    # If buffer full, remove oldest link, add newest link to buffer
+                    elif (len(l_post_buffer) == i_buffer_size):
+                        l_post_buffer.append(o_explore_link.get_attribute("href"))
+                        l_post_buffer.pop(0)
+
+                    # Write link to frontier, increment i_num_scraped_posts
+                    f_frontier.write(o_explore_link.get_attribute("href") + "\n")
                     i_num_scraped_posts += 1
-                    i_iterations_with_no_scrape = 0
-            # If it has not scraped new links in 50 iterations break, else update variables
-            if i_num_scraped_posts == i_last_iteration_num_scraped_posts and i_iterations_with_no_scrape == 50:
-                break
-            elif i_last_iteration_num_scraped_posts == i_num_scraped_posts:
-                i_iterations_with_no_scrape += 1
-            else:
-                i_last_iteration_num_scraped_posts = i_num_scraped_posts
+
+        # If we did get an error, just pass, hopefully page has loaded by next iteration
         except:
             pass
 
-    # Write scraped post links to URLFrontier text document
-    f_frontier = open("URLFrontier.txt", "w", encoding= 'utf-8')
-    for s_link in l_links_to_posts:   
-        f_frontier.write(s_link + "\n")
+        if (s_category == 'location'):
+            i_height = o_browser.execute_script("return document.body.scrollHeight")  # Current browser height
 
-    # Close f_frontier and O_browser
+            # Try to find loading div on page
+            try:
+                # By4na is class name of div with loading text in it
+                WebDriverWait(o_browser, i_delay).until(EC.visibility_of_element_located((By.CLASS_NAME, "By4nA")))
+
+            # If load div not found and page height hasn't changed, set bottom of page to true
+            except TimeoutException:
+                if(i_old_height == i_height):
+                    b_not_bottom = False
+                i_old_height = i_height
+        
+        # Scroll page down
+        o_browser.execute_script("window.scrollBy(0, " + str(i_scroll_pixels) + ")")
+
+    # Close f_frontier and o_browser
     f_frontier.close()
     o_browser.close()
 
+    return True
 
-v_url_extractor("monday")
+#print(b_url_extractor("https://www.instagram.com/explore/locations/222655914/washington-dc-nations-capitol/", s_category = "location"))
+#print(b_url_extractor("no"))
