@@ -35,7 +35,12 @@ class UserDB(o_db.Model):
    b_admin = o_db.Column(o_db.Boolean, nullable = False)
    b_approved = o_db.Column(o_db.Boolean, nullable = False)
    b_logged = o_db.Column(o_db.Boolean, nullable = False)
-
+   b_banned = o_db.Column(o_db.Boolean, nullable = False)
+   s_col1 = o_db.Column(o_db.Text, nullable = True)
+   s_col2 = o_db.Column(o_db.Text, nullable = True)
+   s_col3 = o_db.Column(o_db.Text, nullable = True)
+   s_col4 = o_db.Column(o_db.Text, nullable = True)
+   s_col5 = o_db.Column(o_db.Text, nullable = True)
    
    def __str__(self):
       return f'{self.id} {self.content}'
@@ -246,31 +251,6 @@ def _json_scrape_twitter():
 
    return jsonify({'result': 'OK Twitter Query Complete'})
 
-def _json_user_serializer(user):
-   """
-   Description: Prints out all of the files from the database.
-   Arguements: User - The user we're trying to scrape from the database.
-   Outputs: N/A
-   """
-   return {
-      'email': user.s_email,
-      'password': user.s_password,
-      'first_name': user.s_first,
-      'last_name': user.s_last,
-      'admin': user.b_admin,
-      'account_approved': user.b_approved
-   }
-
-@m_app.route('/api', methods=['GET'])
-def _json_userTable():
-   """
-   Description: Shows us everything in the database. Upgrade to admin-only functionaklity later.
-   Arguements: N/A
-   Outputs: N/A
-   """
-   _dict_user_records = UserDB.query.all()
-   return jsonify([*map(_json_user_serializer, UserDB.query.all())])
-
 # /contact: ContactUsPage - Input an Email and Message (no longer than 140 characters) and outputs an email to the administrator account that contains the message body. 
 @m_app.route('/contact', methods=['GET', 'POST'])
 def _json_contact_form_submit():
@@ -356,17 +336,35 @@ def _json_get_all_accounts():
             an empty collection will be returned). Looks like this:
             [
                {
-                  "s_email" = "a@a.a"
-                  "s_first" = "Jane"
-                  "s_last" = "Doe"
-                  "b_admin" = True OR False
-                  "b_approved" = True OR False
+                  "s_email" = "a@a.a",
+                  "s_first" = "Jane",
+                  "s_last" = "Doe",
+                  "b_admin" = True OR False,
+                  "b_approved" = True OR False,
+                  "b_banned" = True OR False,
                   "b_logged" = True OR False
                },
                ...
             ]
    """
-   pass
+   _dict_user_records = UserDB.query.all()
+   return jsonify([*map(_json_user_serializer, UserDB.query.all())])
+
+def _json_user_serializer(user):
+   """
+   Description: Prints out all of the files from the database.
+   Arguements: User - The user we're trying to scrape from the database.
+   Outputs: N/A
+   """
+   return {
+      's_email': user.s_email,
+      's_first_name': user.s_first,
+      's_last_name': user.s_last,
+      'b_admin': user.b_admin,
+      'b_approved': user.b_approved,
+      'b_banned': user.b_banned,
+      'b_logged': user.b_logged
+   }
 
 # /toggleBan: adminSettingsPage - Takes in an email and a boolean value. Sets the value of the banned column for that user, returning an OK for success and NOK if the email doesn't exist.
 @m_app.route('/toggleBan', methods=['GET', 'POST'])
@@ -388,7 +386,26 @@ def _json_toggle_ban():
                ...
             ]
    """
-   pass
+      # Grabbing input information
+   json_request_data = json.loads(request.data)
+   s_input_email = json_request_data['s_user_email']
+   b_change_value = json_request_data['b_ban_value']
+
+   # Check if the information is within the database
+   o_user = o_db.session.query(UserDB).filter_by(s_email = s_inputEmail).first()
+   if(o_user != None):
+      # If the value passed in is empty, return an error because we can't set a value that isn't there.
+      if(b_change_value != None and b_change_value != ""):
+         # Set the value of that user to whatever the input value is.
+         if(b_change_value == True):
+            o_user.b_banned = True
+         elif(b_change_value == False):
+            o_user.b_banned = False
+         db.session.commit()
+      else:
+         return jsonify({'result': 'NOK No change value passed in.'})
+   else:
+      return jsonify({'result': 'NOK User Not Found'})
 
 # /toggleApproval: adminSettingsPage - Takes in an email and a boolean value. Sets the value of the approved column for that user, returning an OK for success and NOK if the email doesn't exist.
 @m_app.route('/toggleApproval', methods=['GET', 'POST'])
@@ -410,7 +427,26 @@ def _json_toggle_approved():
                ...
             ]
    """
-   pass
+   # Grabbing input information
+   json_request_data = json.loads(request.data)
+   s_input_email = json_request_data['s_user_email']
+   b_change_value = json_request_data['b_admin_value']
+
+   # Check if the information is within the database
+   o_user = o_db.session.query(UserDB).filter_by(s_email = s_inputEmail).first()
+   if(o_user != None):
+      # If the value passed in is empty, return an error because we can't set a value that isn't there.
+      if(b_change_value != None and b_change_value != ""):
+         # Set the value of that user to whatever the input value is.
+         if(b_change_value == True):
+            o_user.b_approved = True
+         elif(b_change_value == False):
+            o_user.b_approved = False
+         db.session.commit()
+      else:
+         return jsonify({'result': 'NOK No change value passed in.'})
+   else:
+      return jsonify({'result': 'NOK User Not Found'})
 
 # /toggleAdmin: adminSettingsPage - Takes in an email and a boolean value. Sets the value of the admin column for that user, returning an OK for success and NOK if the email doesn't exist.
 @m_app.route('/toggleAdmin', methods=['GET', 'POST'])
@@ -432,7 +468,26 @@ def _json_toggle_approved():
                ...
             ]
    """
-   pass
+   # Grabbing input information
+   json_request_data = json.loads(request.data)
+   s_input_email = json_request_data['s_user_email']
+   b_change_value = json_request_data['b_admin_value']
+
+   # Check if the information is within the database
+   o_user = o_db.session.query(UserDB).filter_by(s_email = s_inputEmail).first()
+   if(o_user != None):
+      # If the value passed in is empty, return an error because we can't set a value that isn't there.
+      if(b_change_value != None and b_change_value != ""):
+         # Set the value of that user to whatever the input value is.
+         if(b_change_value == True):
+            o_user.b_admin = True
+         elif(b_change_value == False):
+            o_user.b_admin = False
+         db.session.commit()
+      else:
+         return jsonify({'result': 'NOK No change value passed in.'})
+   else:
+      return jsonify({'result': 'NOK User Not Found'})
 
 # /toggleLogged: settingsPage - Takes in an email and a boolean value. Sets the value of the loggedIn column for that user, returning an OK for success and NOK if the email doesn't exist.
 @m_app.route('/toggleLogged', methods=['GET', 'POST'])
@@ -443,7 +498,7 @@ def _json_toggle_logged():
    Arguements: None, but json body requested needs to look like this:
                {
                   "s_user_email": "a@a.a",
-                  "b_log_value": "True OR False"
+                  "s_log_value": "True OR False"
                }
    Outputs: An OK result message of the user was found and the value is changed and matches the input value.
             An NOK if the email is not found and the value is not changed.
@@ -454,7 +509,26 @@ def _json_toggle_logged():
                ...
             ]
    """
-   pass
+   # Grabbing input information
+   json_request_data = json.loads(request.data)
+   s_input_email = json_request_data['s_user_email']
+   b_change_value = json_request_data['b_log_value']
+
+   # Check if the information is within the database
+   o_user = o_db.session.query(UserDB).filter_by(s_email = s_inputEmail).first()
+   if(o_user != None):
+      # If the value passed in is empty, return an error because we can't set a value that isn't there.
+      if(b_change_value != None and b_change_value != ""):
+         # Set the value of that user to whatever the input value is.
+         if(b_change_value == True):
+            o_user.b_logged = True
+         elif(b_change_value == False):
+            o_user.b_logged = False
+         db.session.commit()
+      else:
+         return jsonify({'result': 'NOK No change value passed in.'})
+   else:
+      return jsonify({'result': 'NOK User Not Found'})
 
 # Starts the application when this function is started.
 if __name__ == '__main__':
