@@ -7,6 +7,7 @@ import HomePage from './components/HomePage'
 import SettingsPage from './components/SettingsPage'
 import ContactUsPage from './components/ContactUsPage'
 import RegisterAccount from './components/RegisterAccount'
+import RegisterAccountConfirm from './components/RegisterAccountConfirm'
 //Test
 
 // Imports from react-router
@@ -43,6 +44,9 @@ function App() {
           </Route>
           <Route exact path = '/RegisterAccount'>
             <RegisterAccount title='Register Account' />
+          </Route>
+          <Route exact path = '/RegisterAccountConfirm'>
+            <RegisterAccountConfirm title='Register Account Confirmation' />
           </Route>
         </Switch>
       </Router>

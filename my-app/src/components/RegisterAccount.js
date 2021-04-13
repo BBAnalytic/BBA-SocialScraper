@@ -86,7 +86,9 @@ export default class RegisterAccount extends Component {
 						</div>
 
 						<div className="createAccountButtonContainer">
-							<button className="createAccountButton">Create Account</button>
+							<Link to='/RegisterAccountConfirm'>
+								<button className="createAccountButton">Create Account</button>
+							</Link>
 						</div>
 					</div>
 				</div>
