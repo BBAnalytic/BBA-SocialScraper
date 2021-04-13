@@ -56,11 +56,7 @@ export default class RegisterAccount extends Component {
 					</label>
 				</div>
 
-				<div className="settingsPageContainer">
-					<div className="homeButtonContainer">
-						<HomeButton></HomeButton>
-					</div>
-
+				<div className="registerAccountPageContainer">
 					<div className="emailDownloadContainer">
 						<form className="emailDownloadForm">
 							<div className="formContainer">
@@ -83,12 +79,17 @@ export default class RegisterAccount extends Component {
 							</div>
 						</form>
 						
+						<div className="returnToLoginBtnContainer">
+							<Link to='/LoginPage'>
+								<button className="btn-returnToLoginPage">Return to Login</button>
+							</Link>
+						</div>
+
 						<div className="createAccountButtonContainer">
 							<button className="createAccountButton">Create Account</button>
 						</div>
 					</div>
 				</div>
-
 			</div>
 		)
 	}

@@ -1,3 +1,11 @@
+.registerAccountPageContent{
+	height: 100vh;
+	width: 100vw;
+	display: flex;
+	align-items: center;
+	justify-content: center;
+}
+
 .registerAccountPageTitleContainer{
 	position:absolute;
 	top: 3vh;
@@ -7,6 +15,19 @@
 	z-index: 1;
 	width: 10vw;
 	height: 5vh;
+}
+
+.registerAccountPageContainer{
+	position: relative;
+	height: 90vh;
+	width: 95vw;
+	border: 2px solid black;
+	margin-left: auto;
+	margin-right: auto;
+	margin-top: auto;
+	margin-bottom: auto;
+	display: flex;
+	flex-direction: column;
 }
 
 .registerAccountPageTitle{
@@ -22,7 +43,7 @@
 	display: flex;
 	flex-direction: row;
 	height: 10vh;
-	margin-top: 10vh;
+	margin-top: 15vh;
 }
 .nameContainer{
 	display: flex;
@@ -76,45 +97,81 @@
 .emailInputBoxR{
 	width: 300px;
 	height: 30px;
+	font-weight: 900;
+    font-size: 16px;
+	text-align: left;
 }
 .nameInputBoxR{
 	width: 300px;
 	height: 30px;
+	font-weight: 900;
+    font-size: 16px;
+	text-align: left;
 }
 .passwordInputBox{
 	width: 300px;
 	height: 30px;
+	font-weight: 900;
+    font-size: 16px;
+	text-align: left;
 }
 .passwordConfirmInputBox{
 	width: 300px;
 	height: 30px;
+	font-weight: 900;
+    font-size: 16px;
+	text-align: left;
+}
+
+.returnToLoginBtnContainer{
+	position: absolute;
+	margin-top: 75vh;
+	margin-left: 5vw;
+}
+
+.btn-returnToLoginPage{
+	font-family: Arial Black;
+    font-style: normal;
+    font-weight: 900;
+    font-size: 18px;
+    line-height: 34px;
+    width: 200px;
+    height: 60px;
+    align-items: center;
+    text-align: center;
+    color: #c7c7c7;
+    border: 1px solid #000000;
+    box-sizing: border-box;
+	margin-top:auto;
+	margin-right:40vw;
+	margin-left:auto;
+	margin-bottom:3vh;
+}
+
+.btn-returnToLoginPage:hover{
+	transform: scale(1.1);
 }
 
 .createAccountButtonContainer{
 	width: 20vw;
 	height: 15vh;
-	margin-top: 200px;
-	margin-left: 35vw;
+	margin-top: 225px;
+	margin-left: 33vw;
 }
 .createAccountButton{
 	font-family: Arial Black;
     font-style: normal;
-	font-weight: 800;
-    font-size: 15px;
-    width: 150px;
-    height: 50px;
+	font-weight: 900;
+    font-size: 18px;
+    line-height: 20px;
+    width: 200px;
+    height: 60px;
+    align-items: center;
     text-align: center;
     color: #FFFFFF;
     background: #0094FF;
     border: 1px solid #000000;
     box-sizing: border-box;
-	margin-left: 1vw;
-	margin-right: 1vw;
-	margin-bottom: 0vh;
-	margin-top: 0vh;
-	justify-content: center;
-	align-items: center;
-	padding-bottom: 20px;
 }
 .createAccountButton:hover{
 	transform: scale(1.1);
