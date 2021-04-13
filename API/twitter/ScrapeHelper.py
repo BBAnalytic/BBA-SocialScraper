@@ -45,11 +45,18 @@ class ScrapeHelper:
         """
         """
         s_now = datetime.now().strftime("%d-%m-%Y_%H")
-        self.s_top_directory = f'./{o_user}_{s_now}/'
+        self.s_top_directory = f'{o_user}_{s_now}/'
         if self.s_platform == 'twitter':
             self.s_pickle_directory = f'{self.s_top_directory}pickles/'
         self.s_media_directory = f'{self.s_top_directory}media/'
 
     def v_increment(self):
-        pass
+        """
+        """
+        self.i_posts_scraped =+ 1
+
+    def i_get_posts_scraped(self):
+        """
+        """
+        return self.i_posts_scraped
 #to do add post counter, getter and setter
