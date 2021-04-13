@@ -48,19 +48,16 @@ export default class SettingsPage extends Component {
 
 	render(){
 		return(
-			<div className="adminSettingsPageContent">
-				<div className="settingsPageTitleContainer">
-					<label className="settingsPageTitle">
+			<div className="settingsPageContentS">
+				<div className="settingsPageTitleContainerS">
+					<label className="settingsPageTitleS">
 						{this.props.title}
 					</label>
 				</div>
 
-				<div className="settingsPageContainer">
-					<div className="homeButtonContainer">
-						<HomeButton></HomeButton>
-					</div>
+				<div className="settingsPageContainerS">
 					<div className="secondRowContainer">
-						<div className="emailDownloadContainer">
+						<div className="emailDownloadContainerS">
 							<form className="emailDownloadForm">
 								<div className="formContainer">
 									<div className="emailContainerS">
@@ -87,15 +84,15 @@ export default class SettingsPage extends Component {
 						</div>
 					</div>
 					
-					<div className="bottomButtonsContainer">
-						<Link to='/LoginPage' className="logoutButtonContainer">
+					<div className="bottomButtonsContainerS">
+						<Link to='/LoginPage' className="logoutButtonContainerS">
 							<button className="logoutButton">Logout</button>
 						</Link>
-						<Link to='/LoginPage' className="topButtonsContainer">
+						<Link to='/LoginPage' className="topButtonsContainerS">
 							<button className="deactivateAccountButton">Deactivate Account</button>
 						</Link>
 					</div>
-					<Link to='/HomePage' className="saveChangesButtonContainer">
+					<Link to='/HomePage' className="saveChangesButtonContainerS">
 						<button className="saveChangesButton">Save Changes</button>
 					</Link>
 				</div>
