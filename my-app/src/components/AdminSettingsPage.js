@@ -1,7 +1,7 @@
 import React, { Component } from 'react'
 import { Link } from 'react-router-dom';
 import HomeButton from './HomeButton';
-import './css/SettingsPage.css'
+import './css/AdminSettingsPage.css'
 
 export default class AdminSettingsPage extends Component {
 	constructor(props){
@@ -88,16 +88,21 @@ export default class AdminSettingsPage extends Component {
 							<div className="approveButtonContainer">
 								<button className="approveButton">Approve</button>
 							</div>
+							<div className="banButtonContainer">
+								<button className="btn-ban">Ban</button>
+							</div>
 						</div>
 					</div>
-					<div className="bottomButtonsContainer">
+					<div className="bottomButtonsContainerA">
 						<div className="logoutButtonContainer">
 						<Link to='/LoginPage'>
 							<button className="logoutButton" onClick={this.handleLogout}>Logout</button>
 						</Link>
 						</div>
-						<div className="saveChangesButtonContainer">
-							<button className="saveChangesButton">Save Changes</button>
+						<div className="saveChangesButtonContainerA">
+							<Link to='/LoginPage'>
+								<button className="btn-saveChanges">Save Changes</button>
+							</Link>
 						</div>
 					</div>
 				</div>
