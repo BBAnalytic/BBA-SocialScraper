@@ -328,7 +328,7 @@ def _json_user_serializer(user):
    """
    Description: Prints out all of the files from the database.
    Arguements: User - The user we're trying to scrape from the database.
-   Outputs: N/A
+   Outputs: A JSONified object containing user details.
    """
    return {
       's_email': user.s_email,
