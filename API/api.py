@@ -35,11 +35,11 @@ class UserDB(o_db.Model):
    b_admin = o_db.Column(o_db.Boolean, nullable = False)
    b_approved = o_db.Column(o_db.Boolean, nullable = False)
    b_banned = o_db.Column(o_db.Boolean, nullable = False)
-   s_col1 = o_db.Column(o_db.Text, nullable = True)
-   s_col2 = o_db.Column(o_db.Text, nullable = True)
-   s_col3 = o_db.Column(o_db.Text, nullable = True)
-   s_col4 = o_db.Column(o_db.Text, nullable = True)
-   s_col5 = o_db.Column(o_db.Text, nullable = True)
+   s_saveEntry1 = o_db.Column(o_db.Text, nullable = True)
+   s_saveEntry2 = o_db.Column(o_db.Text, nullable = True)
+   s_saveEntry3 = o_db.Column(o_db.Text, nullable = True)
+   s_saveEntry4 = o_db.Column(o_db.Text, nullable = True)
+   s_saveEntry5 = o_db.Column(o_db.Text, nullable = True)
    
    def __str__(self):
       return f'{self.id} {self.content}'
@@ -132,8 +132,8 @@ def json_create_user():
                o_user = UserDB(s_email = s_input_email, s_first = s_input_first_name, 
                                s_last = s_input_last_name, s_password = s_input_password, 
                                b_admin = False, b_approved = False, b_banned = False,
-                               s_col1 = "", s_col2 = "", s_col3 = "", s_col4 = "",
-                               s_col5 = "")
+                               s_saveEntry1 = "", s_saveEntry2 = "", s_saveEntry3 = "", s_saveEntry4 = "",
+                               s_saveEntry5 = "")
 
                # Check if the user is in the database before creating the user.
                o_exists = o_db.session.query(UserDB.s_email).filter_by(s_email = o_user.s_email).first()
