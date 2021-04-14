@@ -1,7 +1,7 @@
 """
 Created by: Abdul Karim
 Created on: 03/31/21
-Version: 1.0
+Version: 1.3
 Description: File contains the database schema for the user database as well as endpoints that can be used to access backend processes and the database.
 """
 from flask import Flask, jsonify, request, json
@@ -23,7 +23,7 @@ o_db = SQLAlchemy(m_app)
 """
 Name: Abdul Karim
 Date Created: 03/31/21
-Version: 1.0
+Version: 1.5
 Description: The database schema we'll be using to create our user table.
 """
 class UserDB(o_db.Model):
@@ -44,7 +44,7 @@ class UserDB(o_db.Model):
    def __str__(self):
       return f'{self.id} {self.content}'
 
-@m_app.route('/api/authenticateLogin/', methods = ['POST'])
+@m_app.route('/api/authenticateLogin', methods = ['POST'])
 def json_login_user():
    """
    Description: Allows a frontend process to validate if user credentials are correct.
@@ -178,7 +178,7 @@ def json_delete_user():
    else:
       return jsonify({'result': 'NOK User does not exist'})
 
-@m_app.route('/api/scrapeInstagram/', methods =['POST'])
+@m_app.route('/api/scrapeInstagram', methods =['POST'])
 def json_scrape_instagram():
    """
    Description: Allows a frontend process to process a request to scrape instagram, given inputs.
@@ -212,7 +212,7 @@ def json_scrape_instagram():
 
    return jsonify({'result': 'OK Instagram Query Complete'})
 
-@m_app.route('/api/scrapeTwitter/', methods=['POST'])
+@m_app.route('/api/scrapeTwitter', methods=['POST'])
 def json_scrape_twitter():
    """
    Description: Allows a frontend process to process a request to scrape instagram, given inputs.
@@ -260,7 +260,7 @@ def json_scrape_twitter():
 
    return jsonify({'result': 'OK Twitter Query Complete'})
 
-@m_app.route('/getAllAccounts', methods=['GET'])
+@m_app.route('/api/getAllAccounts', methods=['GET'])
 def json_get_all_accounts():
    """
    Description: Takes all of the information per user and outputs it so that the front end system can
@@ -286,7 +286,7 @@ def json_get_all_accounts():
    _dict_user_records = UserDB.query.all()
    return jsonify([*map(_json_user_serializer, UserDB.query.all())])
 
-@m_app.route('/getAccount', methods=['POST'])
+@m_app.route('/api/getAccount', methods=['POST'])
 def json_get_account():
    """
    Description: Takes in an email and processes it to find a user in the database and return its values
@@ -339,7 +339,7 @@ def _json_user_serializer(user):
       'b_banned': user.b_banned,
    }
 
-@m_app.route('/toggleBan', methods=['POST'])
+@m_app.route('/api/toggleBan', methods=['POST'])
 def json_toggle_ban():
    """
    Description: Takes in an email and a boolean value. Sets the value of the banned column for that user, returning 
@@ -377,7 +377,7 @@ def json_toggle_ban():
    else:
       return jsonify({'result': 'NOK User Not Found'})
 
-@m_app.route('/toggleApprove', methods=['POST'])
+@m_app.route('/api/toggleApprove', methods=['POST'])
 def json_toggle_approved():
    """
    Description: Takes in an email and a boolean value. Sets the value of the approved column for that user, 
@@ -415,7 +415,7 @@ def json_toggle_approved():
    else:
       return jsonify({'result': 'NOK User Not Found'})
 
-@m_app.route('/toggleAdmin', methods=['POST'])
+@m_app.route('/api/toggleAdmin', methods=['POST'])
 def json_toggle_admin():
    """
    Description: Takes in an email and a boolean value. Sets the value of the admin column for that user, 
