@@ -6,6 +6,7 @@ Description: File contains the database schema for the user database as well as 
 """
 from flask import Flask, jsonify, request, json
 from flask_sqlalchemy import SQLAlchemy
+from flask_cors import CORS, cross_origin
 import sys
 
 sys.path.insert(1, './twitter')
@@ -18,6 +19,7 @@ from PostExtractor import v_read_to_queue
 # Flask application initiation.
 m_app = Flask(__name__)
 m_app.config["SQLALCHEMY_DATABASE_URI"] = "sqlite:///userInfo.db"
+CORS(m_app)
 o_db = SQLAlchemy(m_app)
 
 """
@@ -261,6 +263,7 @@ def json_scrape_twitter():
    return jsonify({'result': 'OK Twitter Query Complete'})
 
 @m_app.route('/api/getAllAccounts', methods=['GET'])
+@cross_origin()
 def json_get_all_accounts():
    """
    Description: Takes all of the information per user and outputs it so that the front end system can
