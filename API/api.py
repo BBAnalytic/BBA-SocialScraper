@@ -34,7 +34,6 @@ class UserDB(o_db.Model):
    s_last = o_db.Column(o_db.Text, nullable = False)
    b_admin = o_db.Column(o_db.Boolean, nullable = False)
    b_approved = o_db.Column(o_db.Boolean, nullable = False)
-   b_logged = o_db.Column(o_db.Boolean, nullable = False)
    b_banned = o_db.Column(o_db.Boolean, nullable = False)
    s_col1 = o_db.Column(o_db.Text, nullable = True)
    s_col2 = o_db.Column(o_db.Text, nullable = True)
@@ -45,8 +44,8 @@ class UserDB(o_db.Model):
    def __str__(self):
       return f'{self.id} {self.content}'
 
-@m_app.route('/api/authenticateLogin/', methods = ['GET','POST'])
-def _json_login_user():
+@m_app.route('/api/authenticateLogin/', methods = ['POST'])
+def json_login_user():
    """
    Description: Allows a frontend process to validate if user credentials are correct.
    Arguements: None, but json body requested needs to look like this:
@@ -70,27 +69,35 @@ def _json_login_user():
    if(o_user != None):
       # Check to see if the password is the empty
       if(s_inputPassword != ""):
-         # Check to see if the password matches the one in the DB
-         if(s_inputPassword == o_user.password):
-            return jsonify({'result': 'OK Email/Password Validated'})
+         # Check to see if the user is approved
+         if(o_user.b_approved == True):
+            # Check to see if user is banned
+            if(o_user.b_banned == False):
+               # Check to see if the password matches the one in the DB
+               if(s_inputPassword == o_user.password):
+                  return jsonify({'result': 'OK Email/Password Validated'})
+               else:
+                  return jsonify({'result': 'NOK Email/Password Invalid'})
+            else:
+               return jsonify({'result': 'NOK User us Banned'})
          else:
-            return jsonify({'result': 'NOK Email/Password Invalid'})
+            return jsonify({'result': 'NOK User is not Approved'})
       else:
          return jsonify({'result': 'NOK Password Field Blank'})
    else:
       return jsonify({'result': 'NOK User Not Found'})
 
-@m_app.route('/api/createUser/', methods = ['GET','POST'])
-def _json_create_user():   
+@m_app.route('/api/createUser/', methods = ['POST'])
+def json_create_user():   
    """
-   Description: Allows a frontend process to create a user and store that user in the database.
+   Description: Allows a frontend process to create a user and store that user in the database. Users
+                created initially have their banned, approved, and admin values defaulted to false.
+                They also have all saveSearch columns defaulted to empty string ("")
    Arguements: None, but json body requested needs to look like this:
                {
                   "email": "email@email.com",
                   "name": "First Last",
                   "password": "password",
-                  "admin": True,
-                  "approved": False
                }
    Outputs: JSON body signaling whether or not the information has been validated.    
             Looks like this:
@@ -105,8 +112,6 @@ def _json_create_user():
    s_input_password = json_request_data['password']
    s_input_first_name = ""
    s_input_last_name = ""
-   b_input_admin = json_request_data['admin']
-   b_input_approved = json_request_data['approved']
 
    # Special logic to split the name that is passed in.
    l_split_names = json_request_data['name'].split(" ")
@@ -124,7 +129,11 @@ def _json_create_user():
          if(s_input_first_name != ""):
             if(s_input_last_name != ""):
                # Build out a user to put into the DB
-               o_user = UserDB(s_email = s_input_email, s_first = s_input_first_name, s_last = s_input_last_name, s_password = s_input_password, b_admin = b_input_admin, b_approved = b_input_approved)
+               o_user = UserDB(s_email = s_input_email, s_first = s_input_first_name, 
+                               s_last = s_input_last_name, s_password = s_input_password, 
+                               b_admin = False, b_approved = False, b_banned = False,
+                               s_col1 = "", s_col2 = "", s_col3 = "", s_col4 = "",
+                               s_col5 = "")
 
                # Check if the user is in the database before creating the user.
                o_exists = o_db.session.query(UserDB.email).filter_by(s_email = user.email).first()
@@ -144,8 +153,8 @@ def _json_create_user():
    else:
       return jsonify({'result': 'NOK No Email Input'})
 
-@m_app.route('/api/deleteUser/', methods=['GET','POST'])
-def _json_delete_user():
+@m_app.route('/api/deleteUser/', methods=['POST'])
+def json_delete_user():
    """
    Description: Allows a frontend process to access the database and delete a user.
    Arguements: None, but json body requested needs to look like this:
@@ -169,8 +178,8 @@ def _json_delete_user():
    else:
       return jsonify({'result': 'NOK User does not exist'})
 
-@m_app.route('/api/scrapeInstagram/', methods =['GET','POST'])
-def _json_scrape_instagram():
+@m_app.route('/api/scrapeInstagram/', methods =['POST'])
+def json_scrape_instagram():
    """
    Description: Allows a frontend process to process a request to scrape instagram, given inputs.
    Arguements: None, but json body requested needs to look like this:
@@ -203,8 +212,8 @@ def _json_scrape_instagram():
 
    return jsonify({'result': 'OK Instagram Query Complete'})
 
-@m_app.route('/api/scrapeTwitter/', methods=['GET','POST'])
-def _json_scrape_twitter():
+@m_app.route('/api/scrapeTwitter/', methods=['POST'])
+def json_scrape_twitter():
    """
    Description: Allows a frontend process to process a request to scrape instagram, given inputs.
    Arguements: None, but json body requested needs to look like this:
@@ -251,83 +260,8 @@ def _json_scrape_twitter():
 
    return jsonify({'result': 'OK Twitter Query Complete'})
 
-# /contact: ContactUsPage - Input an Email and Message (no longer than 140 characters) and outputs an email to the administrator account that contains the message body. 
-@m_app.route('/contact', methods=['GET', 'POST'])
-def _json_contact_form_submit():
-   """
-   Description: Allows the frontend process to send an email to the admin account with a contact request.
-   Arguements: None, but json body requested needs to look like this:
-               {
-                  "s_user_email": "a@a.a",
-                  "s_message": "Foo Bar Pie needs account approval?"
-               }
-   Outputs: JSON body signaling if the message was sent or not.  
-            Looks like this:
-            {
-               "result": "OK/NOK based on if the message was sent to the specified admin account."
-            }
-   """
-   #todo
-   _dict_user_records = UserDB.query.all()
-   return jsonify([*map(_json_user_serializer, UserDB.query.all())])
-
-# /recentSearches: HomePage - Queries the DB for 5 columns each containing a record of the most recent searches. 
-@m_app.route('/recentSearches', methods=['GET', 'POST'])
-def _json_get_recent_searches():
-   """
-   Description: Queries the database's columns for a specific user and returns the 5 most recent searches.
-                This information is stored in the database with the following format: platform,mm/dd/yyyy,#keyword#string,-location-string,~phrase~string
-   Arguements: None, but json body requested needs to look like this:
-               {
-                  "s_user_email": "a@a.a",
-               }
-   Outputs: A deserialized version of the 5 most recent scrapes from the database. If a piece of information
-            relating to a scrape doesn't exist, that return value will be empty.
-            The output looks like this (note: this returns an empty list if there is no recent search,
-            and an abbreviated list if there are less than 5 searches):
-            [
-               {
-                  "s_platform": "One of these two: Instagram OR Twitter",
-                  "s_date_scraped": "mm/dd/yyyy",
-                  "s_hashtags": "#keyword#string",
-                  "s_location": "-location-string",
-                  "s_phrases": "~phrase~string"
-               },
-               ...
-            ]
-   """
-   _dict_user_records = UserDB.query.all()
-   return jsonify([*map(_json_user_serializer, UserDB.query.all())])
-
-# /saveSearch: HomePage - moves every other recent search down one column in our database and adds it to the front of the DB. Tracks the date and time associated with the search along with the platform and search keywords. Store as a serialized value, comma-separated. If any commas exist in the input, replace those with a \
-@m_app.route('/saveSearch', methods=['GET', 'POST'])
-def _json_contact_save_search():
-   """
-   Description: Takes the most recent search passed in and serializes it for storage. We can then move every other
-                search down a column in the user's database and chop off the oldest search query. This information 
-                is stored in the database with the following format: platform,mm/dd/yyyy,#keyword#string,
-                -location-string,~phrase~string. We also create the time constant
-                since it's easily done in the backend.
-
-   Arguements: None, but json body requested needs to look like this:
-               {
-                  "s_user_email": "a@a.a",
-                  "s_platform": "One of these two: Instagram OR Twitter",
-                  "s_hashtags": "#keyword#string",
-                  "s_location": "-location-string",
-                  "s_phrases": "~phrase~string"
-               }
-   Outputs: Puts a serialized version of the information into the userDB. Returns OK if user was found
-            and operation was a success. Else, returns NOK. Looks like this:
-            {
-               "result": "OK/NOK based on if the serialization was a success or not."
-            }
-   """
-   pass
-
-# /allAccounts: settingsPage - Returns all information from the userDB concerning 
 @m_app.route('/getAllAccounts', methods=['GET'])
-def _json_get_all_accounts():
+def json_get_all_accounts():
    """
    Description: Takes all of the information per user and outputs it so that the front end system can
                 display them in the settings page as a list with options to approve/ban/admin/delete accounts.
@@ -336,19 +270,59 @@ def _json_get_all_accounts():
             an empty collection will be returned). Looks like this:
             [
                {
-                  "s_email" = "a@a.a",
-                  "s_first" = "Jane",
-                  "s_last" = "Doe",
-                  "b_admin" = True OR False,
-                  "b_approved" = True OR False,
-                  "b_banned" = True OR False,
-                  "b_logged" = True OR False
+                  "s_email" : "a@a.a",
+                  "s_first" : "Jane",
+                  "s_last" : "Doe",
+                  "b_admin" : True OR False,
+                  "b_approved" : True OR False,
+                  "b_banned" : True OR False,
                },
-               ...
+               ...,
+               {
+                  ...
+               }
             ]
    """
    _dict_user_records = UserDB.query.all()
    return jsonify([*map(_json_user_serializer, UserDB.query.all())])
+
+@m_app.route('/getAccount', methods=['POST'])
+def json_get_account():
+   """
+   Description: Takes in an email and processes it to find a user in the database and return its values
+   Arguements: None, but json body requested needs to look like this:
+               {
+                  "s_user_email": "a@a.a",
+               }
+   Outputs: A object containing the user that is found in the database or NOK if user was not found.
+               {
+                  "s_email" : "a@a.a",
+                  "s_first" : "Jane",
+                  "s_last" : "Doe",
+                  "b_admin" : True OR False,
+                  "b_approved" : True OR False,
+                  "b_banned" : True OR False,
+               }
+            OR
+               {
+                  "result": "OK/NOK based on if the user is found or not."
+               }
+   """
+   # Grabbing input information
+   json_request_data = json.loads(request.data)
+   s_input_email = json_request_data['s_user_email']
+
+   # Check if the information is within the database
+   o_user = o_db.session.query(UserDB).filter_by(s_email = s_input_email).first()
+   if(o_user != None):
+      return jsonify({"b_admin": o_user.b_admin, 
+                      "b_approved": o_user.b_approved,
+                      "b_banned": o_user.b_banned,
+                      "s_email": o_user.s_email,
+                      "s_first": o_user.s_first,
+                      "s_last": o_user.s_first})
+   else:
+      return jsonify({'result': 'NOK User Not Found'})
 
 def _json_user_serializer(user):
    """
@@ -363,12 +337,10 @@ def _json_user_serializer(user):
       'b_admin': user.b_admin,
       'b_approved': user.b_approved,
       'b_banned': user.b_banned,
-      'b_logged': user.b_logged
    }
 
-# /toggleBan: adminSettingsPage - Takes in an email and a boolean value. Sets the value of the banned column for that user, returning an OK for success and NOK if the email doesn't exist.
-@m_app.route('/toggleBan', methods=['GET', 'POST'])
-def _json_toggle_ban():
+@m_app.route('/toggleBan', methods=['POST'])
+def json_toggle_ban():
    """
    Description: Takes in an email and a boolean value. Sets the value of the banned column for that user, returning 
                 an OK for success and NOK if the email doesn't exist.
@@ -379,78 +351,72 @@ def _json_toggle_ban():
                }
    Outputs: An OK result message of the user was found and the value is changed and matches the input value.
             An NOK if the email is not found and the value is not changed.
-            [
-               {
-                  "result": "OK/NOK based on if the user is found or not."
-               },
-               ...
-            ]
+            {
+               "result": "OK/NOK based on if the user is found or not."
+            }
    """
-      # Grabbing input information
+   # Grabbing input information
    json_request_data = json.loads(request.data)
    s_input_email = json_request_data['s_user_email']
    b_change_value = json_request_data['b_ban_value']
 
    # Check if the information is within the database
-   o_user = o_db.session.query(UserDB).filter_by(s_email = s_inputEmail).first()
+   o_user = o_db.session.query(UserDB).filter_by(s_email = s_input_email).first()
    if(o_user != None):
       # If the value passed in is empty, return an error because we can't set a value that isn't there.
-      if(b_change_value != None and b_change_value != ""):
+      if(b_change_value != None):
          # Set the value of that user to whatever the input value is.
          if(b_change_value == True):
             o_user.b_banned = True
          elif(b_change_value == False):
             o_user.b_banned = False
-         db.session.commit()
+         o_db.session.commit()
+         return jsonify({'result': 'OK'})
       else:
          return jsonify({'result': 'NOK No change value passed in.'})
    else:
       return jsonify({'result': 'NOK User Not Found'})
 
-# /toggleApproval: adminSettingsPage - Takes in an email and a boolean value. Sets the value of the approved column for that user, returning an OK for success and NOK if the email doesn't exist.
-@m_app.route('/toggleApproval', methods=['GET', 'POST'])
-def _json_toggle_approved():
+@m_app.route('/toggleApprove', methods=['POST'])
+def json_toggle_approved():
    """
    Description: Takes in an email and a boolean value. Sets the value of the approved column for that user, 
                 returning an OK for success and NOK if the email doesn't exist.
    Arguements: None, but json body requested needs to look like this:
                {
                   "s_user_email": "a@a.a",
-                  "b_approval_value": "True OR False"
+                  "b_approve_value": "True OR False"
                }
    Outputs: An OK result message of the user was found and the value is changed and matches the input value.
             An NOK if the email is not found and the value is not changed.
-            [
-               {
-                  "result": "OK/NOK based on if the user is found or not."
-               },
-               ...
-            ]
+            {
+               "result": "OK/NOK based on if the user is found or not."
+            }
    """
    # Grabbing input information
    json_request_data = json.loads(request.data)
    s_input_email = json_request_data['s_user_email']
-   b_change_value = json_request_data['b_admin_value']
+   b_change_value = json_request_data['b_approve_value']
 
    # Check if the information is within the database
-   o_user = o_db.session.query(UserDB).filter_by(s_email = s_inputEmail).first()
+   o_user = o_db.session.query(UserDB).filter_by(s_email = s_input_email).first()
    if(o_user != None):
       # If the value passed in is empty, return an error because we can't set a value that isn't there.
-      if(b_change_value != None and b_change_value != ""):
+      if(b_change_value != None):
          # Set the value of that user to whatever the input value is.
          if(b_change_value == True):
             o_user.b_approved = True
          elif(b_change_value == False):
             o_user.b_approved = False
-         db.session.commit()
+         o_db.session.commit()
+         return jsonify({'result': 'OK'})
       else:
          return jsonify({'result': 'NOK No change value passed in.'})
    else:
       return jsonify({'result': 'NOK User Not Found'})
 
-# /toggleAdmin: adminSettingsPage - Takes in an email and a boolean value. Sets the value of the admin column for that user, returning an OK for success and NOK if the email doesn't exist.
-@m_app.route('/toggleAdmin', methods=['GET', 'POST'])
-def _json_toggle_approved():
+@m_app.route('/toggleAdmin', methods=['POST'])
+def json_toggle_admin():
    """
    Description: Takes in an email and a boolean value. Sets the value of the admin column for that user, 
                 returning an OK for success and NOK if the email doesn't exist.
@@ -461,12 +427,9 @@ def _json_toggle_approved():
                }
    Outputs: An OK result message of the user was found and the value is changed and matches the input value.
             An NOK if the email is not found and the value is not changed.
-            [
-               {
-                  "result": "OK/NOK based on if the user is found or not."
-               },
-               ...
-            ]
+            {
+               "result": "OK/NOK based on if the user is found or not."
+            }
    """
    # Grabbing input information
    json_request_data = json.loads(request.data)
@@ -474,57 +437,17 @@ def _json_toggle_approved():
    b_change_value = json_request_data['b_admin_value']
 
    # Check if the information is within the database
-   o_user = o_db.session.query(UserDB).filter_by(s_email = s_inputEmail).first()
+   o_user = o_db.session.query(UserDB).filter_by(s_email = s_input_email).first()
    if(o_user != None):
       # If the value passed in is empty, return an error because we can't set a value that isn't there.
-      if(b_change_value != None and b_change_value != ""):
+      if(b_change_value != None):
          # Set the value of that user to whatever the input value is.
          if(b_change_value == True):
             o_user.b_admin = True
          elif(b_change_value == False):
             o_user.b_admin = False
-         db.session.commit()
-      else:
-         return jsonify({'result': 'NOK No change value passed in.'})
-   else:
-      return jsonify({'result': 'NOK User Not Found'})
-
-# /toggleLogged: settingsPage - Takes in an email and a boolean value. Sets the value of the loggedIn column for that user, returning an OK for success and NOK if the email doesn't exist.
-@m_app.route('/toggleLogged', methods=['GET', 'POST'])
-def _json_toggle_logged():
-   """
-   Description: Takes in an email and a boolean value. Sets the value of the logged column for that user, 
-                returning an OK for success and NOK if the email doesn't exist.
-   Arguements: None, but json body requested needs to look like this:
-               {
-                  "s_user_email": "a@a.a",
-                  "s_log_value": "True OR False"
-               }
-   Outputs: An OK result message of the user was found and the value is changed and matches the input value.
-            An NOK if the email is not found and the value is not changed.
-            [
-               {
-                  "result": "OK/NOK based on if the user is found or not."
-               },
-               ...
-            ]
-   """
-   # Grabbing input information
-   json_request_data = json.loads(request.data)
-   s_input_email = json_request_data['s_user_email']
-   b_change_value = json_request_data['b_log_value']
-
-   # Check if the information is within the database
-   o_user = o_db.session.query(UserDB).filter_by(s_email = s_inputEmail).first()
-   if(o_user != None):
-      # If the value passed in is empty, return an error because we can't set a value that isn't there.
-      if(b_change_value != None and b_change_value != ""):
-         # Set the value of that user to whatever the input value is.
-         if(b_change_value == True):
-            o_user.b_logged = True
-         elif(b_change_value == False):
-            o_user.b_logged = False
-         db.session.commit()
+         o_db.session.commit()
+         return jsonify({'result': 'OK'})
       else:
          return jsonify({'result': 'NOK No change value passed in.'})
    else:
