@@ -31,20 +31,14 @@ export default class AdminSettingsPage extends Component {
 
 	handleGetUsers(event){
 		// fetch('http://localhost:5000/api/getAllAccounts', {method: 'GET'}).then(data => console.log(data));
-		// fetch('/api/getAllAccounts')
-		// .then(response => {
-		//   console.log(response.text())
-		//   return response
-		// })
-		// .catch(error=>{
-		//   console.log(error)
-		// })
-		// url = 'http://localhost:5000/api/getAllAccounts'
-		return fetch('http://localhost:5000/api/getAllAccounts').then(response => {
-			console.log(response); // Logs the response
-			return response;
-		});
+		fetch('/api/getAllAccounts')
+			.then(response => response.json())
+			.then(data => {
+				console.log(data)
+  		});
 
+
+		
 	}
 
 	render(){
