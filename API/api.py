@@ -87,7 +87,7 @@ def json_login_user():
    else:
       return jsonify({'result': 'NOK User Not Found'})
 
-@m_app.route('/api/createUser/', methods = ['POST'])
+@m_app.route('/api/createUser', methods = ['POST'])
 def json_create_user():   
    """
    Description: Allows a frontend process to create a user and store that user in the database. Users
@@ -136,7 +136,7 @@ def json_create_user():
                                s_col5 = "")
 
                # Check if the user is in the database before creating the user.
-               o_exists = o_db.session.query(UserDB.email).filter_by(s_email = user.email).first()
+               o_exists = o_db.session.query(UserDB.s_email).filter_by(s_email = o_user.s_email).first()
                if(o_exists is None):
                   # Store the user in the User DB
                   o_db.session.add(o_user)
@@ -153,7 +153,7 @@ def json_create_user():
    else:
       return jsonify({'result': 'NOK No Email Input'})
 
-@m_app.route('/api/deleteUser/', methods=['POST'])
+@m_app.route('/api/deleteUser', methods=['POST'])
 def json_delete_user():
    """
    Description: Allows a frontend process to access the database and delete a user.
@@ -168,11 +168,11 @@ def json_delete_user():
             }
    """
    # Grab inputs
-   json_request_data = json.loads(request.data)
-   s_inputEmail = json_request_data['email'] 
+   # json_request_data = json.loads(request.data)
+   s_input_email = "b@b.b"#json_request_data['email'] 
    
    # Check to see if the user exists
-   if(o_db.session.query(UserDB.s_email).filter_by(s_email = s_inputEmail).delete()):
+   if(o_db.session.query(UserDB.s_email).filter_by(s_email = s_input_email).delete()):
       o_db.session.commit()
       return jsonify({'result': 'OK User deleted'})
    else:
