@@ -79,7 +79,7 @@ def json_login_user():
                else:
                   return jsonify({'result': 'NOK Email/Password Invalid'})
             else:
-               return jsonify({'result': 'NOK User us Banned'})
+               return jsonify({'result': 'NOK User is Banned'})
          else:
             return jsonify({'result': 'NOK User is not Approved'})
       else:
@@ -168,8 +168,8 @@ def json_delete_user():
             }
    """
    # Grab inputs
-   # json_request_data = json.loads(request.data)
-   s_input_email = "b@b.b"#json_request_data['email'] 
+   json_request_data = json.loads(request.data)
+   s_input_email = json_request_data['email'] 
    
    # Check to see if the user exists
    if(o_db.session.query(UserDB.s_email).filter_by(s_email = s_input_email).delete()):
