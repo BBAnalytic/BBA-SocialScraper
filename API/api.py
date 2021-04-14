@@ -283,7 +283,6 @@ def json_get_all_accounts():
                }
             ]
    """
-   _dict_user_records = UserDB.query.all()
    return jsonify([*map(_json_user_serializer, UserDB.query.all())])
 
 @m_app.route('/api/getAccount', methods=['POST'])
@@ -339,8 +338,8 @@ def _json_user_serializer(user):
       'b_banned': user.b_banned,
    }
 
-@m_app.route('/api/toggleBan', methods=['POST'])
-def json_toggle_ban():
+@m_app.route('/api/setBan', methods=['POST'])
+def json_set_ban():
    """
    Description: Takes in an email and a boolean value. Sets the value of the banned column for that user, returning 
                 an OK for success and NOK if the email doesn't exist.
@@ -377,8 +376,8 @@ def json_toggle_ban():
    else:
       return jsonify({'result': 'NOK User Not Found'})
 
-@m_app.route('/api/toggleApprove', methods=['POST'])
-def json_toggle_approved():
+@m_app.route('/api/setApprove', methods=['POST'])
+def json_set_approved():
    """
    Description: Takes in an email and a boolean value. Sets the value of the approved column for that user, 
                 returning an OK for success and NOK if the email doesn't exist.
@@ -415,8 +414,8 @@ def json_toggle_approved():
    else:
       return jsonify({'result': 'NOK User Not Found'})
 
-@m_app.route('/api/toggleAdmin', methods=['POST'])
-def json_toggle_admin():
+@m_app.route('/api/setAdmin', methods=['POST'])
+def json_set_admin():
    """
    Description: Takes in an email and a boolean value. Sets the value of the admin column for that user, 
                 returning an OK for success and NOK if the email doesn't exist.
