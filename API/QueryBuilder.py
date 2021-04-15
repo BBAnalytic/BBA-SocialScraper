@@ -1,4 +1,9 @@
-
+"""
+Created by: Ryan Handlon
+Created on: Feb 2021
+Version: 1.0
+Description: This file contains the function for building queries to pass into the api call.
+"""
 
 def s_build_query (l_hashtags=None, l_locations=None, l_phrases=None):
     """ 
