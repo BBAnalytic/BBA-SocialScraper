@@ -36,10 +36,30 @@ export default class AdminSettingsPage extends Component {
 			.then(data => {
 				console.log(data)
   		});
-
-
-		
 	}
+
+	handleDeleteUser(event){
+		const email = 'z@z.z';
+
+		fetch('/api/deleteUser', {method: 'POST'},)
+			.then()
+			.then({
+
+			});
+	}
+
+	handleApproveUser(event){
+
+	}
+
+	handleBanUser(event){
+
+	}
+
+	handleScrapeHistoryToggle(event){
+
+	}
+
 
 	render(){
 		return(
@@ -50,8 +70,14 @@ export default class AdminSettingsPage extends Component {
 					</text>
 				</div>
 
-				<div>
-					<button onClick={this.handleGetUsers}>Press Here</button>
+				{/* These buttons are for testing the endpoints */}
+				<div className="btn-testPurposes">
+					<button onClick={this.handleGetUsers}>Get Users</button>
+					<button onClick={this.handleDeleteUser}>Delete User</button>
+					{/* have to use email to change user, so need to set the email to the
+					classname bc the only thing that's displayed is username */}
+					<button onClick={this.handleApproveUser}>Approve User</button>
+					<button onClick={this.handleBanUser}>Ban User</button>
 				</div>
 
 				<div className="settingsPageContainer">
@@ -75,17 +101,6 @@ export default class AdminSettingsPage extends Component {
 									</div>
 								</div>
 							</form>
-						</div>
-						<div className="toggleButtonsContainer">
-							<div className="scrapeHistoryToggleContainer">
-								<button className="scrapeHistoryToggle">See Scrape History</button>
-							</div>
-							<div className="advancedSearchToggleContainer">
-								<button className="advancedSearchToggle">Always Advanced Search</button>
-							</div>
-							<div className="emailNotifToggleContainer">
-								<button className="emailNotifToggle">Email Notifications</button>
-							</div>
 						</div>
 					</div>
 					<div className="approveAccountsContainer">
