@@ -75,9 +75,6 @@ export default class SettingsPage extends Component {
 							<div className="scrapeHistoryToggleContainer">
 								<button className="scrapeHistoryToggle">See Scrape History</button>
 							</div>
-							<div className="advancedSearchToggleContainer">
-								<button className="advancedSearchToggle">Always Advanced Search</button>
-							</div>
 							<div className="emailNotifToggleContainer">
 								<button className="emailNotifToggle">Email Notifications</button>
 							</div>
