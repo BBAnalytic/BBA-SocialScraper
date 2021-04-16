@@ -6,19 +6,21 @@ Description: File contains the database schema for the user database as well as 
 """
 from flask import Flask, jsonify, request, json
 from flask_sqlalchemy import SQLAlchemy
-import sys
+import sys, threading
 
-sys.path.insert(1, './twitter')
-from TweetExtractor import v_scrape_tweets, s_build_query
+from ScrapeHelper import ScrapeHelper
 
-sys.path.insert(1, './instagram')
+from TweetExtractor import v_scrape_tweets_full_archive, v_scrape_tweets_30_day
+
 from InstagramKeywordURLExtractor import v_url_extractor
-from PostExtractor import v_read_to_queue
+#from PostExtractor import v_read_to_queue
 
 # Flask application initiation.
 m_app = Flask(__name__)
 m_app.config["SQLALCHEMY_DATABASE_URI"] = "sqlite:///userInfo.db"
 o_db = SQLAlchemy(m_app)
+
+d_active_scrapes = {}
 
 """
 Name: Abdul Karim
@@ -215,7 +217,7 @@ def json_scrape_instagram():
 @m_app.route('/api/scrapeTwitter', methods=['POST'])
 def json_scrape_twitter():
    """
-   Description: Allows a frontend process to process a request to scrape instagram, given inputs.
+   Description: Allows a frontend process to process a request to scrape twitter, given inputs.
    Arguements: None, but json body requested needs to look like this:
                {
                   "#hashTags": "#list#of#tags",
@@ -239,25 +241,24 @@ def json_scrape_twitter():
    l_locations.pop(0)
    l_phrases = json_request_data['phrases'].split("#")
    l_phrases.pop(0)
-   s_earliest_date = None
-   s_latest_date = None  
+   s_from_date = json_request_data['earliestDate']
+   s_to_date = json_request_data['latestDate']
 
-   if(json_request_data['earliestDate'] != "" and json_request_data['latestDate'] != ""):
-      s_earliest_date = json_request_data['earliestDate']
-      s_latest_date = json_request_data['latestDate']
+   s_user = json_request_data['email']
+   s_user =  s_user.split('@')
+   s_user = s_user.pop(0)
 
-   # Set empty lists ([]) to None
-   if (len(l_hashTags) <= 0):
-      l_hashTags = None
-   elif (len(l_locations) <= 0):
-      l_locations = None
-   elif (len(l_phrases) <= 0):
-      l_phrases = None
-
-   # Run a twitter scrape
-   s_query = s_build_query(l_hashTags, l_locations, l_phrases)
-   v_scrape_tweets(s_query = s_query, s_earliest = s_earliest_date, s_latest = s_latest_date)
-
+   o_scrape_helper = ScrapeHelper(s_user,
+                                    'twitter',
+                                    l_hashtags=l_hashTags,
+                                    l_locations=l_locations,
+                                    l_phrases=l_phrases,
+                                    s_from_date=s_from_date,
+                                    s_to_date=s_to_date)
+   o_thread = threading.Thread(target=v_scrape_tweets_30_day,args=(o_scrape_helper,))
+   d_active_scrapes[o_scrape_helper.s_user] = o_thread
+   o_thread.start()
+   o_thread.join()
    return jsonify({'result': 'OK Twitter Query Complete'})
 
 @m_app.route('/api/getAllAccounts', methods=['GET'])

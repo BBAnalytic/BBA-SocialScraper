@@ -82,4 +82,5 @@ def s_build_query (l_hashtags=None, l_locations=None, l_phrases=None):
                 s_query = s_query + s_phrase + " OR " 
     
     # Return query
+    #s_query += ' -is:retweet'
     return s_query
