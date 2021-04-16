@@ -4,7 +4,7 @@ my-app/package-lock.json
 my-app/node-node_modules
 API/__pycache__
 API/example.db
-API/example.db
+API/userInfo.db
 __pycache__
 TwitterConfig.py
 InstagramConfig.py
