@@ -211,4 +211,4 @@ def s_build_query (l_hashtags=None, l_locations=None, l_phrases=None):
     # Return query
     return s_query
 
-v_scrape_tweets('dog')
+# v_scrape_tweets('dog')

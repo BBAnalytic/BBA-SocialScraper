@@ -1,0 +1,8 @@
+FLASK==1.1.2
+Flask-SQLAlchemy
+tweepy
+selenium
+insta-scrape
+requests
+jsonify
+XlsxWriter
