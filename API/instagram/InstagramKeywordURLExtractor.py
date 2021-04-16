@@ -6,7 +6,7 @@ Description: This file contains one function, which is used to build a frontier 
 and scraping links off the explore page.
 """
 
-from time import sleep
+import random
 from selenium import webdriver
 from selenium.webdriver.chrome.options import Options
 from selenium.webdriver.common.by import By
@@ -15,11 +15,11 @@ from selenium.webdriver.support import expected_conditions as EC
 from selenium.common.exceptions import TimeoutException
 from selenium.common.exceptions import NoSuchElementException
 import re
-from InstagramConfig import s_insta_username, s_insta_password, s_path_to_driver, d_headers
+from InstagramConfig import s_path_to_driver, d_headers, d_login_dict
 
 
 
-def b_url_extractor(s_search, i_num_posts_wanted = 1000, s_category = 'hashtag'):
+def b_url_extractor(s_search, i_num_posts_wanted = 25, s_category = 'hashtag'):
     """ InstagramURLExtractor - 
     
     Scrapes links to instagram posts of the internet using selenium and compiles them into a text document 
@@ -82,31 +82,55 @@ def b_url_extractor(s_search, i_num_posts_wanted = 1000, s_category = 'hashtag')
     # Set implicitly wait value, forcing selenium to wait an alloted time before throwing errors 
     o_browser.implicitly_wait(i_wait)
 
-    # Load Instagram.com
-    o_browser.get('https://www.instagram.com/')
 
-    # Locate username and password text boxes
-    o_username_input = o_browser.find_element(By.CSS_SELECTOR, "input[name='username']")
-    o_password_input = o_browser.find_element(By.CSS_SELECTOR, "input[name='password']")
+    i_passwd_index = random.randint(0, len(d_login_dict.keys())-1)     # Randomly chosen password index from login dictionary 
+    i_original_index = i_passwd_index                                  # Original value of password index
+    b_logged_in = False                                                # Boolean if we've logged into Instagram
 
-    # Input username and password
-    o_username_input.send_keys(s_insta_username)
-    o_password_input.send_keys(s_insta_password)
+    # While not logged in
+    while(b_logged_in == False):
 
-    # Find login button and click it
-    o_login_button = o_browser.find_element_by_xpath("//button[@type='submit']")
-    o_login_button.click()
+        # Load Instagram.com
+        o_browser.get('https://www.instagram.com/')
 
-    # This while loop tests to make sure the page has loaded before proceding
-    # If page doesn't get loaded, program ends up leaving the page before login in, causing problems later.
-    # While true, keep testing to find search box on page, once found, break from loop
-    i_delay = 0         # Delay of WebDriverWait calls in seconds
-    while (True):
-        try:
-            WebDriverWait(o_browser, i_delay).until(EC.presence_of_element_located((By.XPATH, "//input[@placeholder='Search']")))
-            break
-        except TimeoutException:
-            pass
+        # Locate username and password text boxes
+        o_username_input = o_browser.find_element(By.CSS_SELECTOR, "input[name='username']")
+        o_password_input = o_browser.find_element(By.CSS_SELECTOR, "input[name='password']")
+
+        # Input username and password
+        o_username_input.send_keys(list(d_login_dict.keys())[i_passwd_index])
+        o_password_input.send_keys(d_login_dict[list(d_login_dict.keys())[i_passwd_index]])
+
+        # Find login button and click it
+        o_login_button = o_browser.find_element_by_xpath("//button[@type='submit']")
+        o_login_button.click()
+
+        # This while loop tests to make sure the page has loaded before proceding
+        # If page doesn't get loaded, program ends up leaving the page before login in, causing problems later.
+        # While true, keep testing to find search box on page, once found set logged in to True and break from loop
+        # If login error gets found first, break from inner loop so outer loop can start over
+        i_delay = 0         # Delay of WebDriverWait calls in seconds
+        while (True):
+            try:
+                WebDriverWait(o_browser, i_delay).until(EC.presence_of_element_located((By.XPATH, "//input[@placeholder='Search']")))
+                b_logged_in = True
+                break
+            except TimeoutException:
+                try:
+                    WebDriverWait(o_browser, i_delay).until(EC.presence_of_element_located((By.XPATH, "//p[@data-testid='login-error-message']")))
+                    break
+                except TimeoutException:
+                    pass
+        # Increment i_passwd_index
+        i_passwd_index += 1
+        
+        # If i_passwd_index = length of dictionary, set it to 0
+        if(i_passwd_index == len(d_login_dict.keys())):
+            i_passwd_index = 0
+        
+        # If we've looped back to original index, all accounts are banned, return False
+        if(i_passwd_index == i_original_index):
+            return False
 
     # Load explore page to be scraped
     o_browser.get(s_explore_page)
