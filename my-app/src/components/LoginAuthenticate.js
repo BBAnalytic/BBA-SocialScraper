@@ -11,7 +11,7 @@ export default class LoginAuthenticate extends Component {
     
     render() {
         console.log("LoginAuthenticating...")
-        const fetchUrl = '/api/loginUser/';
+        const fetchUrl = '/api/authenticateLogin/';
         let isAuthenticatedVar = false;
         fetch(fetchUrl, {
             method: 'POST',
@@ -41,16 +41,16 @@ export default class LoginAuthenticate extends Component {
                 )
             }
         })
-        // if (isAuthenticatedVar){
+        if (isAuthenticatedVar){
             
-        // }
-        // else{
-        //     console.log("Login Failed: " + isAuthenticatedVar)
-        //     return (
-        //         <div>
-        //             <Redirect to='/LoginPage'></Redirect>
-        //         </div>
-        //     )
-        // }
+        }
+        else{
+            console.log("Login Failed: " + isAuthenticatedVar)
+            return (
+                <div>
+                    <Redirect to='/HomePage'></Redirect>
+                </div>
+            )
+        }
     }
 }

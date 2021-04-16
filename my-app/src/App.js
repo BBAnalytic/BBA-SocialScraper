@@ -163,7 +163,10 @@ export default class App extends Component {
             />
           </Route>
           <Route exact path = '/HomePage'>
-            <HomePage title = 'HomePage' />
+            <HomePage 
+              title = 'HomePage' 
+              email = {this.state.email}
+            />
           </Route>
           <Route exact path = '/SearchCriteriaPage'>
             <SearchCriteriaPage 
