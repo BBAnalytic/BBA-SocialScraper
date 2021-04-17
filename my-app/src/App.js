@@ -35,7 +35,6 @@ export default class App extends Component {
           endDate: ''
       };
 
-      this.handleLogin = this.handleLogin.bind(this);
       this.handleEmailChange = this.handleEmailChange.bind(this);
       this.handlePasswordChange = this.handlePasswordChange.bind(this);
       this.handleHashTagsInput = this.handleHashTagsInput.bind(this);
@@ -46,41 +45,7 @@ export default class App extends Component {
       this.handleSearch = this.handleSearch.bind(this);
       this.handleSelection = this.handleSelection.bind(this);
     }
-  handleLogin(event){
-    const fetchUrl = '/api/loginUser/';
-    console.log("Handling Login...")
-    fetch(fetchUrl, {
-        method: 'POST',
-        body: JSON.stringify({
-            email: this.state.email,
-            password: this.state.password
-        })
-    })
-    .then((response) => response.json())
-    .then((data) => {
-        if(data.result == 'OK Email/Password Validated')
-            {
-            // Redirect them to the Homepage
-            console.log("Redirecting to HomePage");
-            this.setState({isAuthenticated: true});
-            return (
-              <div>
-                  <Redirect to='/HomePage'></Redirect>
-              </div>
-            )
-            }
-        else
-            {
-            // Redirect them to the LoginPage
-            console.log("Redirecting to LoginPage");
-            this.setState({isAuthenticated: true});
-            }
-        })
-        .catch(function(error) {
-            console.log(error);
-        })
-        event.preventDefault();
-  }
+  
   handleEmailChange(event){
     this.setState({email: event.target.value});
   }

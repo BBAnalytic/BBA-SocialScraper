@@ -74,7 +74,7 @@ def json_login_user():
             # Check to see if user is banned
             if(o_user.b_banned == False):
                # Check to see if the password matches the one in the DB
-               if(s_inputPassword == o_user.password):
+               if(s_inputPassword == o_user.s_password):
                   return jsonify({'result': 'OK Email/Password Validated'})
                else:
                   return jsonify({'result': 'NOK Email/Password Invalid'})
@@ -184,6 +184,7 @@ def json_scrape_instagram():
    Description: Allows a frontend process to process a request to scrape instagram, given inputs.
    Arguements: None, but json body requested needs to look like this:
                {
+                  "email": "email@email.com",
                   "search_term": "#hashtag#stuff OR locationurl",
                   "search_category": "the word: hashtag or the word: location"
                   "email": "a@a.a"
@@ -218,6 +219,7 @@ def json_scrape_twitter():
    Description: Allows a frontend process to process a request to scrape instagram, given inputs.
    Arguements: None, but json body requested needs to look like this:
                {
+                  "email": "email@email.com",
                   "#hashTags": "#list#of#tags",
                   "locations": "#list#of#locations",
                   "phrases": "#list#of#phrases",
