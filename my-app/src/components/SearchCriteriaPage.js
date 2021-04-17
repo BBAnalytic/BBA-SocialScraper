@@ -10,65 +10,8 @@ import NavButtons from './NavButtons'
 export default class SearchCriteriaPage extends Component {
     constructor(props){
         super(props);
-        this.state = {
-            platformSelector: '',
-            searchType: '',
-            hashTags: '',
-            locations: '',
-            phrases: '',
-            startDate: '',
-            endDate: ''
-        };
-
-        this.handleHashTagsInput = this.handleHashTagsInput.bind(this);
-        this.handleLocationsInput = this.handleLocationsInput.bind(this);
-        this.handlePhrasesInput = this.handlePhrasesInput.bind(this);
-        this.handleStartDateInput = this.handleStartDateInput.bind(this);
-        this.handleEndDateInput = this.handleEndDateInput.bind(this);
-        this.handleSearch = this.handleSearch.bind(this);
     }
 
-    handleHashTagsInput(newHashTags){
-        this.setState({hashTags: newHashTags});
-    }
-    handleLocationsInput(newLocations){
-        this.setState({locations: newLocations});
-    }
-    handlePhrasesInput(newPhrases){
-        this.setState({phrases: newPhrases});
-    }
-    handleStartDateInput(newStartDate){
-        this.setState({startDate: newStartDate});
-    }
-    handleEndDateInput(newEndDate){
-        this.setState({endDate: newEndDate});
-    }
-
-    handleSearch(event){
-        const fetchUrl = '/api/scrapeTwitter/';
-
-        fetch(fetchUrl, {
-            method: 'POST',
-            body: JSON.stringify({
-                hashTags: this.state.hashTags,
-                locations: this.state.locations,
-                phrases: this.state.phrases,
-                earliestDate: '',
-                latestDate: ''
-            })
-        })
-        .then(() => {
-            console.log(JSON.stringify({
-                hashTags: this.state.hashTags,
-                locations: this.state.locations,
-                phrases: this.state.phrases
-            }))
-            return (
-                <Link to='/SearchingPage'></Link>
-            )
-            }
-        )
-    }
     render() {
         return (
             <div className="searchCriteriaPageContainer">
@@ -78,16 +21,16 @@ export default class SearchCriteriaPage extends Component {
                     </label>
                 </div>
                 <div className="searchCriteriaPlatformSelectionContainer">
-                    <NavButtons className="navButtons"></NavButtons>
+                    <SettingsButton className="navButtons"></SettingsButton>
                     <div className="platformSearchContentContainer">
                         <div className="platformSelectionContainer">
                             <text className="platformLabel">
                                 Platform:
                             </text>
-                            <select className="platformSelector">
-                                <option value={this.state.platformSelector}>Select</option>
-                                <option value={this.state.platformSelector}>Twitter</option>
-                                <option value={this.state.platformSelector}>Instagram</option>
+                            <select className="platformSelector" value={this.props.platformSelector} onChange={ this.props.handleSelection }>
+                                <option value='Select'>Select</option>
+                                <option value='Twitter'>Twitter</option>
+                                <option value='Instagram'>Instagram</option>
                             </select>
                         </div>
                         <div className="searchTypeSelectionContainer">
@@ -95,8 +38,8 @@ export default class SearchCriteriaPage extends Component {
                                 Search Type:
                             </label>
                             <select className="searchTypeSelector">
-                                <option value={this.state.searchType}>Basic</option>
-                                <option value={this.state.searchType}>Advanced</option>
+                                <option value='Basic'>Basic</option>
+                                <option value='Advanced'>Advanced</option>
                             </select>
                         </div>
                     </div>
@@ -131,44 +74,44 @@ export default class SearchCriteriaPage extends Component {
                                     searchCriteriaLabel="HashTag(s):" 
                                     searchCriteriaExample="Example: #dog#cat#blackbear" 
                                     searchCriteriaPlaceHolder="#HashTag" 
-                                    searchCriteriaValue={this.state.hashTags} 
-                                    onSearchCriteriaChange={this.handleHashTagsInput}
+                                    searchCriteriaValue={this.props.hashTags} 
+                                    onSearchCriteriaChange={this.props.handleHashTagsInput}
                                 />
                                 <SearchCriteriaInput 
                                     searchCriteriaLabel="Location(s):" 
                                     searchCriteriaExample="Example: #newyork#UnitedStates#bangor,ME" 
                                     searchCriteriaPlaceHolder="#Location"
-                                    searchCriteriaValue={this.state.locations} 
-                                    onSearchCriteriaChange={this.handleLocationsInput}
+                                    searchCriteriaValue={this.props.locations} 
+                                    onSearchCriteriaChange={this.props.handleLocationsInput}
                                 />
                                 <SearchCriteriaInput 
                                     searchCriteriaLabel="Phrase(s):" 
                                     searchCriteriaExample="Example: #working late#I love blackbears" 
                                     searchCriteriaPlaceHolder="#Phrase"
-                                    searchCriteriaValue={this.state.phrases} 
-                                    onSearchCriteriaChange={this.handlePhrasesInput}
+                                    searchCriteriaValue={this.props.phrases} 
+                                    onSearchCriteriaChange={this.props.handlePhrasesInput}
                                 />
                             </div>
                             <div className="dateSelectionContainer">
                                 <SearchCriteriaDate 
                                     searchCriteriaDateLabel="Start Date:" 
                                     searchCriteriaDateExample="Example: 01/01/2020" 
-                                    onSearchCriteriaDateChange={this.handleStartDateInput} 
+                                    onSearchCriteriaDateChange={this.props.handleStartDateInput} 
                                 />
                                 <SearchCriteriaDate
                                     searchCriteriaDateLabel="End Date:"
                                     searchCriteriaDateExample="Example: 01/01/2020"
-                                    onSearchCriteriaDateChange={this.handleEndDateInput}
+                                    onSearchCriteriaDateChange={this.props.handleEndDateInput}
                                 />
                             </div>
                         </div>
                     </div>
                 </div>
-                {/* <Link to='SearchingPage' className="searchButtonContainer"> */}
-                    <button className="searchButton" onClick={this.handleSearch}>
+                <Link to='/SearchSubmitPage'>
+                    <button className="searchButton" onClick={this.props.handleSearch}>
                         Search
                     </button>
-                {/* </Link> */}
+                </Link>
             </div>
         )
     }

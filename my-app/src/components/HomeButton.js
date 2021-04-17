@@ -8,7 +8,7 @@ export default class HomeButton extends Component {
         return (
             <NavLink to='/HomePage' className="homeButtonContainer">
                 <button className="homeButton">
-                    <img src={settingsIcon} className="homeIcon" />
+                    {/* <img src={settingsIcon} className="homeIcon" /> */}
                 </button>
             </NavLink>
         )
