@@ -454,6 +454,129 @@ def json_set_admin():
    else:
       return jsonify({'result': 'NOK User Not Found'})
 
+# /contact: ContactUsPage - Input an Email and Message (no longer than 140 characters) and outputs an email to the administrator account that contains the message body. 
+@m_app.route('/contact', methods=['GET', 'POST'])
+def _json_contact_form_submit():
+   """
+   Description: Allows the frontend process to send an email to the admin account with a contact request.
+   Arguements: None, but json body requested needs to look like this:
+               {
+                  "s_user_email": "a@a.a",
+                  "s_message": "Foo Bar Pie needs account approval?"
+               }
+   Outputs: JSON body signaling if the message was sent or not.  
+            Looks like this:
+            {
+               "result": "OK/NOK based on if the message was sent to the specified admin account."
+            }
+   """
+   #todo
+   _dict_user_records = UserDB.query.all()
+   return jsonify([*map(_json_user_serializer, UserDB.query.all())])
+
+# /recentSearches: HomePage - Queries the DB for 5 columns each containing a record of the most recent searches. 
+@m_app.route('/recentSearches', methods=['GET', 'POST'])
+def _json_get_recent_searches():
+   """
+   Description: Queries the database's columns for a specific user and returns the 5 most recent searches.
+                This information is stored in the database with the following format: platform,mm/dd/yyyy,#keyword#string,-location-string,~phrase~string
+   Arguements: None, but json body requested needs to look like this:
+               {
+                  "s_user_email": "a@a.a",
+               }
+   Outputs: A deserialized version of the 5 most recent scrapes from the database. If a piece of information
+            relating to a scrape doesn't exist, that return value will be empty.
+            The output looks like this (note: this returns an empty list if there is no recent search,
+            and an abbreviated list if there are less than 5 searches):
+            [
+               {
+                  "s_platform": "One of these two: Instagram OR Twitter",
+                  "s_date_scraped": "mm/dd/yyyy",
+                  "s_hashtags": "#keyword#string",
+                  "s_location": "-location-string",
+                  "s_phrases": "~phrase~string"
+               },
+               ...
+               {
+                  ...
+               }
+            ]
+   """
+   exampleSearch = "instagram,05/21/1199,#minecraft#blm,-new york-york,~asianlivesmatter~pokemonplatinumrelease"
+   # Grabbing input information
+   # json_request_data = json.loads(request.data)
+   s_input_email = "socialscraper24@gmail.com"#json_request_data['s_user_email']
+
+   # Check for the user
+   o_user = o_db.session.query(UserDB).filter_by(s_email = s_input_email).first()
+   if(o_user != None):
+      # Deserialize the save entries to prep for use as JSON collection.
+      s_entries = [o_user.s_saveEntry1, o_user.s_saveEntry2, o_user.s_saveEntry3, o_user.s_saveEntry4, o_user.s_saveEntry5]
+      json_collection = []
+      for s_entry in s_entries:
+         if (s_entry != ""):
+            # Grap the platform, date, hashtags, locations, phrases for processing.
+            l_sections = s_entry.split[',']
+            platform = [{"s_platform": l_sections[0]}]
+            date = [{"s_date_scraped": l_sections[1]}]
+            hashtags = [{"s_hashtags": l_sections[2].split['#']}]
+            locations = [{"s_location": l_sections[3].split['-']}]
+            phrases = [{"s_phrases": l_sections[4].split['~']}]
+
+            # Make one complete entry into the collection so we can add one object to the collection.
+            json_entry = json.dumps(platform)
+            json_entry = json.dumps(date)
+            json_entry = json.dumps(hashtags)
+            json_entry = json.dumps(locations)
+            json_entry = json.dumps(phrases)
+            json_collection = json.dumps(json_entry)
+      
+      return (json_collection)      
+   else:
+      return jsonify({'result': 'NOK User Not Found'})
+
+
+# /saveSearch: HomePage - moves every other recent search down one column in our database and adds it to the front of the DB. Tracks the date and time associated with the search along with the platform and search keywords. Store as a serialized value, comma-separated. If any commas exist in the input, replace those with a \
+@m_app.route('/saveSearch', methods=['GET', 'POST'])
+def _json_contact_save_search():
+   """
+   Description: Takes the most recent search passed in and serializes it for storage. We can then move every other
+                search down a column in the user's database and chop off the oldest search query. This information 
+                is stored in the database with the following format: platform,mm/dd/yyyy,#keyword#string,
+                -location-string,~phrase~string. We also create the time constant
+                since it's easily done in the backend.
+
+   Arguements: None, but json body requested needs to look like this:
+               {
+                  "s_user_email": "a@a.a",
+                  "s_platform": "One of these two: Instagram OR Twitter",
+                  "s_hashtags": "#keyword#string",
+                  "s_location": "-location-string",
+                  "s_phrases": "~phrase~string"
+               }
+   Outputs: Puts a serialized version of the information into the userDB. Returns OK if user was found
+            and operation was a success. Else, returns NOK. Looks like this:
+            {
+               "result": "OK/NOK based on if the serialization was a success or not."
+            }
+   """
+   pass
+
+def _json_search_entry_serializer(user):
+   """
+   Description: Prints our the saved searches for a single user.
+   Arguements: User - The user we're trying to scrape from the database.
+   Outputs: A JSONified object containing user details.
+   """
+   return {
+      's_saveEntry1': user.s_saveEntry1,
+      's_saveEntry2': user.s_saveEntry2,
+      's_saveEntry3': user.s_saveEntry3,
+      's_saveEntry4': user.s_saveEntry4,
+      's_saveEntry5': user.s_saveEntry5,
+   }
+
+
 # Starts the application when this function is started.
 if __name__ == '__main__':
    m_app.run(debug = True, host = '0.0.0.0')
