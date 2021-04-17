@@ -15,6 +15,9 @@ export default class AdminSettingsPage extends Component {
 			scrapeHistoryToggle: false,
 			advancedSearchToggle: false,
 			emailNotifToggle: false,
+			json: {},
+			allAccounts: [],
+			usersLoaded: false,
 			title: 'Admin Settings',
 			link: '/LoginPage'
 		};
@@ -23,20 +26,54 @@ export default class AdminSettingsPage extends Component {
 
 		this.handleApproved = this.handleLogout.bind(this);
 		this.handleGetUsers = this.handleGetUsers.bind(this);
+		this.createList = this.createList.bind(this);
 	}
 
 	handleLogout(event){
 		
 	}
 
-	handleGetUsers(event){
-		// fetch('http://localhost:5000/api/getAllAccounts', {method: 'GET'}).then(data => console.log(data));
-		fetch('/api/getAllAccounts')
-			.then(response => response.json())
-			.then(data => {
-				console.log(data)
-  		});
+	handleAlert(event){
+		window.alert("test");
 	}
+
+	//createList takes the json data and turns it into a list format with the necessary className tags for styling
+	createList = () => {
+		let accounts = [];
+
+		for(let i = 0; i < this.state.json.length; i++){
+			let children = [];
+			for(let j = 0; j < 1; j++){
+				children.push(<div><li className="accountInScrollBox">{this.state.json[0].s_email}</li></div>)
+			}
+			accounts.push(<div className="accountInScrollBoxContainer">{children}</div>)
+		}
+		return accounts;
+	}
+
+
+	// to access data in the json file in react:
+	// .then(data => response.json())
+	// .then(data => {
+		// console.log(data[0].s_email);
+		// console.log(data[1].s_email);
+	// })
+	//this will grab each one, just replace the array numbers and the s_email with wanted values
+	handleGetUsers(event){
+		//fetch from the endpoint getAllAccounts, take in json data
+		fetch('/api/getAllAccounts')
+			.then(res => res.json())
+			.then(result => {
+				console.log("First: ", result[0].s_first);
+				this.setState({
+					usersLoaded: true,				//to let the scroll box area to know to start rendering the data
+					json: result					//to store the actual json data as a prop
+				})
+				console.log("Data Stuff: ", this.state.json[1].s_first);
+				
+		});
+	}
+
 
 	handleDeleteUser(event){
 		const email = 'z@z.z';
@@ -61,7 +98,8 @@ export default class AdminSettingsPage extends Component {
 	}
 
 
-	render(){
+
+	render (){
 		return(
 			<div className="adminSettingsPageContent">
 				<div className="settingsPageTitleContainer">
@@ -72,21 +110,17 @@ export default class AdminSettingsPage extends Component {
 
 				{/* These buttons are for testing the endpoints */}
 				<div className="btn-testPurposes">
-					<button onClick={this.handleGetUsers}>Get Users</button>
-					<button onClick={this.handleDeleteUser}>Delete User</button>
+					<button onClick={() => {this.handleGetUsers()}}>Get Users</button>
+					{/* <button onClick={() => {this.handleDeleteUser()}}>Delete User</button> */}
 					{/* have to use email to change user, so need to set the email to the
 					classname bc the only thing that's displayed is username */}
-					<button onClick={this.handleApproveUser}>Approve User</button>
+					{/* <button onClick={this.handleApproveUser}>Approve User</button>
 					<button onClick={this.handleBanUser}>Ban User</button>
+					<button onClick={this.handleAlert}>Alert Time</button> */}
 				</div>
 
 				<div className="settingsPageContainer">
 					<HomeButton className="homeButtonAdmin"></HomeButton>
-					<div className="topButtonsContainer">
-						<button className="contactRequestButton">View Contact Requests</button>
-						<button className="editUsersButton">Edit Users</button>
-						<button className="deactivateAccountButton">Deactivate Account</button>
-					</div>
 					<div className="secondRowContainer">
 						<div className="emailDownloadContainer">
 							<form className="emailDownloadForm">
@@ -99,18 +133,34 @@ export default class AdminSettingsPage extends Component {
 										<text className="downloadText">Download Location: </text>
 										<input type="text" className="downloadLocationBox" placeholder="C:/Downloads"></input>
 									</div>
+									<div className="topButtonsContainer">
+										<button className="btn-saveChanges">Save Changes</button>
+									</div>
 								</div>
 							</form>
 						</div>
 					</div>
 					<div className="approveAccountsContainer">
 						<div className="approveAccountsTitleContainer">
-							<text className="approveAccountsTitle">Approve Accounts</text>
+							<text className="approveAccountsTitle">Approve Accounts</text >
 						</div>
 						<div className="approveScrollingContainer">
 							<div className="approveScrollBox">
-								Scroll box: needs to be hooked up to DB.
-								{/*needs to hook up to DB to show accounts to approve.*/}
+								{/* {console.log("Handle Users: ", this.handleGetUsers())} */}
+								{/* <button onClick={() => {console.log("Handle Users: ", this.handleGetUsers())}}>Get Users</button> */}
+								
+								{this.state.usersLoaded ? this.createList() : console.log('No data.')}
+
+								{/* Test foreach loop to iterate */}
+								
+								{/* {this.state.json.map(person => (
+									<li>{person.s_email}</li>
+								))} */}
+								
+								
+								{/* {this.state.usersLoaded && <h1>'Changed successfully.'</h1>} */}
+
+
 							</div>
 						</div>
 						<div className="delAppButtonsContainer">
@@ -133,7 +183,7 @@ export default class AdminSettingsPage extends Component {
 						</div>
 						<div className="saveChangesButtonContainerA">
 							<Link to='/LoginPage'>
-								<button className="btn-saveChanges">Save Changes</button>
+								<button className="deactivateAccountButton">Deactivate Account</button>
 							</Link>
 						</div>
 					</div>
