@@ -58,21 +58,21 @@ def v_scrape_tweets_full_archive(o_scrape_helper):
     # List that will hold all tweets returned from API
     l_tweets = []
 
-    # Since each API request can give a max of 500 tweets, 3 pages of results are requested
+    # Since each API request can give a max of 500 tweets, 2 pages of results are requested
     # Each page will result in a request being used
-    if(o_scrape_helper.s_from_date == None and o_scrape_helper.s_to_date == None): 
+    if(o_scrape_helper.s_from_date == '' and o_scrape_helper.s_to_date == ''): 
         for o_page in tweepy.Cursor(o_scrape_helper.o_api.search_full_archive,
                                     environment_name=s_full_dev_environment,
                                     query=o_scrape_helper.s_query,
-                                    maxResults=500).pages(3):
+                                    maxResults=500).pages(2):
             l_tweets += o_page
     else: 
         for o_page in tweepy.Cursor(o_scrape_helper.o_api.search_full_archive,
-                                environment_name=s_full_dev_environment,
-                                query=o_scrape_helper.s_query,
-                                maxResults=500,
-                                fromDate=o_scrape_helper.s_from_date,
-                                toDate=o_scrape_helper.s_to_date).pages(3):
+                                    environment_name=s_full_dev_environment,
+                                    query=o_scrape_helper.s_query,
+                                    maxResults=500,
+                                    fromDate=o_scrape_helper.s_from_date,
+                                    toDate=o_scrape_helper.s_to_date).pages(2):
             l_tweets += o_page
 
 
@@ -139,7 +139,7 @@ def v_scrape_tweets_full_archive(o_scrape_helper):
                     f_media.write(o_request.content)
 
                 i_media_count += 1
-    _v_zip(o_scrape_helper)
+    o_scrape_helper.v_zip()
 
 def v_scrape_tweets_30_day(o_scrape_helper):
     """ 
@@ -191,19 +191,19 @@ def v_scrape_tweets_30_day(o_scrape_helper):
 
     # Since each API request can give a max of 100 tweets, 5 pages of results are requested
     # Each page will result in a request being used
-    if(o_scrape_helper.s_from_date == None and o_scrape_helper.s_to_date == None): 
+    if(o_scrape_helper.s_from_date == '' and o_scrape_helper.s_to_date == ''): 
         for o_page in tweepy.Cursor(o_scrape_helper.o_api.search_30_day,
                                     environment_name=s_30_day_dev_environment,
                                     query=o_scrape_helper.s_query,
-                                    maxResults=10).pages(5):
+                                    maxResults=100).pages(5):
             l_tweets += o_page
     else: 
         for o_page in tweepy.Cursor(o_scrape_helper.o_api.search_30_day,
-                                environment_name=s_30_day_dev_environment,
-                                query=o_scrape_helper.s_query,
-                                maxResults=10,
-                                fromDate=o_scrape_helper.s_from_date,
-                                toDate=o_scrape_helper.s_to_date).pages(5):
+                                    environment_name=s_30_day_dev_environment,
+                                    query=o_scrape_helper.s_query,
+                                    maxResults=100,
+                                    fromDate=o_scrape_helper.s_from_date,
+                                    toDate=o_scrape_helper.s_to_date).pages(5):
             l_tweets += o_page
 
     # Using i as the iterative loop value and tweet id
@@ -269,12 +269,6 @@ def v_scrape_tweets_30_day(o_scrape_helper):
                     f_media.write(o_request.content)
 
                 i_media_count += 1
-    _v_zip(o_scrape_helper)
+    o_scrape_helper.v_zip()
 
-def _v_zip(o_scrape_helper):
-    """
-    """
-    # Zipping directory
-    os.system(f'zip -rqq {o_scrape_helper.s_user}_twitter_{o_scrape_helper.s_platform}_scrape.zip {o_scrape_helper.s_top_directory}')
-    # Removing the directory
-    os.system(f'rm -rf {o_scrape_helper.s_top_directory}')
+

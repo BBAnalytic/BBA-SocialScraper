@@ -12,8 +12,8 @@ from ScrapeHelper import ScrapeHelper
 
 from TweetExtractor import v_scrape_tweets_full_archive, v_scrape_tweets_30_day
 
-from InstagramKeywordURLExtractor import v_url_extractor
-#from PostExtractor import v_read_to_queue
+from InstagramKeywordURLExtractor import b_url_extractor
+from PostExtractor import v_scrape_instagram
 
 # Flask application initiation.
 m_app = Flask(__name__)
@@ -187,9 +187,8 @@ def json_scrape_instagram():
    Arguements: None, but json body requested needs to look like this:
                {
                   "email": "email@email.com",
-                  "search_term": "#hashtag#stuff OR locationurl",
+                  "search_term": "#hashtag OR locationurl",
                   "search_category": "the word: hashtag or the word: location"
-                  "email": "a@a.a"
                }
    Outputs: JSON body signaling whether or not the information has been validated.    
             Looks like this:
@@ -200,18 +199,22 @@ def json_scrape_instagram():
    # Grab inputs
    json_request_data = json.loads(request.data)
 
+   s_user = json_request_data['email']
+   s_user =  s_user.split('@')
+   s_user = s_user.pop(0)
+
    s_search_term = json_request_data['search_term']
    s_search_category = json_request_data['search_category']
+   o_scrape_helper = ScrapeHelper(s_user,
+                                    'instagram',
+                                    s_search_term=s_search_term,
+                                    s_search_category=s_search_category)
+
+   if o_scrape_helper.b_valid == False:
+      return jsonify({'result': 'NOK Urlfrontier not populated'})
 
    # Call the function that scrapes instagram.
-   v_url_extractor(s_search = s_search_term, s_category = s_search_category)
-   v_read_to_queue()
-
-   # have a try catch that returns true or false based on if we can scrape or not. Based on the S_OK value,
-   # we do read_to_queue and we also return jsonify OK or NOK
-
-   # an email, the criteria. Then we'd put it into the database.
-   # make a foreign key per user that links to that database.
+   v_scrape_instagram(o_scrape_helper)
 
    return jsonify({'result': 'OK Instagram Query Complete'})
 
