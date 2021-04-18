@@ -12,7 +12,7 @@ sys.path.insert(1, './twitter')
 from TweetExtractor import v_scrape_tweets, s_build_query
 
 sys.path.insert(1, './instagram')
-from InstagramKeywordURLExtractor import v_url_extractor
+from InstagramKeywordURLExtractor import b_url_extractor
 from PostExtractor import v_read_to_queue
 
 # Flask application initiation.
@@ -35,14 +35,14 @@ class UserDB(o_db.Model):
    b_admin = o_db.Column(o_db.Boolean, nullable = False)
    b_approved = o_db.Column(o_db.Boolean, nullable = False)
    b_banned = o_db.Column(o_db.Boolean, nullable = False)
-   s_saveEntry1 = o_db.Column(o_db.Text, nullable = True)
-   s_saveEntry2 = o_db.Column(o_db.Text, nullable = True)
-   s_saveEntry3 = o_db.Column(o_db.Text, nullable = True)
-   s_saveEntry4 = o_db.Column(o_db.Text, nullable = True)
-   s_saveEntry5 = o_db.Column(o_db.Text, nullable = True)
+   s_saveEntry1 = o_db.Column(o_db.Text, nullable = True, default = "instagram,05/21/1199,#blm,-new york-york,~asianlivesmatter~pokemonplatinumrelease")
+   s_saveEntry2 = o_db.Column(o_db.Text, nullable = True, default = "twitter,05/21/1199,#minecraft#blm,-new york-york,~asianlivesmatter~pokemonplatinumrelease")
+   s_saveEntry3 = o_db.Column(o_db.Text, nullable = True, default = "twitter,05/21/1199,-new york-york,~asianlivesmatter~pokemonplatinumrelease")
+   s_saveEntry4 = o_db.Column(o_db.Text, nullable = True, default = "twitter,05/21/1199,#minecraft#blm,-new york-york")
+   s_saveEntry5 = o_db.Column(o_db.Text, nullable = True, default = "instagram,05/21/1199,www.test.com")
    
    def __str__(self):
-      return f'{self.id} {self.content}'
+      return f'{self.s_email} {self.s_saveEntry1} {self.s_saveEntry2} {self.s_saveEntry3} {self.s_saveEntry4} {self.s_saveEntry5}'
 
 @m_app.route('/api/authenticateLogin', methods = ['POST'])
 def json_login_user():
@@ -455,8 +455,8 @@ def json_set_admin():
       return jsonify({'result': 'NOK User Not Found'})
 
 # /contact: ContactUsPage - Input an Email and Message (no longer than 140 characters) and outputs an email to the administrator account that contains the message body. 
-@m_app.route('/contact', methods=['GET', 'POST'])
-def _json_contact_form_submit():
+@m_app.route('/api/contact', methods=['GET', 'POST'])
+def json_contact_form_submit():
    """
    Description: Allows the frontend process to send an email to the admin account with a contact request.
    Arguements: None, but json body requested needs to look like this:
@@ -474,9 +474,8 @@ def _json_contact_form_submit():
    _dict_user_records = UserDB.query.all()
    return jsonify([*map(_json_user_serializer, UserDB.query.all())])
 
-# /recentSearches: HomePage - Queries the DB for 5 columns each containing a record of the most recent searches. 
-@m_app.route('/getRecentSearches', methods=['GET', 'POST'])
-def _json_get_recent_searches():
+@m_app.route('/api/getRecentSearches', methods=['GET', 'POST'])
+def json_get_recent_searches():
    """
    Description: Queries the database's columns for a specific user and returns the 5 most recent searches.
                 This information is stored in the database with the following format: platform,mm/dd/yyyy,#keyword#string,-location-string,~phrase~string
@@ -490,11 +489,13 @@ def _json_get_recent_searches():
             and an abbreviated list if there are less than 5 searches):
             [
                {
-                  "s_platform": "One of these two: Instagram OR Twitter",
+                  "l_hashtags": [keyword, string],
+                  "l_location": [location, string],
+                  "l_phrases": [phrase, string],
                   "s_date_scraped": "mm/dd/yyyy",
-                  "s_hashtags": "#keyword#string",
-                  "s_location": "-location-string",
-                  "s_phrases": "~phrase~string"
+                  "s_end_date": "ending scrape date string (format mm/dd/yyyy)"
+                  "s_platform": "One of these two: Instagram OR Twitter",
+                  "s_start_date": "beginning scrape date string (format mm/dd/yyyy)"
                },
                ...
                {
@@ -502,10 +503,9 @@ def _json_get_recent_searches():
                }
             ]
    """
-   exampleSearch = "instagram,05/21/1199,#minecraft#blm,-new york-york,~asianlivesmatter~pokemonplatinumrelease"
    # Grabbing input information
-   # json_request_data = json.loads(request.data)
-   s_input_email = "socialscraper24@gmail.com"#json_request_data['s_user_email']
+   json_request_data = json.loads(request.data)
+   s_input_email = json_request_data['s_user_email']
 
    # Check for the user
    o_user = o_db.session.query(UserDB).filter_by(s_email = s_input_email).first()
@@ -516,28 +516,35 @@ def _json_get_recent_searches():
       for s_entry in s_entries:
          if (s_entry != ""):
             # Grap the platform, date, hashtags, locations, phrases for processing.
-            l_sections = s_entry.split[',']
-            platform = [{"s_platform": l_sections[0]}]
-            date = [{"s_date_scraped": l_sections[1]}]
-            hashtags = [{"s_hashtags": l_sections[2].split['#']}]
-            locations = [{"s_location": l_sections[3].split['-']}]
-            phrases = [{"s_phrases": l_sections[4].split['~']}]
+            l_sections = s_entry.split(',')
+
+            s_platform = l_sections[0]
+            s_date = l_sections[1]
+            l_hashtags = l_sections[2].split('#')
+            l_locations = l_sections[3].split('#')
+            l_phrases = l_sections[4].split('#')
+            s_start_date = l_sections[5]
+            s_end_date = l_sections[6]
+
+            l_hashtags.pop(0)
+            l_locations.pop(0)
+            l_phrases.pop(0)
 
             # Make one complete entry into the collection so we can add one object to the collection.
-            json_entry = json.dumps(platform)
-            json_entry = json.dumps(date)
-            json_entry = json.dumps(hashtags)
-            json_entry = json.dumps(locations)
-            json_entry = json.dumps(phrases)
-            json_collection = json.dumps(json_entry)
-      
-      return (json_collection)      
+            json_object = {'s_platform': s_platform,
+                           's_date_scraped': s_date,
+                           'l_hashtags': l_hashtags,
+                           'l_location': l_locations,
+                           'l_phrases': l_phrases,
+                           's_start_date': s_start_date,
+                           's_end_date': s_end_date}
+            json_collection += [json_object]
+      return jsonify(json_collection)
    else:
       return jsonify({'result': 'NOK User Not Found'})
 
-
 # /saveSearch: HomePage - moves every other recent search down one column in our database and adds it to the front of the DB. Tracks the date and time associated with the search along with the platform and search keywords. Store as a serialized value, comma-separated. If any commas exist in the input, replace those with a \
-@m_app.route('/saveSearch', methods=['GET', 'POST'])
+@m_app.route('/api/saveSearch', methods=['GET', 'POST'])
 def _json_contact_save_search():
    """
    Description: Takes the most recent search passed in and serializes it for storage. We can then move every other
@@ -561,21 +568,6 @@ def _json_contact_save_search():
             }
    """
    pass
-
-def _json_search_entry_serializer(user):
-   """
-   Description: Prints our the saved searches for a single user.
-   Arguements: User - The user we're trying to scrape from the database.
-   Outputs: A JSONified object containing user details.
-   """
-   return {
-      's_saveEntry1': user.s_saveEntry1,
-      's_saveEntry2': user.s_saveEntry2,
-      's_saveEntry3': user.s_saveEntry3,
-      's_saveEntry4': user.s_saveEntry4,
-      's_saveEntry5': user.s_saveEntry5,
-   }
-
 
 # Starts the application when this function is started.
 if __name__ == '__main__':
