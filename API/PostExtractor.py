@@ -66,3 +66,10 @@ def v_scrape_instagram(o_scrape_helper):
 
     f_url_frontier.close()
     o_scrape_helper.v_zip()
+
+
+#s_user = 'Ryan'
+#s_search_term = 'https://www.instagram.com/explore/locations/222655914/washington-dc-nations-capitol/'
+#s_search_category = 'location'
+#o_scrape_helper = ScrapeHelper(s_user, 'instagram', s_search_term=s_search_term, s_search_category=s_search_category)
+#v_scrape_instagram(o_scrape_helper)
