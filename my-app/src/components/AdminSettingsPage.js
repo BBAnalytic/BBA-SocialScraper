@@ -44,7 +44,15 @@ export default class AdminSettingsPage extends Component {
 		for(let i = 0; i < this.state.json.length; i++){
 			let children = [];
 			for(let j = 0; j < 1; j++){
-				children.push(<div><li className="accountInScrollBox">{this.state.json[0].s_email}</li></div>)
+				children.push(
+					<div className="accountInScrollBoxContainer">
+						<li className="accountInScrollBox">{this.state.json[i].s_first_name} {this.state.json[i].s_last_name}</li>
+						<button className="btn-approve" onClick={() => this.handleApproveUser(this.state.json[i].s_email)}>Approve</button>
+						<button className="btn-admin" onClick={() => this.handleAdminUser(this.state.json[i].s_email)}>Admin</button>
+						<button className="btn-banUser" onClick={() => this.handleBanUser(this.state.json[i].s_email)}>Ban</button>
+						<button className="btn-delete" onClick={() => this.handleDeleteUser(this.state.json[i].s_email)}>Delete</button>
+					</div>
+				)
 			}
 			accounts.push(<div className="accountInScrollBoxContainer">{children}</div>)
 		}
@@ -64,32 +72,32 @@ export default class AdminSettingsPage extends Component {
 		fetch('/api/getAllAccounts')
 			.then(res => res.json())
 			.then(result => {
-				console.log("First: ", result[0].s_first);
 				this.setState({
 					usersLoaded: true,				//to let the scroll box area to know to start rendering the data
 					json: result					//to store the actual json data as a prop
 				})
-				console.log("Data Stuff: ", this.state.json[1].s_first);
 				
 		});
 	}
 
+	handleAdminUser(email){
 
-	handleDeleteUser(event){
-		const email = 'z@z.z';
+	}
 
-		fetch('/api/deleteUser', {method: 'POST'},)
-			.then()
-			.then({
-
+	handleDeleteUser(email){
+		console.log("email: ", JSON.stringify(email));
+		fetch('/api/deleteUser', {method: 'POST'}, {body: email})
+			.then(res => res.json())
+			.then(result => {
+				console.log("Deleted user result: ", result[0]);
 			});
 	}
 
-	handleApproveUser(event){
+	handleApproveUser(email){
 
 	}
 
-	handleBanUser(event){
+	handleBanUser(email){
 
 	}
 

@@ -5,6 +5,29 @@
 	margin-left: 2vw;
 }
 
+.btn-approve{
+	position: absolute;
+	margin-top: -4vh;
+}
+
+.btn-admin{
+	position: absolute;
+	margin-top: -4vh;
+	margin-left: 7vw;
+}
+
+.btn-banUser{
+	position: absolute;
+	margin-top: -4vh;
+	margin-left: 13vw;
+}
+
+.btn-delete{
+	position: absolute;
+	margin-top: -4vh;
+	margin-left: 17.5vw;
+}
+
 .accountInScrollBoxContainer{
 	height: 6vh;
 	border: 1px solid black;

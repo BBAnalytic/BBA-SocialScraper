@@ -18,6 +18,7 @@ import {
   Link,
   Redirect
 } from "react-router-dom";
+import AdminSettingsPage from './components/AdminSettingsPage';
 
 export default class App extends Component {
   constructor(props){
@@ -162,6 +163,9 @@ export default class App extends Component {
           </Route>
           <Route exact path = '/SettingsPage'>
             <SettingsPage title = 'Settings' />
+          </Route>
+          <Route exact path = '/AdminSettingsPage'>
+            <AdminSettingsPage title = 'Admin Settings' />
           </Route>
           <Route exact path = '/ContactUsPage'>
             <ContactUsPage title='Contact Us'></ContactUsPage>
