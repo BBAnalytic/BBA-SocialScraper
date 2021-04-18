@@ -475,7 +475,7 @@ def _json_contact_form_submit():
    return jsonify([*map(_json_user_serializer, UserDB.query.all())])
 
 # /recentSearches: HomePage - Queries the DB for 5 columns each containing a record of the most recent searches. 
-@m_app.route('/recentSearches', methods=['GET', 'POST'])
+@m_app.route('/getRecentSearches', methods=['GET', 'POST'])
 def _json_get_recent_searches():
    """
    Description: Queries the database's columns for a specific user and returns the 5 most recent searches.
