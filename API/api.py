@@ -6,9 +6,6 @@ Description: File contains the database schema for the user database as well as 
 """
 from flask import Flask, jsonify, request, json
 from flask_sqlalchemy import SQLAlchemy
-
-from datetime import date
-
 import sys
 
 sys.path.insert(1, './twitter')
@@ -45,7 +42,7 @@ class UserDB(o_db.Model):
    s_saveEntry5 = o_db.Column(o_db.Text, nullable = False, default = "")
    
    def __str__(self):
-      return f'{self.s_email} {self.s_saveEntry1} {self.s_saveEntry2} {self.s_saveEntry3} {self.s_saveEntry4} {self.s_saveEntry5}'
+      return f'{self.s_email} {self.s_password} {self.s_first} {self.s_last} {self.b_admin} {self.b_approved} {self.b_banned} {self.s_saveEntry1} {self.s_saveEntry2} {self.s_saveEntry3} {self.s_saveEntry4} {self.s_saveEntry5}'
 
 @m_app.route('/api/authenticateLogin', methods = ['POST'])
 def json_login_user():
