@@ -38,6 +38,8 @@ def v_scrape_instagram(o_scrape_helper):
     i_post_count = 1
 
     while s_url:
+
+        # Sometimes instagram redirects you to login page so this exception needs to caught
         try:
             o_post = Post(s_url)
             o_post.scrape(headers=d_headers)
@@ -64,17 +66,17 @@ def v_scrape_instagram(o_scrape_helper):
                 o_post.download(f'{o_scrape_helper.s_media_directory}pictureID#{str(i_post_count).zfill(5)}.jpg')
         
             i_post_count += 1
+        # Catching redirect error
         except InstagramLoginRedirectError:
             pass
+        # Finally increment to the next line in file
         finally:
             s_url = f_url_frontier.readline()
 
+    # Close url frontier
     f_url_frontier.close()
+    # Close csv file
+    f_csv.close()
+
+    # Zip working directory
     o_scrape_helper.v_zip()
-
-
-#s_user = 'Ryan'
-#s_search_term = 'https://www.instagram.com/explore/locations/222655914/washington-dc-nations-capitol/'
-#s_search_category = 'location'
-#o_scrape_helper = ScrapeHelper(s_user, 'instagram', s_search_term=s_search_term, s_search_category=s_search_category)
-#v_scrape_instagram(o_scrape_helper)

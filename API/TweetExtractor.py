@@ -15,7 +15,7 @@ def v_scrape_tweets_full_archive(o_scrape_helper):
     Tweet scraper function, collects tweets from Twitter's API and scrapes 
     the text as well as the media of a tweet if it exists. Function results in a 
     zip archive containing a CSV file with scraped text along with a directory for 
-    the media that was scraped. 
+    the media that was scraped. This function is for the full archive search
 
     Arguments:
     - s_query - string - filter/rules of tweets to find. More on query structure here: 
@@ -26,7 +26,7 @@ def v_scrape_tweets_full_archive(o_scrape_helper):
 
     Output: Function does not return a value.
     """
-    
+
     # Creation of directories for scraped data
     os.makedirs(o_scrape_helper.s_media_directory,exist_ok=True)
     # Creating the CSV file to be written to
@@ -139,6 +139,9 @@ def v_scrape_tweets_full_archive(o_scrape_helper):
                     f_media.write(o_request.content)
 
                 i_media_count += 1
+    # Close csv 
+    f_csv.close()
+    # Archive scraped results
     o_scrape_helper.v_zip()
 
 def v_scrape_tweets_30_day(o_scrape_helper):
@@ -146,7 +149,7 @@ def v_scrape_tweets_30_day(o_scrape_helper):
     Tweet scraper function, collects tweets from Twitter's API and scrapes 
     the text as well as the media of a tweet if it exists. Function results in a 
     zip archive containing a CSV file with scraped text along with a directory for 
-    the media that was scraped. 
+    the media that was scraped. This function is for the 30 day search. Mostly used for testing purposes.
 
     Arguments:
     - s_query - string - filter/rules of tweets to find. More on query structure here: 
@@ -269,6 +272,9 @@ def v_scrape_tweets_30_day(o_scrape_helper):
                     f_media.write(o_request.content)
 
                 i_media_count += 1
+    # Close csv 
+    f_csv.close()
+    # Archive scraped results
     o_scrape_helper.v_zip()
 
 

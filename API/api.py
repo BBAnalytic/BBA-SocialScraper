@@ -199,6 +199,7 @@ def json_scrape_instagram():
    # Grab inputs
    json_request_data = json.loads(request.data)
 
+   # Do not need full email so grab bit up to the '@'
    s_user = json_request_data['email']
    s_user =  s_user.split('@')
    s_user = s_user.pop(0)
@@ -213,9 +214,18 @@ def json_scrape_instagram():
    if o_scrape_helper.b_valid == False:
       return jsonify({'result': 'NOK Urlfrontier not populated'})
 
-   # Call the function that scrapes instagram.
-   v_scrape_instagram(o_scrape_helper)
+   # Call the function that scrapes instagram within thread
+   o_thread = threading.Thread(target=v_scrape_instagram,args=(o_scrape_helper,))
 
+   # Add active thread to active thread dictionary 
+   d_active_scrapes[o_scrape_helper.s_user] = o_thread
+
+   # Start thread
+   o_thread.start()
+   o_thread.join()
+
+   # Once scrape is done remove from active scrapes dictionary
+   del d_active_scrapes[o_scrape_helper.s_user]
    return jsonify({'result': 'OK Instagram Query Complete'})
 
 @m_app.route('/api/scrapeTwitter', methods=['POST'])
@@ -225,7 +235,7 @@ def json_scrape_twitter():
    Arguements: None, but json body requested needs to look like this:
                {
                   "email": "email@email.com",
-                  "#hashTags": "#list#of#tags",
+                  "hashTags": "#list#of#tags",
                   "locations": "#list#of#locations",
                   "phrases": "#list#of#phrases",
                   "earliestDate": "yyyyMMddHHmm",
@@ -249,6 +259,7 @@ def json_scrape_twitter():
    s_from_date = json_request_data['earliestDate']
    s_to_date = json_request_data['latestDate']
 
+   # Do not need full email so grab bit up to the '@'
    s_user = json_request_data['email']
    s_user =  s_user.split('@')
    s_user = s_user.pop(0)
@@ -260,10 +271,20 @@ def json_scrape_twitter():
                                     l_phrases=l_phrases,
                                     s_from_date=s_from_date,
                                     s_to_date=s_to_date)
+
+   # Call the function that scrapes twitter within thread
    o_thread = threading.Thread(target=v_scrape_tweets_30_day,args=(o_scrape_helper,))
+
+   # Add active thread to active thread dictionary 
    d_active_scrapes[o_scrape_helper.s_user] = o_thread
+
+   # Start thread
    o_thread.start()
    o_thread.join()
+
+   # Once scrape is done remove from active scrapes dictionary
+   del d_active_scrapes[o_scrape_helper.s_user]
+
    return jsonify({'result': 'OK Twitter Query Complete'})
 
 @m_app.route('/api/getAllAccounts', methods=['GET'])
