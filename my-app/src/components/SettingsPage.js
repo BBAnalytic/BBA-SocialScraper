@@ -61,13 +61,13 @@ export default class SettingsPage extends Component {
 							<form className="emailDownloadForm">
 								<div className="formContainer">
 									<div className="emailContainerS">
-										<label className="emailTextS">Email: </label>
-										<input type="email" className="emailInputBoxS" placeholder="first.last@email.com"></input>
+										<label className="emailTextS">Email: socialscraper24@gmail.com</label>
+										{/* <input type="email" className="emailInputBoxS" placeholder="first.last@email.com"></input> */}
 									</div>
-									<div className="downloadContainer">
+									{/* <div className="downloadContainer">
 										<label className="downloadText">Download Location: </label>
 										<input type="text" className="downloadLocationBox" placeholder="C:/Downloads"></input>
-									</div>
+									</div> */}
 								</div>
 							</form>
 						</div>
@@ -75,9 +75,9 @@ export default class SettingsPage extends Component {
 							<div className="scrapeHistoryToggleContainer">
 								<button className="scrapeHistoryToggle">See Scrape History</button>
 							</div>
-							<div className="emailNotifToggleContainer">
+							{/* <div className="emailNotifToggleContainer">
 								<button className="emailNotifToggle">Email Notifications</button>
-							</div>
+							</div> */}
 						</div>
 					</div>
 					
@@ -89,9 +89,9 @@ export default class SettingsPage extends Component {
 							<button className="deactivateAccountButton">Deactivate Account</button>
 						</Link>
 					</div>
-					<Link to='/HomePage' className="saveChangesButtonContainerS">
+					{/* <Link to='/HomePage' className="saveChangesButtonContainerS">
 						<button className="saveChangesButton">Save Changes</button>
-					</Link>
+					</Link> */}
 				</div>
 			</div>
 		)

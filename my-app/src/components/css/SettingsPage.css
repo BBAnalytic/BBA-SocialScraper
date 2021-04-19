@@ -67,7 +67,7 @@
 	font-family: Arial;
 	font-style: normal;
 	font-size: 16;
-	margin-right: 5vw;
+	margin-right: 18vw;
 	width: 6vw;
 }
 
@@ -180,8 +180,11 @@
 }
 
 .toggleButtonsContainer{
+	position: absolute;
 	width: 20vw;
 	margin-top: 2vh;
+	margin-right: 0vw;
+	margin-left: 58vw;
 }
 
 .scrapeHistoryToggle{
@@ -189,6 +192,7 @@
 	width: 15vw;
 	border-radius: 10px;
 	border:#000000;
+	margin-right: 10vw;
 }
 .scrapeHistoryToggleContainer{
 	width: 15vw;
