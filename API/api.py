@@ -13,7 +13,7 @@ sys.path.insert(1, './twitter')
 from TweetExtractor import v_scrape_tweets, s_build_query
 
 sys.path.insert(1, './instagram')
-from InstagramKeywordURLExtractor import v_url_extractor
+from InstagramKeywordURLExtractor import b_url_extractor
 from PostExtractor import v_read_to_queue
 
 # Flask application initiation.
