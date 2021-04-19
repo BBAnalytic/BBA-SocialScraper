@@ -6,6 +6,8 @@ Description: File contains the database schema for the user database as well as 
 """
 from flask import Flask, jsonify, request, json
 from flask_sqlalchemy import SQLAlchemy
+from datetime import date
+
 import sys
 
 sys.path.insert(1, './twitter')
