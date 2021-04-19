@@ -3,6 +3,7 @@ import { Link } from 'react-router-dom';
 import HomeButton from './HomeButton';
 import './css/AdminSettingsPage.css'
 
+
 export default class AdminSettingsPage extends Component {
 	constructor(props){
 		super(props);
@@ -17,6 +18,7 @@ export default class AdminSettingsPage extends Component {
 			emailNotifToggle: false,
 			json: {},
 			allAccounts: [],
+			pageLoad: true,
 			usersLoaded: false,
 			title: 'Admin Settings',
 			link: '/LoginPage'
@@ -47,10 +49,7 @@ export default class AdminSettingsPage extends Component {
 				children.push(
 					<div className="accountInScrollBoxContainer">
 						<li className="accountInScrollBox">{this.state.json[i].s_first_name} {this.state.json[i].s_last_name}</li>
-						<button className="btn-approve" onClick={() => this.handleApproveUser(this.state.json[i].s_email)}>Approve</button>
-						<button className="btn-admin" onClick={() => this.handleAdminUser(this.state.json[i].s_email)}>Admin</button>
-						<button className="btn-banUser" onClick={() => this.handleBanUser(this.state.json[i].s_email)}>Ban</button>
-						<button className="btn-delete" onClick={() => this.handleDeleteUser(this.state.json[i].s_email)}>Delete</button>
+						<li className="emailInScrollBox">{this.state.json[i].s_email}</li>
 					</div>
 				)
 			}
@@ -73,10 +72,10 @@ export default class AdminSettingsPage extends Component {
 			.then(res => res.json())
 			.then(result => {
 				this.setState({
+					pageLoad: false,
 					usersLoaded: true,				//to let the scroll box area to know to start rendering the data
 					json: result					//to store the actual json data as a prop
 				})
-				
 		});
 	}
 
@@ -85,11 +84,22 @@ export default class AdminSettingsPage extends Component {
 	}
 
 	handleDeleteUser(email){
-		console.log("email: ", JSON.stringify(email));
-		fetch('/api/deleteUser', {method: 'POST'}, {body: email})
-			.then(res => res.json())
-			.then(result => {
-				console.log("Deleted user result: ", result[0]);
+		const requestOptions = {
+			method: 'POST',
+			headers: { 'Content-Type': 'applications/json'},
+			body: JSON.stringify({ "email": email })
+		}
+
+		console.log("jsonsstuff: ", JSON.stringify({ 'email': email }));
+		fetch('/api/deleteUser', requestOptions)
+			// .then(res => res.json())
+			.then(data => {
+				if(!data.ok){
+					throw 'Error';
+				}
+				else{
+					console.log("Deleted user result: ", data);
+				}
 			});
 	}
 
@@ -116,17 +126,6 @@ export default class AdminSettingsPage extends Component {
 					</text>
 				</div>
 
-				{/* These buttons are for testing the endpoints */}
-				<div className="btn-testPurposes">
-					<button onClick={() => {this.handleGetUsers()}}>Get Users</button>
-					{/* <button onClick={() => {this.handleDeleteUser()}}>Delete User</button> */}
-					{/* have to use email to change user, so need to set the email to the
-					classname bc the only thing that's displayed is username */}
-					{/* <button onClick={this.handleApproveUser}>Approve User</button>
-					<button onClick={this.handleBanUser}>Ban User</button>
-					<button onClick={this.handleAlert}>Alert Time</button> */}
-				</div>
-
 				<div className="settingsPageContainer">
 					<HomeButton className="homeButtonAdmin"></HomeButton>
 					<div className="secondRowContainer">
@@ -135,14 +134,6 @@ export default class AdminSettingsPage extends Component {
 								<div className="formContainer">
 									<div className="emailContainerS">
 										<text className="emailTextS">Email: </text>
-										<input type="email" className="emailInputBoxS" placeholder="first.last@email.com"></input>
-									</div>
-									<div className="downloadContainer">
-										<text className="downloadText">Download Location: </text>
-										<input type="text" className="downloadLocationBox" placeholder="C:/Downloads"></input>
-									</div>
-									<div className="topButtonsContainer">
-										<button className="btn-saveChanges">Save Changes</button>
 									</div>
 								</div>
 							</form>
@@ -154,32 +145,21 @@ export default class AdminSettingsPage extends Component {
 						</div>
 						<div className="approveScrollingContainer">
 							<div className="approveScrollBox">
-								{/* {console.log("Handle Users: ", this.handleGetUsers())} */}
-								{/* <button onClick={() => {console.log("Handle Users: ", this.handleGetUsers())}}>Get Users</button> */}
-								
+								{/* {!this.state.json[i].b_approved && <button className="btn-approve" onClick={() => this.handleApproveUser(this.state.json[i].s_email)}>Approve</button>} */}
+								{/* <button className="btn-admin" onClick={() => this.handleAdminUser(this.state.json[i].s_email)}>Admin</button> */}
+								{/* <button className="btn-banUser" onClick={() => this.handleBanUser(this.state.json[i].s_email)}>Ban</button> */}
+								<button className="btn-delete" onClick={() => this.handleDeleteUser('test@gmail.com')}>Delete</button>
+							 	
+
+								{/* The two following lines are what grab the accounts from the database (calling handleGetUsers()) and display the list (createList)  */}
+								{this.state.pageLoad && 
+									this.handleGetUsers()
+								}
 								{this.state.usersLoaded ? this.createList() : console.log('No data.')}
-
-								{/* Test foreach loop to iterate */}
 								
-								{/* {this.state.json.map(person => (
-									<li>{person.s_email}</li>
-								))} */}
-								
-								
-								{/* {this.state.usersLoaded && <h1>'Changed successfully.'</h1>} */}
+								{/* get the length of the json data (number of accounts returned) */}
+								{/* make a loop for that amount of data?? send out the buttons */}
 
-
-							</div>
-						</div>
-						<div className="delAppButtonsContainer">
-							<div className="deleteButtonContainer">
-								<button className="deleteButton">Delete</button>
-							</div>
-							<div className="approveButtonContainer">
-								<button className="approveButton">Approve</button>
-							</div>
-							<div className="banButtonContainer">
-								<button className="btn-ban">Ban</button>
 							</div>
 						</div>
 					</div>

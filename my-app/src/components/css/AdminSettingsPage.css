@@ -5,6 +5,14 @@
 	margin-left: 2vw;
 }
 
+.emailInScrollBox{
+	list-style-type: none;
+	text-align: left;
+	font-size: 12px;
+	margin-top: -2vh;
+	margin-left: 20px;
+}
+
 .btn-approve{
 	position: absolute;
 	margin-top: -4vh;
