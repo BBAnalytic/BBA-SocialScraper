@@ -7,6 +7,7 @@ Description: Need to update this
 import csv, os
 from InstagramConfig import d_headers
 from instascrape import Post
+from instascrape.exceptions.exceptions import InstagramLoginRedirectError
 from ScrapeHelper import ScrapeHelper
 
 def v_scrape_instagram(o_scrape_helper):
@@ -37,32 +38,36 @@ def v_scrape_instagram(o_scrape_helper):
     i_post_count = 1
 
     while s_url:
-        o_post = Post(s_url)
-        o_post.scrape(headers=d_headers)
-        s_timestamp = o_post.timestamp
-        s_full_name = o_post.full_name
-        s_username = o_post.username
-        s_caption = o_post.caption
-        s_likes = o_post.likes
-        s_location = o_post.location
+        try:
+            o_post = Post(s_url)
+            o_post.scrape(headers=d_headers)
+            s_timestamp = o_post.timestamp
+            s_full_name = o_post.full_name
+            s_username = o_post.username
+            s_caption = o_post.caption
+            s_likes = o_post.likes
+            s_location = o_post.location
 
-        o_writer.writerow({
-            'Post ID' : i_post_count,
-            'Timestamp' : s_timestamp,
-            'Full Name' : s_full_name,
-            'Username' : s_username,
-            'Caption' : s_caption,
-            'Likes' : s_likes,
-            'Location' : s_location,
-            'Link' : s_url})
+            o_writer.writerow({
+                'Post ID' : i_post_count,
+                'Timestamp' : s_timestamp,
+                'Full Name' : s_full_name,
+                'Username' : s_username,
+                'Caption' : s_caption,
+                'Likes' : s_likes,
+                'Location' : s_location,
+                'Link' : s_url})
         
-        if o_post.is_video:
-            o_post.download(f'{o_scrape_helper.s_media_directory}videoID#{str(i_post_count).zfill(5)}.mp4')
-        else:
-            o_post.download(f'{o_scrape_helper.s_media_directory}pictureID#{str(i_post_count).zfill(5)}.jpg')
+            if o_post.is_video:
+                o_post.download(f'{o_scrape_helper.s_media_directory}videoID#{str(i_post_count).zfill(5)}.mp4')
+            else:
+                o_post.download(f'{o_scrape_helper.s_media_directory}pictureID#{str(i_post_count).zfill(5)}.jpg')
         
-        i_post_count += 1
-        s_url = f_url_frontier.readline()
+            i_post_count += 1
+        except InstagramLoginRedirectError:
+            pass
+        finally:
+            s_url = f_url_frontier.readline()
 
     f_url_frontier.close()
     o_scrape_helper.v_zip()
