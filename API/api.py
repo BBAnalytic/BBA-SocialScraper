@@ -6,6 +6,9 @@ Description: File contains the database schema for the user database as well as 
 """
 from flask import Flask, jsonify, request, json
 from flask_sqlalchemy import SQLAlchemy
+
+from datetime import date
+
 import sys
 
 sys.path.insert(1, './twitter')
@@ -35,11 +38,11 @@ class UserDB(o_db.Model):
    b_admin = o_db.Column(o_db.Boolean, nullable = False)
    b_approved = o_db.Column(o_db.Boolean, nullable = False)
    b_banned = o_db.Column(o_db.Boolean, nullable = False)
-   s_saveEntry1 = o_db.Column(o_db.Text, nullable = True, default = "instagram,05/21/1199,#blm,-new york-york,~asianlivesmatter~pokemonplatinumrelease")
-   s_saveEntry2 = o_db.Column(o_db.Text, nullable = True, default = "twitter,05/21/1199,#minecraft#blm,-new york-york,~asianlivesmatter~pokemonplatinumrelease")
-   s_saveEntry3 = o_db.Column(o_db.Text, nullable = True, default = "twitter,05/21/1199,-new york-york,~asianlivesmatter~pokemonplatinumrelease")
-   s_saveEntry4 = o_db.Column(o_db.Text, nullable = True, default = "twitter,05/21/1199,#minecraft#blm,-new york-york")
-   s_saveEntry5 = o_db.Column(o_db.Text, nullable = True, default = "instagram,05/21/1199,www.test.com")
+   s_saveEntry1 = o_db.Column(o_db.Text, nullable = False, default = "")
+   s_saveEntry2 = o_db.Column(o_db.Text, nullable = False, default = "")
+   s_saveEntry3 = o_db.Column(o_db.Text, nullable = False, default = "")
+   s_saveEntry4 = o_db.Column(o_db.Text, nullable = False, default = "")
+   s_saveEntry5 = o_db.Column(o_db.Text, nullable = False, default = "")
    
    def __str__(self):
       return f'{self.s_email} {self.s_saveEntry1} {self.s_saveEntry2} {self.s_saveEntry3} {self.s_saveEntry4} {self.s_saveEntry5}'
@@ -454,31 +457,12 @@ def json_set_admin():
    else:
       return jsonify({'result': 'NOK User Not Found'})
 
-# /contact: ContactUsPage - Input an Email and Message (no longer than 140 characters) and outputs an email to the administrator account that contains the message body. 
-@m_app.route('/api/contact', methods=['GET', 'POST'])
-def json_contact_form_submit():
-   """
-   Description: Allows the frontend process to send an email to the admin account with a contact request.
-   Arguements: None, but json body requested needs to look like this:
-               {
-                  "s_user_email": "a@a.a",
-                  "s_message": "Foo Bar Pie needs account approval?"
-               }
-   Outputs: JSON body signaling if the message was sent or not.  
-            Looks like this:
-            {
-               "result": "OK/NOK based on if the message was sent to the specified admin account."
-            }
-   """
-   #todo
-   _dict_user_records = UserDB.query.all()
-   return jsonify([*map(_json_user_serializer, UserDB.query.all())])
-
-@m_app.route('/api/getRecentSearches', methods=['GET', 'POST'])
+@m_app.route('/api/getRecentSearches', methods=['POST'])
 def json_get_recent_searches():
    """
-   Description: Queries the database's columns for a specific user and returns the 5 most recent searches.
-                This information is stored in the database with the following format: platform,mm/dd/yyyy,#keyword#string,-location-string,~phrase~string
+   Description: Queries the database's columns for a specific user and returns the 5 most recent searches. 
+   This information is stored in the database with the following format: 
+   platform,mm/dd/yyyy,#keyword#string,#location#string,#phrase#string, start date (mm/dd/yyyy), end date (mm/dd/yyyy)
    Arguements: None, but json body requested needs to look like this:
                {
                   "s_user_email": "a@a.a",
@@ -543,31 +527,76 @@ def json_get_recent_searches():
    else:
       return jsonify({'result': 'NOK User Not Found'})
 
-# /saveSearch: HomePage - moves every other recent search down one column in our database and adds it to the front of the DB. Tracks the date and time associated with the search along with the platform and search keywords. Store as a serialized value, comma-separated. If any commas exist in the input, replace those with a \
-@m_app.route('/api/saveSearch', methods=['GET', 'POST'])
+@m_app.route('/api/saveSearch', methods=['POST'])
 def _json_contact_save_search():
    """
    Description: Takes the most recent search passed in and serializes it for storage. We can then move every other
-                search down a column in the user's database and chop off the oldest search query. This information 
-                is stored in the database with the following format: platform,mm/dd/yyyy,#keyword#string,
-                -location-string,~phrase~string. We also create the time constant
-                since it's easily done in the backend.
+                search down a column in the user's database and chop off the oldest search query. 
+                This information is stored in the database with the following format: 
+                platform,mm/dd/yyyy,#keyword#string,#location#string,#phrase#string, start date (mm/dd/yyyy), end date (mm/dd/yyyy) 
+                We also create the time constant since it's easily done in the backend.
 
    Arguements: None, but json body requested needs to look like this:
                {
-                  "s_user_email": "a@a.a",
-                  "s_platform": "One of these two: Instagram OR Twitter",
+                  "s_email": "email@email.com",
                   "s_hashtags": "#keyword#string",
-                  "s_location": "-location-string",
-                  "s_phrases": "~phrase~string"
+                  "s_location": "#location#string",
+                  "s_phrases": "#phrases#string",
+                  "s_end_date": "ending scrape date string (format mm/dd/yyyy)",
+                  "s_platform": "One of these two: Instagram OR Twitter",
+                  "s_start_date": "beginning scrape date string (format mm/dd/yyyy)"
                }
    Outputs: Puts a serialized version of the information into the userDB. Returns OK if user was found
             and operation was a success. Else, returns NOK. Looks like this:
             {
-               "result": "OK/NOK based on if the serialization was a success or not."
+               "result": "OK/NOK based on if the serialization and saving was a success or not."
             }
    """
-   pass
+   # Capture all input
+   json_request_data = json.loads(request.data)
+   s_input_email = json_request_data['s_email']
+   s_input_hashtags = json_request_data['s_hashtags']
+   s_input_location = json_request_data['s_location']
+   s_phrases = json_request_data['s_phrases']
+   s_end_date = json_request_data['s_end_date']
+   s_platform = json_request_data['s_platform']
+   s_start_date = json_request_data['s_start_date']
+
+   # Find out the scrape date: format = mm/dd/yyyy
+   today = date.today()
+   s_current_date = today.strftime('%m/%d/%Y')
+
+   # Serialize the input
+   s_save_entry = (s_platform + ',' + s_current_date + ',' + s_input_hashtags + ',' + 
+                  s_input_location + ',' + s_phrases + ',' + s_start_date + ',' + 
+                  s_end_date)
+
+   # Move all save entries down a column
+   o_user = o_db.session.query(UserDB).filter_by(s_email = s_input_email).first()
+   # Check if the information is within the database
+   if(o_user != None):
+      # Make all entries
+      save_entry1 = s_save_entry
+      save_entry2 = o_user.s_saveEntry1
+      save_entry3 = o_user.s_saveEntry2
+      save_entry4 = o_user.s_saveEntry3
+      save_entry5 = o_user.s_saveEntry4
+
+      # Enter all those into the database
+      o_user.s_saveEntry1 = save_entry1
+      o_user.s_saveEntry2 = save_entry2
+      o_user.s_saveEntry3 = save_entry3
+      o_user.s_saveEntry4 = save_entry4
+      o_user.s_saveEntry5 = save_entry5
+
+      # Commit and persist that information
+      o_db.session.add(o_user)
+      o_db.session.commit()
+   else:
+      return jsonify({'result': 'NOK user does not exist'})
+
+   # Return OK
+   return jsonify({'result': 'OK entry saved'})
 
 # Starts the application when this function is started.
 if __name__ == '__main__':
