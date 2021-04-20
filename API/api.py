@@ -6,13 +6,15 @@ Description: File contains the database schema for the user database as well as 
 """
 from flask import Flask, jsonify, request, json
 from flask_sqlalchemy import SQLAlchemy
+from datetime import date
+
 import sys
 
 sys.path.insert(1, './twitter')
 from TweetExtractor import v_scrape_tweets, s_build_query
 
 sys.path.insert(1, './instagram')
-from InstagramKeywordURLExtractor import v_url_extractor
+from InstagramKeywordURLExtractor import b_url_extractor
 from PostExtractor import v_read_to_queue
 
 # Flask application initiation.
@@ -35,14 +37,14 @@ class UserDB(o_db.Model):
    b_admin = o_db.Column(o_db.Boolean, nullable = False)
    b_approved = o_db.Column(o_db.Boolean, nullable = False)
    b_banned = o_db.Column(o_db.Boolean, nullable = False)
-   s_saveEntry1 = o_db.Column(o_db.Text, nullable = True)
-   s_saveEntry2 = o_db.Column(o_db.Text, nullable = True)
-   s_saveEntry3 = o_db.Column(o_db.Text, nullable = True)
-   s_saveEntry4 = o_db.Column(o_db.Text, nullable = True)
-   s_saveEntry5 = o_db.Column(o_db.Text, nullable = True)
+   s_saveEntry1 = o_db.Column(o_db.Text, nullable = False, default = "")
+   s_saveEntry2 = o_db.Column(o_db.Text, nullable = False, default = "")
+   s_saveEntry3 = o_db.Column(o_db.Text, nullable = False, default = "")
+   s_saveEntry4 = o_db.Column(o_db.Text, nullable = False, default = "")
+   s_saveEntry5 = o_db.Column(o_db.Text, nullable = False, default = "")
    
    def __str__(self):
-      return f'{self.id} {self.content}'
+      return f'{self.s_email} {self.s_password} {self.s_first} {self.s_last} {self.b_admin} {self.b_approved} {self.b_banned} {self.s_saveEntry1} {self.s_saveEntry2} {self.s_saveEntry3} {self.s_saveEntry4} {self.s_saveEntry5}'
 
 @m_app.route('/api/authenticateLogin', methods = ['POST'])
 def json_login_user():
@@ -453,6 +455,147 @@ def json_set_admin():
          return jsonify({'result': 'NOK No change value passed in.'})
    else:
       return jsonify({'result': 'NOK User Not Found'})
+
+@m_app.route('/api/getRecentSearches', methods=['POST'])
+def json_get_recent_searches():
+   """
+   Description: Queries the database's columns for a specific user and returns the 5 most recent searches. 
+   This information is stored in the database with the following format: 
+   platform,mm/dd/yyyy,#keyword#string,#location#string,#phrase#string, start date (mm/dd/yyyy), end date (mm/dd/yyyy)
+   Arguements: None, but json body requested needs to look like this:
+               {
+                  "s_user_email": "a@a.a",
+               }
+   Outputs: A deserialized version of the 5 most recent scrapes from the database. If a piece of information
+            relating to a scrape doesn't exist, that return value will be empty.
+            The output looks like this (note: this returns an empty list if there is no recent search,
+            and an abbreviated list if there are less than 5 searches):
+            [
+               {
+                  "l_hashtags": [keyword, string],
+                  "l_location": [location, string],
+                  "l_phrases": [phrase, string],
+                  "s_date_scraped": "mm/dd/yyyy",
+                  "s_end_date": "ending scrape date string (format mm/dd/yyyy)"
+                  "s_platform": "One of these two: Instagram OR Twitter",
+                  "s_start_date": "beginning scrape date string (format mm/dd/yyyy)"
+               },
+               ...
+               {
+                  ...
+               }
+            ]
+   """
+   # Grabbing input information
+   json_request_data = json.loads(request.data)
+   s_input_email = json_request_data['s_user_email']
+
+   # Check for the user
+   o_user = o_db.session.query(UserDB).filter_by(s_email = s_input_email).first()
+   if(o_user != None):
+      # Deserialize the save entries to prep for use as JSON collection.
+      s_entries = [o_user.s_saveEntry1, o_user.s_saveEntry2, o_user.s_saveEntry3, o_user.s_saveEntry4, o_user.s_saveEntry5]
+      json_collection = []
+      for s_entry in s_entries:
+         if (s_entry != ""):
+            # Grap the platform, date, hashtags, locations, phrases for processing.
+            l_sections = s_entry.split(',')
+
+            s_platform = l_sections[0]
+            s_date = l_sections[1]
+            l_hashtags = l_sections[2].split('#')
+            l_locations = l_sections[3].split('#')
+            l_phrases = l_sections[4].split('#')
+            s_start_date = l_sections[5]
+            s_end_date = l_sections[6]
+
+            l_hashtags.pop(0)
+            l_locations.pop(0)
+            l_phrases.pop(0)
+
+            # Make one complete entry into the collection so we can add one object to the collection.
+            json_object = {'s_platform': s_platform,
+                           's_date_scraped': s_date,
+                           'l_hashtags': l_hashtags,
+                           'l_location': l_locations,
+                           'l_phrases': l_phrases,
+                           's_start_date': s_start_date,
+                           's_end_date': s_end_date}
+            json_collection += [json_object]
+      return jsonify(json_collection)
+   else:
+      return jsonify({'result': 'NOK User Not Found'})
+
+@m_app.route('/api/saveSearch', methods=['POST'])
+def _json_contact_save_search():
+   """
+   Description: Takes the most recent search passed in and serializes it for storage. We can then move every other
+                search down a column in the user's database and chop off the oldest search query. 
+                This information is stored in the database with the following format: 
+                platform,mm/dd/yyyy,#keyword#string,#location#string,#phrase#string, start date (mm/dd/yyyy), end date (mm/dd/yyyy) 
+                We also create the time constant since it's easily done in the backend.
+
+   Arguements: None, but json body requested needs to look like this:
+               {
+                  "s_email": "email@email.com",
+                  "s_hashtags": "#keyword#string",
+                  "s_location": "#location#string",
+                  "s_phrases": "#phrases#string",
+                  "s_end_date": "ending scrape date string (format mm/dd/yyyy)",
+                  "s_platform": "One of these two: Instagram OR Twitter",
+                  "s_start_date": "beginning scrape date string (format mm/dd/yyyy)"
+               }
+   Outputs: Puts a serialized version of the information into the userDB. Returns OK if user was found
+            and operation was a success. Else, returns NOK. Looks like this:
+            {
+               "result": "OK/NOK based on if the serialization and saving was a success or not."
+            }
+   """
+   # Capture all input
+   json_request_data = json.loads(request.data)
+   s_input_email = json_request_data['s_email']
+   s_input_hashtags = json_request_data['s_hashtags']
+   s_input_location = json_request_data['s_location']
+   s_phrases = json_request_data['s_phrases']
+   s_end_date = json_request_data['s_end_date']
+   s_platform = json_request_data['s_platform']
+   s_start_date = json_request_data['s_start_date']
+
+   # Find out the scrape date: format = mm/dd/yyyy
+   today = date.today()
+   s_current_date = today.strftime('%m/%d/%Y')
+
+   # Serialize the input
+   s_save_entry = (s_platform + ',' + s_current_date + ',' + s_input_hashtags + ',' + 
+                  s_input_location + ',' + s_phrases + ',' + s_start_date + ',' + 
+                  s_end_date)
+
+   # Move all save entries down a column
+   o_user = o_db.session.query(UserDB).filter_by(s_email = s_input_email).first()
+   # Check if the information is within the database
+   if(o_user != None):
+      # Make all entries
+      save_entry1 = s_save_entry
+      save_entry2 = o_user.s_saveEntry1
+      save_entry3 = o_user.s_saveEntry2
+      save_entry4 = o_user.s_saveEntry3
+      save_entry5 = o_user.s_saveEntry4
+
+      # Enter all those into the database
+      o_user.s_saveEntry1 = save_entry1
+      o_user.s_saveEntry2 = save_entry2
+      o_user.s_saveEntry3 = save_entry3
+      o_user.s_saveEntry4 = save_entry4
+      o_user.s_saveEntry5 = save_entry5
+
+      # Commit and persist that information
+      o_db.session.add(o_user)
+      o_db.session.commit()
+   else:
+      return jsonify({'result': 'NOK user does not exist'})
+
+   # Return OK
+   return jsonify({'result': 'OK entry saved'})
 
 # Starts the application when this function is started.
 if __name__ == '__main__':
