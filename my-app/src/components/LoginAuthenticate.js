@@ -7,8 +7,16 @@ export default class LoginAuthenticate extends Component {
         this.state={
             isAuthenticated: false
         };
+
     }
-    
+    handleAuthentication(){
+        if(this.state.isAuthenticated){
+            return true;
+        }
+        else{
+            return false;
+        }
+    }
     render() {
         console.log("LoginAuthenticating...")
         const fetchUrl = '/api/authenticateLogin';
@@ -23,27 +31,12 @@ export default class LoginAuthenticate extends Component {
         .then((response) => response.json())
         .then((data) => {
             if(data.result === 'OK Email/Password Validated'){
-                // this.setState({isAuthenticated: true});
-                // console.log(this.state.isAuthenticated)
-                // console.log("Attempting to LOGIN")
-                // this.setState({
-                //     isAuthenticated: true
-                // })
-                return (
-                    <div>
-                        <Redirect to='/HomePage'></Redirect>
-                    </div>
-                )
-            }
-            else{
-                return (
-                    <div>
-                        <Redirect to='/LoginPage'></Redirect>
-                    </div>
-                )
+                this.setState({
+                    isAuthenticated: true
+                })
             }
         })
-        if (this.state.isAuthenticated){
+        if (this.handleAuthentication){
             return(
                 <div>
                     <Redirect to='/HomePage'></Redirect>
@@ -51,7 +44,6 @@ export default class LoginAuthenticate extends Component {
             )
         }
         else{
-            console.log("Login Failed: " + this.state.isAuthenticated)
             return (
                 <div>
                     <Redirect to='/LoginPage'></Redirect>

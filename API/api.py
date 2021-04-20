@@ -62,6 +62,7 @@ def json_login_user():
             }
    """
    # Grabbing input information
+   print("AuthenticateLogin POST")
    json_request_data = json.loads(request.data)
    s_inputEmail = json_request_data['email']
    s_inputPassword = json_request_data['password']
