@@ -19,7 +19,7 @@ from InstagramConfig import s_path_to_driver, d_headers, d_login_dict
 
 
 
-def b_url_extractor(s_search, i_num_posts_wanted = 35, s_category = 'hashtag'):
+def b_url_extractor(s_search, i_num_posts_wanted = 50, s_category = 'hashtag'):
     """ InstagramURLExtractor - 
     
     Scrapes links to instagram posts of the internet using selenium and compiles them into a text document 
@@ -209,7 +209,3 @@ def b_url_extractor(s_search, i_num_posts_wanted = 35, s_category = 'hashtag'):
     f_frontier.close()
     o_browser.close()
     return True
-
-#b_url_extractor("https://www.instagram.com/explore/locations/222655914/washington-dc-nations-capitol/", s_category = "location")
-#b_url_extractor("waffles", s_category = 'hashtag')
-#print(b_url_extractor("no"))
