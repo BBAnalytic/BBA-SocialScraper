@@ -79,7 +79,7 @@ class ScrapeHelper:
             s_search_category = s_search_category
             self.b_valid = b_url_extractor(s_search_term, s_category=s_search_category)
 
-        self._v_set_working_directories(s_user)
+        self._v_name_working_directories(s_user)
         self.s_zip_name = f"{self.s_user}_{self.s_platform}_scrape.zip"
         
     def _v_make_api_connection(self):
@@ -112,7 +112,7 @@ class ScrapeHelper:
         self.s_from_date = s_from_date
         self.s_to_date = s_to_date
         
-    def _v_set_working_directories(self, o_user):
+    def _v_name_working_directories(self, o_user):
         """
         Creates the working directories of the scrape
         """
