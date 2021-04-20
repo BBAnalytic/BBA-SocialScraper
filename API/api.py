@@ -4,7 +4,7 @@ Created on: 03/31/21
 Version: 1.3
 Description: File contains the database schema for the user database as well as endpoints that can be used to access backend processes and the database.
 """
-from flask import Flask, jsonify, request, json
+from flask import Flask, jsonify, request, json, send_file
 from flask_sqlalchemy import SQLAlchemy
 from datetime import date
 
@@ -213,7 +213,9 @@ def json_scrape_instagram():
    # an email, the criteria. Then we'd put it into the database.
    # make a foreign key per user that links to that database.
 
-   return jsonify({'result': 'OK Instagram Query Complete'})
+   #return jsonify({'result': 'OK Instagram Query Complete'})
+
+   return send_file(o_scrape_helper.s_zip_name, as_attachment = True)
 
 @m_app.route('/api/scrapeTwitter', methods=['POST'])
 def json_scrape_twitter():
@@ -262,7 +264,9 @@ def json_scrape_twitter():
    s_query = s_build_query(l_hashTags, l_locations, l_phrases)
    v_scrape_tweets(s_query = s_query, s_earliest = s_earliest_date, s_latest = s_latest_date)
 
-   return jsonify({'result': 'OK Twitter Query Complete'})
+   #return jsonify({'result': 'OK Twitter Query Complete'})
+
+   return send_file(o_scrape_helper.s_zip_name, as_attachment = True)
 
 @m_app.route('/api/getAllAccounts', methods=['GET'])
 def json_get_all_accounts():
