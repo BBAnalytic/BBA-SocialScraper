@@ -6,33 +6,20 @@ Description: File contains the database schema for the user database as well as 
 """
 from flask import Flask, jsonify, request, json
 from flask_sqlalchemy import SQLAlchemy
-<<<<<<< HEAD
 import sys, threading
-=======
 from datetime import date
-
-import sys
->>>>>>> development
 
 from ScrapeHelper import ScrapeHelper
 
-<<<<<<< HEAD
 from TweetExtractor import v_scrape_tweets_full_archive, v_scrape_tweets_30_day
 
 from InstagramKeywordURLExtractor import b_url_extractor
 from PostExtractor import v_scrape_instagram
-=======
-sys.path.insert(1, './instagram')
-from InstagramKeywordURLExtractor import b_url_extractor
-from PostExtractor import v_read_to_queue
->>>>>>> development
 
 # Flask application initiation.
 m_app = Flask(__name__)
 m_app.config["SQLALCHEMY_DATABASE_URI"] = "sqlite:///userInfo.db"
 o_db = SQLAlchemy(m_app)
-
-d_active_scrapes = {}
 
 """
 Name: Abdul Karim
@@ -229,15 +216,10 @@ def json_scrape_instagram():
    # Call the function that scrapes instagram within thread
    o_thread = threading.Thread(target=v_scrape_instagram,args=(o_scrape_helper,))
 
-   # Add active thread to active thread dictionary 
-   d_active_scrapes[o_scrape_helper.s_user] = o_thread
-
    # Start thread
    o_thread.start()
    o_thread.join()
 
-   # Once scrape is done remove from active scrapes dictionary
-   del d_active_scrapes[o_scrape_helper.s_user]
    return jsonify({'result': 'OK Instagram Query Complete'})
 
 @m_app.route('/api/scrapeTwitter', methods=['POST'])
@@ -287,15 +269,9 @@ def json_scrape_twitter():
    # Call the function that scrapes twitter within thread
    o_thread = threading.Thread(target=v_scrape_tweets_30_day,args=(o_scrape_helper,))
 
-   # Add active thread to active thread dictionary 
-   d_active_scrapes[o_scrape_helper.s_user] = o_thread
-
    # Start thread
    o_thread.start()
    o_thread.join()
-
-   # Once scrape is done remove from active scrapes dictionary
-   del d_active_scrapes[o_scrape_helper.s_user]
 
    return jsonify({'result': 'OK Twitter Query Complete'})
 
