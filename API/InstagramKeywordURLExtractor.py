@@ -60,11 +60,9 @@ def b_url_extractor(s_search, i_num_posts_wanted = 35, s_category = 'hashtag'):
         if re_valid_location:
             s_explore_page = re_valid_location.group(0)
         else:
-            print(1)
             return False
     else:
         # Bad input, return False
-        print(2)
         return False
 
     # Building a regex used to match instaggram links to posts 
@@ -132,7 +130,6 @@ def b_url_extractor(s_search, i_num_posts_wanted = 35, s_category = 'hashtag'):
         
         # If we've looped back to original index, all accounts are banned, return False
         if(i_passwd_index == i_original_index):
-            print(3)
             return False
 
     # Load explore page to be scraped
@@ -143,7 +140,6 @@ def b_url_extractor(s_search, i_num_posts_wanted = 35, s_category = 'hashtag'):
     try:
         s_bad_page = o_browser.find_element(By.CLASS_NAME, "_7UhW9").text
         if(s_bad_page == "Sorry, this page isn't available."):
-            print(4)
             return False
     except NoSuchElementException:
         pass
@@ -212,7 +208,6 @@ def b_url_extractor(s_search, i_num_posts_wanted = 35, s_category = 'hashtag'):
     # Close f_frontier and o_browser
     f_frontier.close()
     o_browser.close()
-    print(5)
     return True
 
 #b_url_extractor("https://www.instagram.com/explore/locations/222655914/washington-dc-nations-capitol/", s_category = "location")

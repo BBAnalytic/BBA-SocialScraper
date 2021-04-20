@@ -238,8 +238,8 @@ def json_scrape_twitter():
                   "hashTags": "#list#of#tags",
                   "locations": "#list#of#locations",
                   "phrases": "#list#of#phrases",
-                  "earliestDate": "yyyyMMddHHmm",
-                  "latestDate": "yyyyMMddHHmm"
+                  "earliestDate": "MM/dd/yy",
+                  "latestDate": "MM/dd/yy"
                }
    Outputs: JSON body signaling whether or not the information has been validated.    
             Looks like this:
