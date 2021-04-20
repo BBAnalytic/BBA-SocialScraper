@@ -25,10 +25,10 @@ export default class LoginAuthenticate extends Component {
             if(data.result === 'OK Email/Password Validated'){
                 // this.setState({isAuthenticated: true});
                 // console.log(this.state.isAuthenticated)
-                console.log("Attempting to LOGIN")
-                this.setState({
-                    isAuthenticated: true
-                })
+                // console.log("Attempting to LOGIN")
+                // this.setState({
+                //     isAuthenticated: true
+                // })
                 return (
                     <div>
                         <Redirect to='/HomePage'></Redirect>
