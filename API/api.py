@@ -62,7 +62,6 @@ def json_login_user():
             }
    """
    # Grabbing input information
-   print("AuthenticateLogin POST")
    json_request_data = json.loads(request.data)
    s_inputEmail = json_request_data['email']
    s_inputPassword = json_request_data['password']
@@ -296,7 +295,7 @@ def json_get_account():
    Description: Takes in an email and processes it to find a user in the database and return its values
    Arguements: None, but json body requested needs to look like this:
                {
-                  "s_user_email": "a@a.a",
+                  "email": "a@a.a",
                }
    Outputs: A object containing the user that is found in the database or NOK if user was not found.
                {
@@ -314,7 +313,7 @@ def json_get_account():
    """
    # Grabbing input information
    json_request_data = json.loads(request.data)
-   s_input_email = json_request_data['s_user_email']
+   s_input_email = json_request_data['email']
 
    # Check if the information is within the database
    o_user = o_db.session.query(UserDB).filter_by(s_email = s_input_email).first()

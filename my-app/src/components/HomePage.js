@@ -7,10 +7,7 @@ import NavButtons from './NavButtons'
 export default class HomePage extends Component {
 
     render() {
-        console.log("Home Page Loading...");
-
         if (this.props.email != ""){
-            console.log("Home Page Rendering... Email: " + this.props.email);
             return (
                 <div className="homePageContent">
                     <div className="homePageTitleContainer">

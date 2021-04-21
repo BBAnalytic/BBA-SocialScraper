@@ -36,7 +36,7 @@ export default class LoginPage extends Component {
                         <input type="password" value={this.props.password} placeholder="Password" onChange={this.props.handlePasswordChange} className="passwordInputBox" />
                         <input type="button" value="Forgot Password" className="forgotPasswordButton" />
                         <Link to='/LoginAuthenticate'>
-                            <input type="submit" value="Login" className="loginButton" />
+                            <input type="submit" value="Login" className="loginButton" onClick={this.props.handleLogin}/>
                         </Link>
                     </form>
                 </div>

@@ -5,7 +5,7 @@ o_db.create_all()
 
 # Make a user
 initialEntry = UserDB(s_email = "a@a.a", 
-                      s_password = "SAasdas", 
+                      s_password = "a", 
                       s_first = "admin", 
                       s_last = "account", 
                       b_admin = True, 
