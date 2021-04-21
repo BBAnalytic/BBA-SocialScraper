@@ -51,10 +51,10 @@ export default class AdminSettingsPage extends Component {
 				children.push(
 					<div className="accountInScrollBoxContainer">
 						<div className="nameContainer">
-							<li className="accountInScrollBox">{this.state.json[i].s_first_name} {this.state.json[i].s_last_name}</li>
+							<li className="accountInScrollBox">{this.state.json[i].s_first_name} {this.state.json[i].s_last_name} {this.state.json[i].b_banned && "[Banned]"} {this.state.json[i].b_admin && "[Admin]"} {!this.state.json[i].b_approved && "[Pending]"}</li>
 						</div>
 						<div className="emailContainer">
-							<li className="emailInScrollBox">{this.state.json[i].s_email} {this.state.json[i].b_banned && "[Banned]"} {this.state.json[i].b_admin && "[Admin]"} {!this.state.json[i].b_approved && "[Pending]"}</li>
+							<li className="emailInScrollBox">{this.state.json[i].s_email}</li>
 						</div>
 						<div className="btn-containersAccounts">
 							<div className="btn-approveContainer">
