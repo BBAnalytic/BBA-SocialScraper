@@ -8,44 +8,39 @@ export default class RegisterAccount extends Component {
 		super(props);
 		this.state = {
 			email: '',
-			downloadLocation: '',
-			approved: false,
-			deleted: false,
-			saved: false,
-			scrapeHistoryToggle: false,
-			advancedSearchToggle: false,
-			emailNotifToggle: false,
+			name: '',
+			password: '',
+			passCon: '',
 			title: "Create Your Account"
 		};
 
 		const emailRegex = /^[A-Za-z0-9._%+-]+@[A-Za-z0-9.-]+\.[a-z]{2,}$$/;
 
-		this.handleApproved = this.handleApproved.bind(this);
-		this.handleDeleted = this.handleDeleted.bind(this);
-		this.handleSaved = this.handleSaved.bind(this);
-		this.handleScrapeTog = this.handleScrapeTog.bind(this);
-		this.handleSearchTog = this.handleSearchTog.bind(this);
-		this.handleNotifTog = this.handleNotifTog.bind(this);
+		this.handleCreateAccount = this.handleCreateAccount.bind(this);
 	}
 
-	handleApproved(event){
+	handleCreateAccount(email, name, pass, passConfirm){
+		if(pass == passConfirm){
+
+		}
+		else{
+			window.alert("The passwords do not match.")
+		}
+	}
+
+	updateEmailInput(email){
 
 	}
-	handleDeleted(event){
+	updateNameInput(name){
 
 	}
-	handleNotifTog(event){
+	updatePasswordInput(pass){
+		
+	}
+	updatePassCon(passCon){
 
 	}
-	handleSaved(event){
 
-	}
-	handleScrapeTog(event){
-
-	}
-	handleSearchTog(event){
-
-	}
 
 	render(){
 		return(
@@ -87,7 +82,7 @@ export default class RegisterAccount extends Component {
 
 						<div className="createAccountButtonContainer">
 							<Link to='/RegisterAccountConfirm'>
-								<button className="createAccountButton">Create Account</button>
+								<button className="createAccountButton" onClick={this.handleCreateAccount()}>Create Account</button>
 							</Link>
 						</div>
 					</div>
