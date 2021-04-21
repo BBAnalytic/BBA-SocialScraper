@@ -108,7 +108,7 @@ export default class SearchCriteriaPage extends Component {
                             </div>
                         </div>
                     </div>
-                    <Link to='/SearchSubmitPage'>
+                    <Link to='/SearchingPage'>
                         <button className="searchButton" onClick={this.props.handleSearch}>
                             Search
                         </button>
