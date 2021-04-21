@@ -35,6 +35,7 @@ export default class App extends Component {
       };
 
       this.handleLogin = this.handleLogin.bind(this);
+      this.handleLogout = this.handleLogout.bind(this);
       this.handleEmailChange = this.handleEmailChange.bind(this);
       this.handlePasswordChange = this.handlePasswordChange.bind(this);
       this.handleHashTagsInput = this.handleHashTagsInput.bind(this);
@@ -84,10 +85,6 @@ export default class App extends Component {
   }
   handleHashTagsInput(newHashTags){
       this.setState({hashTags: newHashTags});
-
-      if (this.state.platformSelector != 'Select'){
-        this.setState({isValidSubmit: true});
-      }
   }
   handleLocationsInput(newLocations){
       this.setState({locations: newLocations});
@@ -180,7 +177,18 @@ export default class App extends Component {
 
     return 'N/A';
   }
-
+  handleLogout(){
+    this.setState({
+      email: '',
+      password: ''
+    })
+  }
+  componentDidMount(){
+    this.setState({
+      email: '',
+      password: ''
+    })
+  }
 
   render(){
   return (
@@ -195,6 +203,7 @@ export default class App extends Component {
               handleEmailChange = {this.handleEmailChange} 
               handlePasswordChange = {this.handlePasswordChange} 
               handleLogin = {this.handleLogin} 
+              handleLogout = {this.handleLogout}
             />
           </Route>
           <Route exact path = '/HomePage'>
@@ -227,9 +236,9 @@ export default class App extends Component {
               title = 'Searching'
               email = { this.state.email }
               user = { this.sendUser }
-              hashTags = { this.sendHashTags }
-              locations = { this.sendLocations }
-              phrases = { this.sendPhrases }
+              hashTags = { this.state.hashTags /*this.sendHashTags()*/ }
+              locations = { this.sendLocations() }
+              phrases = { this.sendPhrases() }
             />
           </Route>
           <Route exact path = '/SettingsPage'>

@@ -6,6 +6,9 @@
     justify-content: center;
     flex-direction: column;
 }
+.searchTypeSelectionContainer{
+    visibility: hidden;
+}
 .searchPlatformSelectionTitleContainer{
     position: absolute;
     top: 1vh;
@@ -113,6 +116,7 @@
     height: 30vh;
     padding-left: 20px;
     padding-right: 20px;
+    visibility: hidden;
 }
 .searchByLabel{
     font-family: Arial Black;
