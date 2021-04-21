@@ -173,7 +173,7 @@ def json_delete_user():
    s_input_email = json_request_data['email'] 
    
    # Check to see if the user exists
-   if(o_db.session.query(UserDB.s_email).filter_by(s_email = s_input_email).delete()):
+   if(o_db.session.query(UserDB).filter_by(s_email = s_input_email).delete()):
       o_db.session.commit()
       return jsonify({'result': 'OK User deleted'})
    else:
