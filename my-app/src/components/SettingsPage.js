@@ -47,7 +47,7 @@ export default class SettingsPage extends Component {
 							<form className="emailDownloadForm">
 								<div className="formContainer">
 									<div className="emailContainerS">
-										<label className="emailTextS">Email: {this.props.email}</label>
+										<label className="emailTextS">Email: {this.state.email}</label>
 									</div>
 								</div>
 							</form>
@@ -59,7 +59,7 @@ export default class SettingsPage extends Component {
 							<button className="logoutButton">Logout</button>
 						</Link>
 						<Link to='/LoginPage' className="topButtonsContainerS">
-							<button className="deactivateAccountButton" onClick={this.handleDeleteUser(this.props.email)}>Deactivate Account</button>
+							<button className="deactivateAccountButton" onClick={() => this.handleDeleteUser(this.state.email)}>Deactivate Account</button>
 						</Link>
 					</div>
 				</div>
