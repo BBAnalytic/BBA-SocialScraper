@@ -17,7 +17,7 @@ export default class SettingsPage extends Component {
 		const requestOptions = {
 			method: 'POST',
 			headers: { 'Content-Type': 'applications/json'},
-			body: JSON.stringify({ "email": email })
+			body: JSON.stringify({ "email": this.props.email })
 		}
 
 		fetch('/api/deleteUser', requestOptions)
@@ -40,6 +40,7 @@ export default class SettingsPage extends Component {
 					</label>
 				</div>
 				{/* TODO: add home page button */}
+				{/* TODO: connect the email */}
 
 				<div className="settingsPageContainerS">
 					<div className="secondRowContainer">
@@ -47,7 +48,7 @@ export default class SettingsPage extends Component {
 							<form className="emailDownloadForm">
 								<div className="formContainer">
 									<div className="emailContainerS">
-										<label className="emailTextS">Email: {this.state.email}</label>
+										<label className="emailTextS">Email: {this.props.email}</label>
 									</div>
 								</div>
 							</form>
@@ -59,7 +60,7 @@ export default class SettingsPage extends Component {
 							<button className="logoutButton">Logout</button>
 						</Link>
 						<Link to='/LoginPage' className="topButtonsContainerS">
-							<button className="deactivateAccountButton" onClick={() => this.handleDeleteUser(this.state.email)}>Deactivate Account</button>
+							<button className="deactivateAccountButton" onClick={() => this.handleDeleteUser()}>Deactivate Account</button>
 						</Link>
 					</div>
 				</div>

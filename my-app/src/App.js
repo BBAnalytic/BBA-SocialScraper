@@ -23,7 +23,7 @@ export default class App extends Component {
   constructor(props){
       super(props);
       this.state = {
-          email: '',
+          email: 'b@b.b',
           password: '',
           isAuthenticated: false,
           isValidSubmit: false,
@@ -161,7 +161,10 @@ export default class App extends Component {
             />
           </Route>
           <Route exact path = '/SettingsPage'>
-            <SettingsPage title = 'Settings' />
+            <SettingsPage
+              title = 'Settings'
+              email = {this.state.email}
+              />
           </Route>
           <Route exact path = '/ContactUsPage'>
             <ContactUsPage title='Contact Us'></ContactUsPage>
