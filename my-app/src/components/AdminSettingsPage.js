@@ -180,7 +180,7 @@ export default class AdminSettingsPage extends Component {
 							<form className="emailDownloadForm">
 								<div className="formContainer">
 									<div className="emailContainerS">
-										<text className="emailTextS">Email: </text>
+										<text className="emailTextS">Email: {this.props.email}</text>
 									</div>
 								</div>
 							</form>
