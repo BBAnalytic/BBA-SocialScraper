@@ -6,16 +6,15 @@ Description: File contains the database schema for the user database as well as 
 """
 from flask import Flask, jsonify, request, json
 from flask_sqlalchemy import SQLAlchemy
+import sys, threading
 from datetime import date
 
-import sys
+from ScrapeHelper import ScrapeHelper
 
-sys.path.insert(1, './twitter')
-from TweetExtractor import v_scrape_tweets, s_build_query
+from TweetExtractor import v_scrape_tweets_full_archive, v_scrape_tweets_30_day
 
-sys.path.insert(1, './instagram')
 from InstagramKeywordURLExtractor import b_url_extractor
-from PostExtractor import v_read_to_queue
+from PostExtractor import v_scrape_instagram
 
 # Flask application initiation.
 m_app = Flask(__name__)
@@ -187,9 +186,8 @@ def json_scrape_instagram():
    Arguements: None, but json body requested needs to look like this:
                {
                   "email": "email@email.com",
-                  "search_term": "#hashtag#stuff OR locationurl",
+                  "search_term": "#hashtag OR locationurl",
                   "search_category": "the word: hashtag or the word: location"
-                  "email": "a@a.a"
                }
    Outputs: JSON body signaling whether or not the information has been validated.    
             Looks like this:
@@ -200,33 +198,42 @@ def json_scrape_instagram():
    # Grab inputs
    json_request_data = json.loads(request.data)
 
+   # Do not need full email so grab bit up to the '@'
+   s_user = json_request_data['email']
+   s_user =  s_user.split('@')
+   s_user = s_user.pop(0)
+
    s_search_term = json_request_data['search_term']
    s_search_category = json_request_data['search_category']
+   o_scrape_helper = ScrapeHelper(s_user,
+                                    'instagram',
+                                    s_search_term=s_search_term,
+                                    s_search_category=s_search_category)
 
-   # Call the function that scrapes instagram.
-   v_url_extractor(s_search = s_search_term, s_category = s_search_category)
-   v_read_to_queue()
+   if o_scrape_helper.b_valid == False:
+      return jsonify({'result': 'NOK Urlfrontier not populated'})
 
-   # have a try catch that returns true or false based on if we can scrape or not. Based on the S_OK value,
-   # we do read_to_queue and we also return jsonify OK or NOK
+   # Call the function that scrapes instagram within thread
+   o_thread = threading.Thread(target=v_scrape_instagram,args=(o_scrape_helper,))
 
-   # an email, the criteria. Then we'd put it into the database.
-   # make a foreign key per user that links to that database.
+   # Start thread
+   o_thread.start()
+   o_thread.join()
 
    return jsonify({'result': 'OK Instagram Query Complete'})
 
 @m_app.route('/api/scrapeTwitter', methods=['POST'])
 def json_scrape_twitter():
    """
-   Description: Allows a frontend process to process a request to scrape instagram, given inputs.
+   Description: Allows a frontend process to process a request to scrape twitter, given inputs.
    Arguements: None, but json body requested needs to look like this:
                {
                   "email": "email@email.com",
-                  "#hashTags": "#list#of#tags",
+                  "hashTags": "#list#of#tags",
                   "locations": "#list#of#locations",
                   "phrases": "#list#of#phrases",
-                  "earliestDate": "yyyyMMddHHmm",
-                  "latestDate": "yyyyMMddHHmm"
+                  "earliestDate": "MM/dd/yy",
+                  "latestDate": "MM/dd/yy"
                }
    Outputs: JSON body signaling whether or not the information has been validated.    
             Looks like this:
@@ -243,24 +250,28 @@ def json_scrape_twitter():
    l_locations.pop(0)
    l_phrases = json_request_data['phrases'].split("#")
    l_phrases.pop(0)
-   s_earliest_date = None
-   s_latest_date = None  
+   s_from_date = json_request_data['earliestDate']
+   s_to_date = json_request_data['latestDate']
 
-   if(json_request_data['earliestDate'] != "" and json_request_data['latestDate'] != ""):
-      s_earliest_date = json_request_data['earliestDate']
-      s_latest_date = json_request_data['latestDate']
+   # Do not need full email so grab bit up to the '@'
+   s_user = json_request_data['email']
+   s_user =  s_user.split('@')
+   s_user = s_user.pop(0)
 
-   # Set empty lists ([]) to None
-   if (len(l_hashTags) <= 0):
-      l_hashTags = None
-   elif (len(l_locations) <= 0):
-      l_locations = None
-   elif (len(l_phrases) <= 0):
-      l_phrases = None
+   o_scrape_helper = ScrapeHelper(s_user,
+                                    'twitter',
+                                    l_hashtags=l_hashTags,
+                                    l_locations=l_locations,
+                                    l_phrases=l_phrases,
+                                    s_from_date=s_from_date,
+                                    s_to_date=s_to_date)
 
-   # Run a twitter scrape
-   s_query = s_build_query(l_hashTags, l_locations, l_phrases)
-   v_scrape_tweets(s_query = s_query, s_earliest = s_earliest_date, s_latest = s_latest_date)
+   # Call the function that scrapes twitter within thread
+   o_thread = threading.Thread(target=v_scrape_tweets_30_day,args=(o_scrape_helper,))
+
+   # Start thread
+   o_thread.start()
+   o_thread.join()
 
    return jsonify({'result': 'OK Twitter Query Complete'})
 
