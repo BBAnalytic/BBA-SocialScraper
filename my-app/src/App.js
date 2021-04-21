@@ -23,7 +23,7 @@ export default class App extends Component {
   constructor(props){
       super(props);
       this.state = {
-          email: 'b@b.b',
+          email: '',
           password: '',
           isAuthenticated: false,
           isValidSubmit: false,
