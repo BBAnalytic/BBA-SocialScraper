@@ -7,42 +7,27 @@ export default class SettingsPage extends Component {
 	constructor(props){
 		super(props);
 		this.state = {
-			email: '',
-			downloadLocation: '',
-			approved: false,
-			deleted: false,
-			saved: false,
-			scrapeHistoryToggle: false,
-			advancedSearchToggle: false,
-			emailNotifToggle: false
+			email: 'a@a.a'
 		};
 
-		const emailRegex = /^[A-Za-z0-9._%+-]+@[A-Za-z0-9.-]+\.[a-z]{2,}$$/;
-
-		this.handleApproved = this.handleApproved.bind(this);
-		this.handleDeleted = this.handleDeleted.bind(this);
-		this.handleSaved = this.handleSaved.bind(this);
-		this.handleScrapeTog = this.handleScrapeTog.bind(this);
-		this.handleSearchTog = this.handleSearchTog.bind(this);
-		this.handleNotifTog = this.handleNotifTog.bind(this);
+		this.handleDeleteUser = this.handleDeleteUser.bind(this);
 	}
 
-	handleApproved(event){
+	handleDeleteUser(email){
+		const requestOptions = {
+			method: 'POST',
+			headers: { 'Content-Type': 'applications/json'},
+			body: JSON.stringify({ "email": email })
+		}
 
+		fetch('/api/deleteUser', requestOptions)
+			.then(data => {
+				console.log('deleted');
+				// TODO: get the confirmation and error check
+			});
 	}
-	handleDeleted(event){
 
-	}
-	handleNotifTog(event){
-
-	}
-	handleSaved(event){
-
-	}
-	handleScrapeTog(event){
-
-	}
-	handleSearchTog(event){
+	handleGetEmail(){
 
 	}
 
@@ -54,6 +39,7 @@ export default class SettingsPage extends Component {
 						{this.props.title}
 					</label>
 				</div>
+				{/* TODO: add home page button */}
 
 				<div className="settingsPageContainerS">
 					<div className="secondRowContainer">
@@ -61,23 +47,10 @@ export default class SettingsPage extends Component {
 							<form className="emailDownloadForm">
 								<div className="formContainer">
 									<div className="emailContainerS">
-										<label className="emailTextS">Email: socialscraper24@gmail.com</label>
-										{/* <input type="email" className="emailInputBoxS" placeholder="first.last@email.com"></input> */}
+										<label className="emailTextS">Email: {this.props.email}</label>
 									</div>
-									{/* <div className="downloadContainer">
-										<label className="downloadText">Download Location: </label>
-										<input type="text" className="downloadLocationBox" placeholder="C:/Downloads"></input>
-									</div> */}
 								</div>
 							</form>
-						</div>
-						<div className="toggleButtonsContainer">
-							<div className="scrapeHistoryToggleContainer">
-								<button className="scrapeHistoryToggle">See Scrape History</button>
-							</div>
-							{/* <div className="emailNotifToggleContainer">
-								<button className="emailNotifToggle">Email Notifications</button>
-							</div> */}
 						</div>
 					</div>
 					
@@ -86,12 +59,9 @@ export default class SettingsPage extends Component {
 							<button className="logoutButton">Logout</button>
 						</Link>
 						<Link to='/LoginPage' className="topButtonsContainerS">
-							<button className="deactivateAccountButton">Deactivate Account</button>
+							<button className="deactivateAccountButton" onClick={this.handleDeleteUser(this.props.email)}>Deactivate Account</button>
 						</Link>
 					</div>
-					{/* <Link to='/HomePage' className="saveChangesButtonContainerS">
-						<button className="saveChangesButton">Save Changes</button>
-					</Link> */}
 				</div>
 			</div>
 		)
