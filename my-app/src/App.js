@@ -9,6 +9,8 @@ import ContactUsPage from './components/ContactUsPage'
 import LoginAuthenticate from './components/LoginAuthenticate'
 import AdminSettingsPage from './components/AdminSettingsPage';
 import SettingsAuthenticate from './components/SettingsAuthenticate';
+import RegisterAccount from './components/RegisterAccount';
+import RegisterAccountConfirm from './components/RegisterAccountConfirm';
 //Test
 
 // Imports from react-router
@@ -232,6 +234,12 @@ export default class App extends Component {
               handleLogin = {this.handleLogin} 
               handleLogout = {this.handleLogout}
             />
+          </Route>
+          <Route exact path = '/RegisterAccount'>
+            <RegisterAccount title = 'Register Account' />
+          </Route>
+          <Route exact path = '/RegisterAccountConfirm'>
+            <RegisterAccountConfirm title = 'Register Account Confirm' />
           </Route>
           <Route exact path = '/HomePage'>
             <HomePage 
