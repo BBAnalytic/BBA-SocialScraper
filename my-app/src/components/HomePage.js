@@ -26,8 +26,9 @@ export default class HomePage extends Component {
         fetch(fetchURL, fetchContent)
             .then(response => response.json())
             .then(data => {
+                console.log(data[0])
                 this.setState({
-                    scrapeHistory: data
+                    scrapeHistory: data[0]
                 })
             })
     }

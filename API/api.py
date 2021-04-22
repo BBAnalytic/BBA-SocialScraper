@@ -498,6 +498,7 @@ def json_get_recent_searches():
                }
             ]
    """
+   print("Recent Searches Hit")
    # Grabbing input information
    json_request_data = json.loads(request.data)
    s_input_email = json_request_data['email']
@@ -528,13 +529,13 @@ def json_get_recent_searches():
             print(l_hashtags)
 
             # Make one complete entry into the collection so we can add one object to the collection.
-            json_object = jsonify({'s_platform': s_platform,
+            json_object = {'s_platform': s_platform,
                            's_date_scraped': s_date,
                            'l_hashtags': l_hashtags,
                            'l_location': l_locations,
                            'l_phrases': l_phrases,
                            's_start_date': s_start_date,
-                           's_end_date': s_end_date})
+                           's_end_date': s_end_date}
             json_collection += [json_object]
             print(json_collection[0])
       return jsonify(json_collection)
