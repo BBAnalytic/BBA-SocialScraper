@@ -100,6 +100,8 @@ class ScrapeHelper:
         """
         # If dates are empty nothing needs to be done so return 
         if s_unparsed_from_date == '' and s_unparsed_to_date == '':
+            self.s_from_date = ''
+            self.s_to_date = ''
             return
         # Split dates by '/' to get a 3 element list ['MM','dd','yy']
         s_split_from_date = s_unparsed_from_date.split('/')
