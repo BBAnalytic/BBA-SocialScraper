@@ -7,6 +7,7 @@ import HomePage from './components/HomePage'
 import SettingsPage from './components/SettingsPage'
 import ContactUsPage from './components/ContactUsPage'
 import LoginAuthenticate from './components/LoginAuthenticate'
+import AdminSettingsPage from './components/AdminSettingsPage';
 //Test
 
 // Imports from react-router
@@ -251,6 +252,18 @@ export default class App extends Component {
               email = {this.state.email} 
             />
           </Route>
+          <Route exact path = '/AdminSettingsPage'>
+            <AdminSettingsPage
+              title = 'Admin Settings'
+              email = {this.state.email}
+             />
+          </Route>
+          {/* <Route exact path = '/RegisterAccount'>
+            <RegisterAccount title = 'Register Account' />
+          </Route>
+          <Route exact path = '/RegisterAccountConfirm'>
+            <RegisterAccountConfirm title = 'Register Account' />
+          </Route> */}
           <Route exact path = '/ContactUsPage'>
             <ContactUsPage title='Contact Us'></ContactUsPage>
           </Route>
