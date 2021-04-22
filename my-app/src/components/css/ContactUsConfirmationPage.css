@@ -1,0 +1,73 @@
+.contactUsConfirmPageContent{
+	height: 100vh;
+	width: 100vw;
+	display: flex;
+	align-items: center;
+	justify-content: center;
+}
+
+.conUsConPageTitleContainer{
+	position:absolute;
+	top: 1vh;
+	left: 15vw;
+	box-sizing: content-box;
+	background-color: #FFFFFF;
+	z-index: 1;
+	width: 200px;
+	height: 30px;
+}
+
+.conUsConPageTitle{
+	font-family: Arial Black;
+    font-style: normal;
+    font-weight: 900;
+    font-size: 18px;
+}
+
+.conUsConContentContainer{
+	position: relative;
+	height: 90vh;
+	width: 95vw;
+	border: 2px solid black;
+	margin-left: auto;
+	margin-right: auto;
+	margin-top: auto;
+	margin-bottom: auto;
+	display: flex;
+	flex-direction: column;
+	justify-content: center;
+	align-items: center;
+}
+
+.conUsConTextContainer{
+	width: 500px;
+}
+
+.conUsConText{
+	width: 500px;
+	margin-bottom: auto;
+}
+
+.conUsConReturnButtonContainer{
+	margin-top: 10vh;
+}
+
+.btn-returnToLogin{
+	font-family: Arial Black;
+    font-style: normal;
+	font-weight: 800;
+    font-size: 20px;
+    line-height: 20px;
+    width: 200px;
+    height: 60px;
+    align-items: center;
+    text-align: center;
+    color: #FFFFFF;
+    background: #0094FF;
+    border: 1px solid #000000;
+    box-sizing: border-box;
+}
+
+.btn-returnToLogin:hover{
+	transform: scale(1.1);
+}

@@ -6,6 +6,7 @@ import SearchingPage from './components/SearchingPage';
 import HomePage from './components/HomePage'
 import SettingsPage from './components/SettingsPage'
 import ContactUsPage from './components/ContactUsPage'
+import ContactUsConfirmationPage from './components/ContactUsConfirmationPage'
 import LoginAuthenticate from './components/LoginAuthenticate'
 import SearchSubmit from './components/SearchSubmit'
 import RegisterAccount from './components/RegisterAccount';
@@ -190,6 +191,9 @@ export default class App extends Component {
           <Route exact path = '/ContactUsPage'>
             <ContactUsPage title='Contact Us'></ContactUsPage>
           </Route>
+          <Route exact path = '/ContactUsConfirmationPage'>
+            <ContactUsConfirmationPage title='Contact Us Confirmation'></ContactUsConfirmationPage>
+          </Route>
           <Route exact path = '/LoginAuthenticate'>
             <LoginAuthenticate 
               isAuthenticated={this.state.isAuthenticated}
@@ -201,10 +205,9 @@ export default class App extends Component {
             <SearchSubmit 
               isValidSubmit = { this.state.isValidSubmit }
             />
-          </Route>
+            </Route>
         </Switch>
       </Router>
     </div>
   );
-}
-}
+}}
