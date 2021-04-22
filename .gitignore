@@ -1,6 +1,4 @@
 .DS_Store
-my-app/package.json
-my-app/package-lock.json
 my-app/node-node_modules
 API/__pycache__
 API/example.db
@@ -18,11 +16,12 @@ URLFrontier.txt
 *.mp4
 *.zip
 .vscode
+.eslintcache
 
 # See https://help.github.com/articles/ignoring-files/ for more about ignoring files.
 
 # dependencies
-/node_modules
+node_modules/
 /.pnp
 .pnp.js
 
@@ -40,3 +39,6 @@ URLFrontier.txt
 npm-debug.log*
 yarn-debug.log*
 yarn-error.log*
+API/Pipfile
+API/Pipfile.lock
+package-lock.json
