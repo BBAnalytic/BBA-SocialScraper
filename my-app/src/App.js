@@ -8,6 +8,7 @@ import SettingsPage from './components/SettingsPage'
 import ContactUsPage from './components/ContactUsPage'
 import LoginAuthenticate from './components/LoginAuthenticate'
 import AdminSettingsPage from './components/AdminSettingsPage';
+import SettingsAuthenticate from './components/SettingsAuthenticate';
 //Test
 
 // Imports from react-router
@@ -32,7 +33,8 @@ export default class App extends Component {
           phrases: '',
           startDate: '',
           endDate: '',
-          fetchURL: ''
+          fetchURL: '',
+          userAdmin: true
       };
 
       this.handleLogin = this.handleLogin.bind(this);
@@ -64,6 +66,26 @@ export default class App extends Component {
                 this.setState({isAuthenticated: '/HomePage'})
               }
             }) 
+        
+        this.getUserType()
+  }
+  getUserType(){
+    const fetchURL = '/api/getAccount';
+    const fetchBody = {
+      method: 'POST',
+      body: JSON.stringify({
+        email: this.state.email
+      })
+    }
+
+    fetch(fetchURL, fetchBody)
+      .then(response => response.json())
+      .then(data => {
+          this.setState({
+            userAdmin: data.b_admin
+          })
+        }
+      )
   }
 
   getAuth(){
@@ -257,6 +279,11 @@ export default class App extends Component {
               title = 'Admin Settings'
               email = {this.state.email}
              />
+            <Route exact path = '/SettingsAuthenticate'>
+              <SettingsAuthenticate
+                userAdmin = {this.state.userAdmin}
+              />
+            </Route>
           </Route>
           {/* <Route exact path = '/RegisterAccount'>
             <RegisterAccount title = 'Register Account' />

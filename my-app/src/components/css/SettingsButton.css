@@ -1,3 +1,28 @@
+/* .navButtonContainer{
+    position: absolute;
+    top: 2vh;
+    right: 2vw;
+    font-family: Arial Black;
+    font-style: normal;
+    font-weight: 900;
+    font-size: 18px;
+    background: none;
+    border: none;
+    align-items: center;
+    text-align: center;
+    display: flex;
+    flex-direction: row;
+} */
+.homeButton{
+    position: absolute;
+    top: 2.7vh;
+    right: 15vw;
+}
+
+.homeButton:hover {
+    transform: scale(1.1);
+}
+
 .settingsButton{
     position: absolute;
     top: 2vh;
