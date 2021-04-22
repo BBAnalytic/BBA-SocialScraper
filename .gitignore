@@ -42,3 +42,4 @@ yarn-debug.log*
 yarn-error.log*
 API/Pipfile
 API/Pipfile.lock
+package-lock.json
