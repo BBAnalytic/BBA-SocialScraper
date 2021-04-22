@@ -4,7 +4,7 @@ Created on: 03/31/21
 Version: 1.3
 Description: File contains the database schema for the user database as well as endpoints that can be used to access backend processes and the database.
 """
-from flask import Flask, jsonify, request, json
+from flask import Flask, jsonify, request, json, send_file
 from flask_sqlalchemy import SQLAlchemy
 import sys, threading
 from datetime import date
@@ -76,7 +76,6 @@ def json_login_user():
             if(o_user.b_banned == False):
                # Check to see if the password matches the one in the DB
                if(s_inputPassword == o_user.s_password):
-                  print('OK Email/Password Validated')
                   return jsonify({'result': 'OK Email/Password Validated'})
                else:
                   return jsonify({'result': 'NOK Email/Password Invalid'})
@@ -188,7 +187,7 @@ def json_scrape_instagram():
                {
                   "email": "email@email.com",
                   "search_term": "#hashtag OR locationurl",
-                  "search_category": "the word: hashtag or the word: location"
+                  "search_category": "the word: 'hashtag' or the word: 'location'"
                }
    Outputs: JSON body signaling whether or not the information has been validated.    
             Looks like this:
@@ -211,6 +210,9 @@ def json_scrape_instagram():
                                     s_search_term=s_search_term,
                                     s_search_category=s_search_category)
 
+
+   o_scrape_helper.b_valid = b_url_extractor(o_scrape_helper)
+
    if o_scrape_helper.b_valid == False:
       return jsonify({'result': 'NOK Urlfrontier not populated'})
 
@@ -221,7 +223,8 @@ def json_scrape_instagram():
    o_thread.start()
    o_thread.join()
 
-   return jsonify({'result': 'OK Instagram Query Complete'})
+   # Send the scraped file back to user as attachment, set chache timeout to 2 so it doesn't get returned again on next call
+   return send_file(o_scrape_helper.s_zip_name, as_attachment = True, cache_timeout = 2)
 
 @m_app.route('/api/scrapeTwitter', methods=['POST'])
 def json_scrape_twitter():
@@ -274,7 +277,8 @@ def json_scrape_twitter():
    o_thread.start()
    o_thread.join()
 
-   return jsonify({'result': 'OK Twitter Query Complete'})
+   # Send the scraped file back to user as attachment, set chache timeout to 2 so it doesn't get returned again on next call
+   return send_file(o_scrape_helper.s_zip_name, as_attachment = True, cache_timeout = 2)
 
 @m_app.route('/api/getAllAccounts', methods=['GET'])
 def json_get_all_accounts():
@@ -498,7 +502,6 @@ def json_get_recent_searches():
                }
             ]
    """
-   print("Recent Searches Hit")
    # Grabbing input information
    json_request_data = json.loads(request.data)
    s_input_email = json_request_data['email']
@@ -526,7 +529,7 @@ def json_get_recent_searches():
             l_locations.pop(0)
             l_phrases.pop(0)
 
-            print(l_hashtags)
+            # print(l_hashtags)
 
             # Make one complete entry into the collection so we can add one object to the collection.
             json_object = {'s_platform': s_platform,
@@ -537,7 +540,7 @@ def json_get_recent_searches():
                            's_start_date': s_start_date,
                            's_end_date': s_end_date}
             json_collection += [json_object]
-            print(json_collection[0])
+            # print(json_collection[0])
       return jsonify(json_collection)
    else:
       return jsonify({'result': 'NOK User Not Found'})

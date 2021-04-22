@@ -37,6 +37,9 @@ def v_scrape_instagram(o_scrape_helper):
     s_url = f_url_frontier.readline()
     i_post_count = 1
 
+    # Add cookies to d_headers
+    d_headers['cookie'] = o_scrape_helper.s_cookies
+
     while s_url:
 
         # Sometimes instagram redirects you to login page so this exception needs to caught
