@@ -4,7 +4,7 @@ Created on: 03/31/21
 Version: 1.3
 Description: File contains the database schema for the user database as well as endpoints that can be used to access backend processes and the database.
 """
-from flask import Flask, jsonify, request, json
+from flask import Flask, jsonify, request, json, send_file
 from flask_sqlalchemy import SQLAlchemy
 import sys, threading
 from datetime import date
@@ -187,7 +187,7 @@ def json_scrape_instagram():
                {
                   "email": "email@email.com",
                   "search_term": "#hashtag OR locationurl",
-                  "search_category": "the word: hashtag or the word: location"
+                  "search_category": "the word: 'hashtag' or the word: 'location'"
                }
    Outputs: JSON body signaling whether or not the information has been validated.    
             Looks like this:
@@ -210,6 +210,9 @@ def json_scrape_instagram():
                                     s_search_term=s_search_term,
                                     s_search_category=s_search_category)
 
+
+   o_scrape_helper.b_valid = b_url_extractor(o_scrape_helper)
+
    if o_scrape_helper.b_valid == False:
       return jsonify({'result': 'NOK Urlfrontier not populated'})
 
@@ -220,7 +223,8 @@ def json_scrape_instagram():
    o_thread.start()
    o_thread.join()
 
-   return jsonify({'result': 'OK Instagram Query Complete'})
+   # Send the scraped file back to user as attachment, set chache timeout to 2 so it doesn't get returned again on next call
+   return send_file(o_scrape_helper.s_zip_name, as_attachment = True, cache_timeout = 2)
 
 @m_app.route('/api/scrapeTwitter', methods=['POST'])
 def json_scrape_twitter():
@@ -273,7 +277,8 @@ def json_scrape_twitter():
    o_thread.start()
    o_thread.join()
 
-   return jsonify({'result': 'OK Twitter Query Complete'})
+   # Send the scraped file back to user as attachment, set chache timeout to 2 so it doesn't get returned again on next call
+   return send_file(o_scrape_helper.s_zip_name, as_attachment = True, cache_timeout = 2)
 
 @m_app.route('/api/getAllAccounts', methods=['GET'])
 def json_get_all_accounts():

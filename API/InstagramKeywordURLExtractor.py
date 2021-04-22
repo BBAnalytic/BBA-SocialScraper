@@ -17,24 +17,16 @@ from selenium.common.exceptions import NoSuchElementException
 import re
 from InstagramConfig import s_path_to_driver, d_headers, d_login_dict
 
-
-
-def b_url_extractor(s_search, i_num_posts_wanted = 50, s_category = 'hashtag'):
+def b_url_extractor(o_scrape_helper):
     """ InstagramURLExtractor - 
     
     Scrapes links to instagram posts of the internet using selenium and compiles them into a text document 
     titled "URLFrontier.txt".
 
     Arguments:
-    - s_search   - string  - search term that is being scraped, whether its a hashtag or location
-                           - if scraping a hashtag, don't include the # - example: "blm"
-                           - if scraping a location, this must be the link to a location explore page on instagram 
-                           - example: "www.instagram.com/explore/locations/498870164/new-delhi/"
-    - i_posts    - integer - number of posts to be scraped
-                           - this feature is currently here temporarily and will be removed later.
-                           - default i_posts is 100
-    - s_category - string  - what type of search is being done "hashtag" or "location"
-                           - default s_category is "hashtag"
+
+    -o_scrape_helper    -object     - Scrape helper object holds relevent information needed for scraping
+                                    - This includes i_num_posts_wanted, s_search_term, and s_search_category
 
     Output: 
         The function returns a boolean value. If False is returned, that means there was invalid input 
@@ -51,12 +43,12 @@ def b_url_extractor(s_search, i_num_posts_wanted = 50, s_category = 'hashtag'):
 
 
     # Build link to explore page based of if searching hashtag or location
-    if(s_category == 'hashtag'):
-        s_explore_page = 'https://www.instagram.com/explore/tags/' + s_search + '/'
-    elif (s_category == 'location'):
+    if(o_scrape_helper.s_search_category == 'hashtag'):
+        s_explore_page = 'https://www.instagram.com/explore/tags/' + o_scrape_helper.s_search_term + '/'
+    elif (o_scrape_helper.s_search_category == 'location'):
         # Regex for location link triming off everything after number in link
         # If match, set equal to s_explore_page, else return false
-        re_valid_location = re.compile(r'(https:\/\/www\.instagram\.com\/explore\/locations\/)(\d)+').match(s_search)
+        re_valid_location = re.compile(r'(https:\/\/www\.instagram\.com\/explore\/locations\/)(\d)+').match(o_scrape_helper.s_search_term)
         if re_valid_location:
             s_explore_page = re_valid_location.group(0)
         else:
@@ -135,6 +127,14 @@ def b_url_extractor(s_search, i_num_posts_wanted = 50, s_category = 'hashtag'):
     # Load explore page to be scraped
     o_browser.get(s_explore_page)
 
+    # Grab cookies, format them into a neat string, and save to o_scrape_helper
+    # Cookies are needed later for PostExtractor process
+    o_cookies = o_browser.get_cookies()
+    o_scrape_helper.s_cookies = ''
+    for o_cookie in o_cookies:
+        o_scrape_helper.s_cookies = o_scrape_helper.s_cookies + o_cookie['name'] + '=' + o_cookie['value'] + '; '
+    o_scrape_helper.s_cookies = o_scrape_helper.s_cookies[:-2]
+
     # Try to find "Sorry, this page isn't available."
     # If found, bad input, return False
     try:
@@ -163,7 +163,7 @@ def b_url_extractor(s_search, i_num_posts_wanted = 50, s_category = 'hashtag'):
 
     # add escape if global variable ticked into this logic, eventually remove i_num_posts_wanted
     # While number of scraped posts is less than number of posts wanted and number of posts on page and not at bottom of page
-    while(i_num_scraped_posts < i_post_count and i_num_scraped_posts < i_num_posts_wanted and b_not_bottom):
+    while(i_num_scraped_posts < i_post_count and i_num_scraped_posts < o_scrape_helper.i_num_posts_wanted and b_not_bottom):
         l_explore_links = o_browser.find_elements_by_xpath("//a[@href]")
 
         # Try catch because sometimes posts haven't loaded yet 
@@ -188,7 +188,7 @@ def b_url_extractor(s_search, i_num_posts_wanted = 50, s_category = 'hashtag'):
         except:
             pass
 
-        if (s_category == 'location'):
+        if (o_scrape_helper.s_search_category == 'location'):
             i_height = o_browser.execute_script("return document.body.scrollHeight")  # Current browser height
 
             # Try to find loading div on page
