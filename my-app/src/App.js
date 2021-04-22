@@ -133,27 +133,28 @@ export default class App extends Component {
   //If Twitter Platform selected, POST Twitter info
   //Else Instagram Platform selected, POST Instagram info
 
-      // if (this.state.platformSelector == 'Twitter'){
-      //     fetch(this.state.fetchURL, {
-      //         method: 'POST',
-      //         body: JSON.stringify({
-      //             hashTags: this.state.hashTags,
-      //             locations: this.state.locations,
-      //             phrases: this.state.phrases,
-      //             earliestDate: this.state.startDate,
-      //             latestDate: this.state.endDate
-      //         })
-      //     })
-      // }
-      // else {
-      //     fetch(this.state.fetchURL, {
-      //         method: 'POST',
-      //         body: JSON.stringify({
-      //             searchTerm: this.state.hashTags,
-      //             searchCategory: 'hashtag'
-      //         })
-      //     })
-      // }
+      if (this.state.platformSelector == 'Twitter'){
+        console.log("Handle Search Hit")
+          fetch(this.state.fetchURL, {
+              method: 'POST',
+              body: JSON.stringify({
+                  hashTags: this.state.hashTags,
+                  locations: this.state.locations,
+                  phrases: this.state.phrases,
+                  earliestDate: this.state.startDate,
+                  latestDate: this.state.endDate
+              })
+          })
+      }
+      else {
+          fetch(this.state.fetchURL, {
+              method: 'POST',
+              body: JSON.stringify({
+                  searchTerm: this.state.hashTags,
+                  searchCategory: 'hashtag'
+              })
+          })
+      }
   }
 
   sendUser(){
