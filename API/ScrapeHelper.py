@@ -31,7 +31,8 @@ class ScrapeHelper:
                 s_to_date - string of to date, gets passed as MM/dd/yy
             instagram expects:
                 s_search_term - string that is either single hashtag or a location url
-                s_search_category - string of the category they are scraping either hashtag or location
+                              - ex. '#blm' or 'www.instagram.com/explore/locations/498870164/new-delhi/'
+                s_search_category - string of the category they are scraping either 'hashtag' or 'location'
         Output:
             No returned value but function results in a scrapehelper object ready to assist
             in scraping.
@@ -75,9 +76,12 @@ class ScrapeHelper:
             if s_search_category == 'hashtag':
                 # Cannot pass a hashtag to instagram so have to remove
                 s_search_term = s_search_term.replace('#','')
-            s_search_term = s_search_term
-            s_search_category = s_search_category
-            self.b_valid = b_url_extractor(s_search_term, s_category=s_search_category)
+            self.s_search_term = s_search_term              # Instagram Search term
+            self.s_search_category = s_search_category      # Instagram Search category
+            
+            self.b_valid = None                 # Bool weather Scrape was valid
+            self.i_num_posts_wanted = 50        # Int Number of posts to be scraped from Instagram
+            self.s_cookies = ''                 # String of cookies gathered from URlExtraction process
 
         self._v_name_working_directories(s_user)
         self.s_zip_name = f"{self.s_user}_{self.s_platform}_scrape.zip"

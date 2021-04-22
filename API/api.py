@@ -187,7 +187,7 @@ def json_scrape_instagram():
                {
                   "email": "email@email.com",
                   "search_term": "#hashtag OR locationurl",
-                  "search_category": "the word: hashtag or the word: location"
+                  "search_category": "the word: 'hashtag' or the word: 'location'"
                }
    Outputs: JSON body signaling whether or not the information has been validated.    
             Looks like this:
@@ -209,6 +209,9 @@ def json_scrape_instagram():
                                     'instagram',
                                     s_search_term=s_search_term,
                                     s_search_category=s_search_category)
+
+
+   o_scrape_helper.b_valid = b_url_extractor(o_scrape_helper)
 
    if o_scrape_helper.b_valid == False:
       return jsonify({'result': 'NOK Urlfrontier not populated'})
