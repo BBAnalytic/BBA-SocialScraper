@@ -76,7 +76,6 @@ def json_login_user():
             if(o_user.b_banned == False):
                # Check to see if the password matches the one in the DB
                if(s_inputPassword == o_user.s_password):
-                  print('OK Email/Password Validated')
                   return jsonify({'result': 'OK Email/Password Validated'})
                else:
                   return jsonify({'result': 'NOK Email/Password Invalid'})
@@ -498,7 +497,6 @@ def json_get_recent_searches():
                }
             ]
    """
-   print("Recent Searches Hit")
    # Grabbing input information
    json_request_data = json.loads(request.data)
    s_input_email = json_request_data['email']
@@ -526,7 +524,7 @@ def json_get_recent_searches():
             l_locations.pop(0)
             l_phrases.pop(0)
 
-            print(l_hashtags)
+            # print(l_hashtags)
 
             # Make one complete entry into the collection so we can add one object to the collection.
             json_object = {'s_platform': s_platform,
@@ -537,7 +535,7 @@ def json_get_recent_searches():
                            's_start_date': s_start_date,
                            's_end_date': s_end_date}
             json_collection += [json_object]
-            print(json_collection[0])
+            # print(json_collection[0])
       return jsonify(json_collection)
    else:
       return jsonify({'result': 'NOK User Not Found'})
