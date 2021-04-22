@@ -30,8 +30,8 @@ export default class App extends Component {
           password: '',
           isAuthenticated: '/LoginPage',
           platformSelector: 'Select',
-          hashTags: 'N/A',
-          locations: 'N/A',
+          hashTags: '',
+          locations: '',
           phrases: '',
           startDate: '',
           endDate: '',
@@ -106,10 +106,10 @@ export default class App extends Component {
     this.setState({platformSelector: newPlatform.target.value});
     
     if(newPlatform.target.value == "Twitter"){
-        this.setState({fetchURL: '/api/scrapeTwitter/'});
+        this.setState({fetchURL: '/api/scrapeTwitter'});
     }
     else{
-        this.setState({fetchURL: '/api/scrapeInstagram/'});
+        this.setState({fetchURL: '/api/scrapeInstagram'});
     }
   }
   handleHashTagsInput(newHashTags){
@@ -134,10 +134,15 @@ export default class App extends Component {
   //Else Instagram Platform selected, POST Instagram info
 
       if (this.state.platformSelector == 'Twitter'){
-        console.log("Handle Search Hit")
+        console.log("Handle Search Hit: " + this.state.fetchURL)
           fetch(this.state.fetchURL, {
               method: 'POST',
+              headers: {
+                'Accept': 'application/json',
+                'Content-Type': 'application/json',
+              },
               body: JSON.stringify({
+                  email: this.state.email,
                   hashTags: this.state.hashTags,
                   locations: this.state.locations,
                   phrases: this.state.phrases,
@@ -145,16 +150,47 @@ export default class App extends Component {
                   latestDate: this.state.endDate
               })
           })
+          .then(response => response.json())
+          .then(data => {
+            console.log("Hit Data Return")
+            console.log(data)
+          })
       }
       else {
           fetch(this.state.fetchURL, {
               method: 'POST',
+              headers: {
+                'Accept': 'application/json',
+                'Content-Type': 'application/json',
+              },
               body: JSON.stringify({
-                  searchTerm: this.state.hashTags,
-                  searchCategory: 'hashtag'
+                  email: this.state.email,
+                  search_term: this.state.hashTags,
+                  search_category: 'hashtag'
               })
-          })
+          }).then((response) => {
+            var a = response.body.getReader();
+            a.read().then(({ done, value }) => {
+                // console.log(new TextDecoder("utf-8").decode(value));
+                this.saveAsFile(new TextDecoder("utf-8").decode(value), 'filename');
+              }
+            );
+          });
       }
+  }
+  saveAsFile(text, filename) {
+    // Step 1: Create the blob object with the text you received
+    const type = 'application/text'; // modify or get it from response
+    const blob = new Object([text], {type});
+  
+    // Step 2: Create Blob Object URL for that blob
+    const url = URL.createObjectURL(blob);
+  
+    // Step 3: Trigger downloading the object using that URL
+    const a = document.createElement('a');
+    a.href = url;
+    a.download = filename;
+    a.click(); // triggering it manually
   }
 
   sendUser(){
