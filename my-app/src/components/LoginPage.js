@@ -3,17 +3,6 @@ import './css/LoginPage.css'
 import { Link, Redirect, withRouter, useHistory } from 'react-router-dom'
 
 export default class LoginPage extends Component {
-    constructor(props){
-        super(props);
-        this.state = {
-            email: '',
-            password: '',
-            submitted: false,
-            link: '/HomePage'
-        };
-
-        const emailRegex = /^[A-Za-z0-9._%+-]+@[A-Za-z0-9.-]+\.[a-z]{2,}$$/;
-    }
 
     render() {
         return (

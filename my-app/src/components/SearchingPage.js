@@ -37,7 +37,7 @@ export default class SearchingPage extends Component {
             .then(Response => Response.json())
             .then(data => {
                 const name = data.s_first + " " + data.s_last;
-                console.log(name + " and Hash: " + this.props.hashTags)
+                
                 this.setState({ 
                     user: name
                 })

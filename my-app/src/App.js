@@ -26,8 +26,8 @@ export default class App extends Component {
           password: '',
           isAuthenticated: '/LoginPage',
           platformSelector: 'Select',
-          hashTags: '',
-          locations: '',
+          hashTags: 'N/A',
+          locations: 'N/A',
           phrases: '',
           startDate: '',
           endDate: '',
@@ -58,7 +58,11 @@ export default class App extends Component {
         }
         fetch(fetchUrl, fetchBody)
             .then(response => response.json())
-            .then(data => this.setState({isAuthenticated: '/HomePage'})) 
+            .then(data => {
+              if (data.result == "OK Email/Password Validated"){
+                this.setState({isAuthenticated: '/HomePage'})
+              }
+            }) 
   }
 
   getAuth(){

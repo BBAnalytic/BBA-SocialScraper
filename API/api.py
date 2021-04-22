@@ -76,6 +76,7 @@ def json_login_user():
             if(o_user.b_banned == False):
                # Check to see if the password matches the one in the DB
                if(s_inputPassword == o_user.s_password):
+                  print('OK Email/Password Validated')
                   return jsonify({'result': 'OK Email/Password Validated'})
                else:
                   return jsonify({'result': 'NOK Email/Password Invalid'})
@@ -475,7 +476,7 @@ def json_get_recent_searches():
    platform,mm/dd/yyyy,#keyword#string,#location#string,#phrase#string, start date (mm/dd/yyyy), end date (mm/dd/yyyy)
    Arguements: None, but json body requested needs to look like this:
                {
-                  "s_user_email": "a@a.a",
+                  "email": "a@a.a",
                }
    Outputs: A deserialized version of the 5 most recent scrapes from the database. If a piece of information
             relating to a scrape doesn't exist, that return value will be empty.
@@ -499,7 +500,7 @@ def json_get_recent_searches():
    """
    # Grabbing input information
    json_request_data = json.loads(request.data)
-   s_input_email = json_request_data['s_user_email']
+   s_input_email = json_request_data['email']
 
    # Check for the user
    o_user = o_db.session.query(UserDB).filter_by(s_email = s_input_email).first()
@@ -524,15 +525,18 @@ def json_get_recent_searches():
             l_locations.pop(0)
             l_phrases.pop(0)
 
+            print(l_hashtags)
+
             # Make one complete entry into the collection so we can add one object to the collection.
-            json_object = {'s_platform': s_platform,
+            json_object = jsonify({'s_platform': s_platform,
                            's_date_scraped': s_date,
                            'l_hashtags': l_hashtags,
                            'l_location': l_locations,
                            'l_phrases': l_phrases,
                            's_start_date': s_start_date,
-                           's_end_date': s_end_date}
+                           's_end_date': s_end_date})
             json_collection += [json_object]
+            print(json_collection[0])
       return jsonify(json_collection)
    else:
       return jsonify({'result': 'NOK User Not Found'})

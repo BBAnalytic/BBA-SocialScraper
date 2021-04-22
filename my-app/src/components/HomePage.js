@@ -13,6 +13,8 @@ export default class HomePage extends Component {
     }
 
     componentDidMount(){
+        console.log('HomePage Mounted')
+        console.log(this.props.email)
         const fetchURL = '/api/getRecentSearches';
         const fetchContent = {
             method: 'POST',
@@ -24,13 +26,15 @@ export default class HomePage extends Component {
         fetch(fetchURL, fetchContent)
             .then(response => response.json())
             .then(data => {
-                console.log(data)
-                console.log(data[0])
-                console.log(data[0].s_platform)
                 this.setState({
                     scrapeHistory: data
                 })
             })
+    }
+
+    handleScrapeHistory(event){
+        //Set state of Search Criteria info
+        //Redirect to Search Criteria Page
     }
 
     render() {
@@ -52,9 +56,36 @@ export default class HomePage extends Component {
                                     <label>Scrape History</label>
                                 </div>
                                 <div className="scrapeHistoryButtonContainer">
-                                    <div className="scrapeHistoryButtonOne">
-                                        <button>{ this.state.scrapeHistory[0].s_platform }</button>
-                                    </div>
+                                    <button 
+                                        className="scrapeHistoryButtonOne"
+                                        onClick={ this.handleScrapeHistory }
+                                    >
+                                        { 'Twitter: #minecraft' /*this.state.scrapeHistory*/ }
+                                    </button>
+                                    <button 
+                                        className="scrapeHistoryButtonOne"
+                                        onClick={ this.handleScrapeHistory }
+                                    >
+                                        { 'Twitter: #minecraft' /*this.state.scrapeHistory*/ }
+                                    </button>
+                                    <button 
+                                        className="scrapeHistoryButtonOne"
+                                        onClick={ this.handleScrapeHistory }
+                                    >
+                                        { 'Twitter: #minecraft' /*this.state.scrapeHistory*/ }
+                                    </button>
+                                    <button 
+                                        className="scrapeHistoryButtonOne"
+                                        onClick={ this.handleScrapeHistory }
+                                    >
+                                        { 'Twitter: #minecraft' /*this.state.scrapeHistory*/ }
+                                    </button>
+                                    <button 
+                                        className="scrapeHistoryButtonOne"
+                                        onClick={ this.handleScrapeHistory }
+                                    >
+                                        { 'Twitter: #minecraft' /*this.state.scrapeHistory*/ }
+                                    </button>
                                 </div>
                             </div>
                             <div className="buttonContainer">
