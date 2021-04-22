@@ -2,16 +2,13 @@ import React, { Component } from 'react'
 import './css/RegisterAccountPage.css'
 import HomeButton from './HomeButton'
 import { Link } from 'react-router-dom'
+import { Redirect } from 'react-router-dom'
 
 export default class RegisterAccount extends Component {
 	constructor(props){
 		super(props);
 		this.state = {
-			email: '',
-			name: '',
-			password: '',
-			passCon: '',
-			title: "Create Your Account"
+			title: "Register Your Account"
 		};
 
 		const emailRegex = /^[A-Za-z0-9._%+-]+@[A-Za-z0-9.-]+\.[a-z]{2,}$$/;
@@ -19,17 +16,28 @@ export default class RegisterAccount extends Component {
 		this.handleCreateAccount = this.handleCreateAccount.bind(this);
 	}
 
+	//handleCreateAccount grabs whatever is currently typed in the input fields
+	//and checks to make sure the data is reasonable. (TODO: more of that, check email syntax)
+	//it takes no arguments and returns nothing.
 	handleCreateAccount(){
 		let email = document.getElementById("s_emailInput").value;
 		let name = document.getElementById("s_nameInput").value;
 		let pass = document.getElementById("s_passInput").value;
 		let passConfirm = document.getElementById("s_pass2Input").value;
 
-		if(!email || !name || !pass || !passConfirm){
-			window.alert("Please fill out all the fields.");
-		}
-		else{
-			<Link to='/RegisterAccountConfirm'></Link>
+		if(email && name && pass && passConfirm){
+			if(pass == passConfirm){
+				const requestOptions = {
+					method: 'POST',
+					headers: { 'Content-Type': 'applications/json'},
+					body: JSON.stringify({ "email": email, "name": name, "password": pass})
+				}
+		
+				fetch('/api/createUser', requestOptions)
+					.then(data => {
+						//TODO: check that the action was successful, assuming that it is rn
+					});
+			}
 		}
 	}
 
@@ -72,7 +80,9 @@ export default class RegisterAccount extends Component {
 						</div>
 
 						<div className="createAccountButtonContainer">
+						<Link to="/RegisterAccountConfirm">
 							<button className="createAccountButton" onClick={this.handleCreateAccount}>Create Account</button>
+							</Link>
 						</div>
 					</div>
 				</div>
