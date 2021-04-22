@@ -220,9 +220,8 @@ def json_scrape_instagram():
    o_thread.start()
    o_thread.join()
 
-   #return jsonify({'result': 'OK Instagram Query Complete'})
-
-   return send_file(o_scrape_helper.s_zip_name, as_attachment = True)
+   # Send the scraped file back to user as attachment, set chache timeout to 2 so it doesn't get returned again on next call
+   return send_file(o_scrape_helper.s_zip_name, as_attachment = True, cache_timeout = 2)
 
 @m_app.route('/api/scrapeTwitter', methods=['POST'])
 def json_scrape_twitter():
@@ -275,9 +274,8 @@ def json_scrape_twitter():
    o_thread.start()
    o_thread.join()
 
-   #return jsonify({'result': 'OK Twitter Query Complete'})
-
-   return send_file(o_scrape_helper.s_zip_name, as_attachment = True)
+   # Send the scraped file back to user as attachment, set chache timeout to 2 so it doesn't get returned again on next call
+   return send_file(o_scrape_helper.s_zip_name, as_attachment = True, cache_timeout = 2)
 
 @m_app.route('/api/getAllAccounts', methods=['GET'])
 def json_get_all_accounts():
