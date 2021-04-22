@@ -8,7 +8,8 @@ import SettingsPage from './components/SettingsPage'
 import ContactUsPage from './components/ContactUsPage'
 import LoginAuthenticate from './components/LoginAuthenticate'
 import SearchSubmit from './components/SearchSubmit'
-// import RegisterAccountConfirm from './components/RegisterAccountConfirm'
+import RegisterAccount from './components/RegisterAccount';
+import RegisterAccountConfirm from './components/RegisterAccountConfirm';
 //Test
 
 // Imports from react-router
@@ -128,6 +129,12 @@ export default class App extends Component {
               handlePasswordChange = {this.handlePasswordChange} 
               handleLogin = {this.handleLogin} 
             />
+          </Route>
+          <Route exact path = '/RegisterAccount'>
+            <RegisterAccount title = 'Register Account' />
+          </Route>
+          <Route exact path = '/RegisterAccountConfirm'>
+            <RegisterAccountConfirm title = 'Register Account Confirm' />
           </Route>
           <Route exact path = '/HomePage'>
             <HomePage 
