@@ -2,29 +2,18 @@ import React, { Component } from 'react'
 import { Link } from 'react-router-dom';
 import HomeButton from './HomeButton';
 import './css/AdminSettingsPage.css'
-
+import { confirmAlert } from 'react-confirm-alert'; 
+import 'react-confirm-alert/src/react-confirm-alert.css'
 
 export default class AdminSettingsPage extends Component {
 	constructor(props){
 		super(props);
 		this.state = {
-			email: '',
-			downloadLocation: '',
-			approved: false,
-			deleted: false,
-			saved: false,
-			scrapeHistoryToggle: false,
-			advancedSearchToggle: false,
-			emailNotifToggle: false,
 			json: {},
-			allAccounts: [],
 			pageLoad: true,			//false when it's not meant to load, true when it's meant to load. starts at true so that it can initially load.
-			usersLoaded: false,
-			title: 'Admin Settings',
-			link: '/LoginPage'
+			usersLoaded: false,		//false when the users haven't been fetched yet, is set to true when ready to display the fetched accounts
+			title: 'Admin Settings'
 		};
-
-		const emailRegex = /^[A-Za-z0-9._%+-]+@[A-Za-z0-9.-]+\.[a-z]{2,}$$/;
 
 		this.handleApproved = this.handleLogout.bind(this);
 		this.handleGetUsers = this.handleGetUsers.bind(this);
@@ -36,11 +25,11 @@ export default class AdminSettingsPage extends Component {
 		
 	}
 
-	handleAlert(event){
-		window.alert("test");
-	}
-
-	//createList takes the json data and turns it into a list format with the necessary className tags for styling
+	//createList fetches the json data and loops over each account in the database
+	//with each account, four buttons are created: Approve, Admin, Delete, and Ban
+	//each button is connected onclick to its respective function above
+	//when styling CSS, keep the containers around each button directly on each button, otherwise clickability will be affected
+	//RETURNS: accounts, an array variable that has all of the account information and labels for styling (as shown below)
 	createList = () => {
 		let accounts = [];
 
@@ -64,7 +53,7 @@ export default class AdminSettingsPage extends Component {
 								{!this.state.json[i].b_admin && !this.state.json[i].b_banned && <button className="btn-admin" onClick={() => this.handleAdminUser(s_tempEmail, true)}>Admin</button>}
 							</div>
 							<div className="btn-deleteContainer">
-								<button className="btn-delete" onClick={() => this.handleDeleteUser(s_tempEmail)}>Delete</button>
+								<button className="btn-delete" onClick={() => this.deleteUserAlert(s_tempEmail)}>Delete</button>
 							</div>
 							<div className="btn-banContainer">
 								{!this.state.json[i].b_banned && <button className="btn-banUser" onClick={() => this.handleBanUser(s_tempEmail, true)}>Ban</button>}
@@ -78,14 +67,10 @@ export default class AdminSettingsPage extends Component {
 		return accounts;
 	}
 
-	// to access data in the json file in react:
-	// .then(data => response.json())
-	// .then(data => {
-		// console.log(data[0].s_email);
-		// console.log(data[1].s_email);
-	// })
-	//this will grab each one, just replace the array numbers and the s_email with wanted values
-	handleGetUsers(event){
+	//handleGetUsers takes no arguments
+	//it fetches the data from the endpoint getAllAccounts, which gives all the accounts in the database.
+	//It returns nothing, but sets a prop named json to the result from the fetch
+	handleGetUsers(){
 		//fetch from the endpoint getAllAccounts, take in json data
 		fetch('/api/getAllAccounts')
 			.then(res => res.json())
@@ -98,6 +83,10 @@ export default class AdminSettingsPage extends Component {
 		});
 	}
 
+	//handleApproveUser takes one argument: email, which is the user's email address for database use
+	//it posts to the endpoint setApprove, sending the email address
+	//this approves the user and marks their approval in the database to true
+	//handleApproveUser returns nothing
 	handleApproveUser(email){
 		const requestOptions = {
 			method: 'POST',
@@ -110,11 +99,29 @@ export default class AdminSettingsPage extends Component {
 				this.setState({
 					pageLoad: true
 				})
-				// TODO: get the confirmation and error check
+				
+				//This is not functioning.
+				//alert the user if there has been an error
+				// if(data.result != 'OK'){
+				// 	this.genericErrorAlert(email, 'handleApproveUser', data.result);
+				// }
 			})
 	}
 
+	//This is not functioning. 
+	// genericErrorAlert(s_email, s_funcName,){
+	// 	confirmAlert({
+	// 		title: 'Error Warning',
+	// 		message: 'Unable to complete request. Function ' + s_funcName + ' could not process ' + s_email + ' Please click OK and try refreshing the page.',
+	// 		buttons: [
+	// 			{label: 'OK'}
+	// 		]
+	// 	})
+	// }
+
 	handleAdminUser(email, isAdmin){
+		this.handleApproveUser(email);
+
 		const requestOptions = {
 			method: 'POST',
 			headers: { 'Content-Type': 'applications/json'},
@@ -128,6 +135,23 @@ export default class AdminSettingsPage extends Component {
 				})
 				// TODO: get the confirmation and error check
 			});
+	}
+
+	deleteUserAlert(email){
+		confirmAlert({
+			title: 'Confirm Deletion',
+			message: 'Are you sure you want to delete '+ email + '\'s account?',
+			buttons: [
+			  {
+				label: 'Yes',
+				onClick: () => {this.handleDeleteUser(email)}
+			  },
+			  {
+				label: 'No',
+				onClick: () => {return false}
+			  }
+			]
+		  })
 	}
 
 	handleDeleteUser(email){
@@ -169,7 +193,7 @@ export default class AdminSettingsPage extends Component {
 			<div className="adminSettingsPageContent">
 				<div className="settingsPageTitleContainer">
 					<text className="adminSettingsPageTitle">
-						{this.props.title}
+						{this.state.title}
 					</text>
 				</div>
 
@@ -193,8 +217,12 @@ export default class AdminSettingsPage extends Component {
 						<div className="approveScrollingContainer">
 							<div className="approveScrollBox">
 								{/* The two following lines are what grab the accounts from the database (calling handleGetUsers()) and display the list (createList)  */}
-								{this.state.pageLoad ? this.handleGetUsers() : console.log("Cannot reload.")}
-								{this.state.usersLoaded ? this.createList() : console.log('No data.')}
+								{/* {this.state.pageLoad ? this.handleGetUsers() : console.log("Cannot reload.")}
+								{this.state.usersLoaded ? this.createList() : console.log('No data.')} */}
+
+								{/* The two following lines are the same thing as above, but without the console logging if no data. */}
+								{this.state.pageLoad && this.handleGetUsers()}
+								{this.state.usersLoaded && this.createList()}
 
 							</div>
 						</div>
@@ -207,7 +235,7 @@ export default class AdminSettingsPage extends Component {
 						</div>
 						<div className="btn-deactivateContainer">
 							<Link to='/LoginPage'>
-								<button className="deactivateAccountButton">Deactivate Account</button>
+								<button className="deactivateAccountButton" onClick={() => this.handleDeleteUser(this.props.email)}>Deactivate Account</button>
 							</Link>
 						</div>
 					</div>

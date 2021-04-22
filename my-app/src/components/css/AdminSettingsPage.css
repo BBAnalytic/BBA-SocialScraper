@@ -33,56 +33,55 @@
 .btn-approveContainer{
 	position: absolute;
 	height: 35px;
-	width: 55px;
+	width: 65px;
 	margin-top: 5vh;
+	margin-left: 1vw;
 }
 .btn-approve{
 	height: 35px;
 	width: 65px;
 	margin-top: 0vh;
-	margin-left: 1vw;
+	margin-left: 0vw;
 }
 
 .btn-adminContainer{
 	position: absolute;
 	height: 35px;
-	width: 55px;
-	margin-left: 3vw;
+	width: 65px;
+	margin-left: 7vw;
 	margin-top: 5vh;
 }
 .btn-admin{
 	height: 35px;
 	width: 65px;
 	margin-top: 0vh;
-	margin-left: 4vw;
-}
-
-.btn-banContainer{
-	position: absolute;
-	height: 35px;
-	width: 55px;
-	margin-top: 5vh;
-	margin-left: 15vw;
-}
-.btn-banUser{
-	position: absolute;
-	height: 35px;
-	width: 65px;
-	margin-left: 2vw;
-	margin-top: 0vh;
+	margin-left: 0vw;
 }
 
 .btn-deleteContainer{
 	position: absolute;
 	height: 35px;
-	width: 55px;
+	width: 65px;
 	margin-left: 13vw;
-	margin-top: 0vh;
+	margin-top: 5vh;
 }
 .btn-delete{
 	height: 35px;
 	width: 65px;
+	margin-top: 0vh;
+}
+
+.btn-banContainer{
+	position: absolute;
+	height: 35px;
+	width: 65px;
 	margin-top: 5vh;
+	margin-left: 19vw;
+}
+.btn-banUser{
+	height: 35px;
+	width: 65px;
+	margin-top: 0vh;
 }
 
 .accountInScrollBoxContainer{
