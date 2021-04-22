@@ -1,5 +1,14 @@
 # Specify the base image
 FROM ubuntu:18.04
+# Installing apt-get package manager 
+RUN  apt-get update -y && \
+     apt-get upgrade -y && \
+     apt-get dist-upgrade -y && \
+     apt-get -y autoremove && \
+     apt-get clean
+RUN apt-get install -y zip 
+
+CMD ["Bash"]
 
 # Specify language being used.
 FROM python:3
