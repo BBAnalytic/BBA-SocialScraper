@@ -1,0 +1,299 @@
+.accountInScrollBox{
+	list-style-type: none;
+    text-align: left;
+	margin-left: 2vw;
+	position: absolute;
+	width: 15vw;
+}
+
+.emailInScrollBox{
+	list-style-type: none;
+	text-align: left;
+	font-size: 12px;
+	margin-top: 3vh;
+	margin-left: 2vw;
+	position: relative;
+}
+
+.nameContainer{
+	position: relative;
+	width: 10vw;
+}
+
+.btn-containersAccounts{
+	display: flex;
+	flex-direction: column;
+	position: relative;
+	height: 10vh;
+	width: 50vw;
+	margin-top: -8vh;
+	margin-left: 20vw;
+}
+
+.btn-approveContainer{
+	position: absolute;
+	height: 35px;
+	width: 65px;
+	margin-top: 5vh;
+	margin-left: 1vw;
+}
+.btn-approve{
+	height: 35px;
+	width: 65px;
+	margin-top: 0vh;
+	margin-left: 0vw;
+}
+
+.btn-adminContainer{
+	position: absolute;
+	height: 35px;
+	width: 65px;
+	margin-left: 7vw;
+	margin-top: 5vh;
+}
+.btn-admin{
+	height: 35px;
+	width: 65px;
+	margin-top: 0vh;
+	margin-left: 0vw;
+}
+
+.btn-deleteContainer{
+	position: absolute;
+	height: 35px;
+	width: 65px;
+	margin-left: 13vw;
+	margin-top: 5vh;
+}
+.btn-delete{
+	height: 35px;
+	width: 65px;
+	margin-top: 0vh;
+}
+
+.btn-banContainer{
+	position: absolute;
+	height: 35px;
+	width: 65px;
+	margin-top: 5vh;
+	margin-left: 19vw;
+}
+.btn-banUser{
+	height: 35px;
+	width: 65px;
+	margin-top: 0vh;
+}
+
+.accountInScrollBoxContainer{
+	height: 10vh;
+	border: 1px solid black;
+}
+
+.settingsPageTitleContainer{
+	position: absolute;
+    top: 2vh;
+    left: 10vw;
+    box-sizing: content-box;
+    background-color: #FFFFFF;
+    z-index: 1;
+    width: 360px;
+    height: 30px;
+}
+
+.adminSettingsPageTitle{
+	font-family: Arial Black;
+    font-style: normal;
+    font-weight: 900;
+    font-size: 18px;
+}
+
+.settingsPageContainer{
+	position: relative;
+	height: 90vh;
+	width: 95vw;
+	border: 2px solid black;
+	margin-left: auto;
+	margin-right: auto;
+	margin-top: auto;
+	margin-bottom: auto;
+	display: flex;
+	flex-direction: column;
+}
+
+.homeButtonContainer{
+	position: relative;
+	width: 5vw;
+	margin-right: 3vw;
+	margin-left: 87vw;
+	justify-content: right;
+}
+
+.emailDownloadContainer{
+	display: flex;
+	flex-direction: column;
+	margin-left: 0vw;
+	width: 70vw;
+	height: 10vh;
+}
+
+.emailContainer{
+	width: 20vw;
+	height: 3vh;
+	font-family: Arial Black;
+    font-style: normal;
+	margin-right: 0vw;
+	margin-left: 0vw;
+	margin-top: 1vh;
+	margin-bottom: 1vh;
+}
+
+.emailText{
+	margin-left: 0vw;
+	font-family: Arial;
+	font-style: normal;
+	font-size: 16;
+	margin-right: 5vw;
+	width: 6vw;
+}
+
+.homeButtonAdmin{
+	height: 100px;
+    width: 300px;
+    padding-bottom: 20px;
+}
+
+.deactivateAccountButton:hover{
+	transform: scale(1.1);
+}
+
+.scrapeHistoryToggle{
+	height: 5vh;
+	width: 15vw;
+	border-radius: 10px;
+	border:#000000;
+}
+.scrapeHistoryToggleContainer{
+	width: 15vw;
+}
+
+.adminSettingsPageContent{
+	height: 100vh;
+	width: 100vw;
+	display: flex;
+}
+
+.secondRowContainer{
+	display: flex;
+	flex-direction: row;
+	position: absolute;
+	margin-top: 5vh;
+	height: 20vh;
+}
+
+.scrapeHistoryToggle:hover{
+	transform: scale(1.1);
+}
+
+.approveAccountsTitleContainer{
+	box-sizing: content-box;
+	background-color: #FFFFFF;
+	z-index: 1;
+	width: 25vw;
+	height: 5vh;
+	/* margin-left: 15vw; */
+}
+
+.approveAccountsTitle{
+	font-family: Arial Black;
+    font-style: normal;
+    font-size: 16px;
+	position: absolute;
+	margin-top: 20vh;
+	margin-left: 25vw;
+	width: 20vw;
+}
+
+.approveScrollingContainer{
+	position: absolute;
+	height: 35vh;
+	width: 50vw;
+	border: 2px solid black;
+	margin-left: 23vw;
+	margin-right: 23vw;
+	margin-top: 20vh;
+	margin-bottom: auto;
+	display: flex;
+	flex-direction: row;
+	justify-content: center;
+	align-items: center;
+}
+
+.approveScrollBox{
+	flex: 1;
+	height: 35vh;
+	width: 50vw;
+	border: 1px solid #ccc;
+	font: 16px/26px Georgia, Garamond, Serif;
+	overflow-y: scroll;
+	overflow-x: scroll;
+}
+
+.bottomButtonsContainerA{
+	display: flex;
+	flex-direction: row;
+	justify-content: center;
+	margin-top: 75vh;
+}
+
+.delAppButtonsContainer{
+	display: flex;
+	flex-direction: row;
+	justify-content: center;
+}
+
+.logoutButtonContainer{
+	margin-left: 0px;
+	margin-right: 85vw;
+	margin-top: -5vh;
+}
+
+.logoutButton{
+	font-family: Arial Black;
+    font-style: normal;
+	font-weight: 800;
+    font-size: 15px;
+    line-height: 20px;
+    width: 150px;
+    height: 50px;
+    text-align: center;
+    color: #FFFFFF;
+    background: #0094FF;
+    border: 1px solid #000000;
+    box-sizing: border-box;
+}
+
+.btn-deactivateContainer{
+	position: absolute;
+	height: 10vh;
+	width: 12vw;
+	margin-top: -4vh;
+	margin-left: 78vw;
+}
+.deactivateAccountButton{
+	font-family: Arial Black;
+    font-style: normal;
+	font-weight: 800;
+    font-size: 15px;
+    line-height: 20px;
+    width: 150px;
+    height: 50px;
+    text-align: center;
+    color: #FFFFFF;
+    background: #a4a7a7;
+    border: 1px solid #000000;
+    box-sizing: border-box;
+}
+
+.logoutButton:hover{
+	transform: scale(1.1);
+}

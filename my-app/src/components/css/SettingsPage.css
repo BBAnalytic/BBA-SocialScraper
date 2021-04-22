@@ -1,4 +1,12 @@
-.settingsPageTitleContainer{
+.settingsPageContentS{
+	height: 100vh;
+	width: 100vw;
+	display: flex;
+	align-items: center;
+	justify-content: center;
+}
+
+.settingsPageTitleContainerS{
 	position:absolute;
 	top: 3vh;
 	left: 15vw;
@@ -9,59 +17,57 @@
 	height: 5vh;
 }
 
-.settingsPageTitle{
+.settingsPageTitleS{
 	font-family: Arial Black;
     font-style: normal;
     font-weight: 900;
-    font-size: 24px;
+    font-size: 18px;
 }
 
-.settingsPageContainer{
+.settingsPageContainerS{
 	position: relative;
 	height: 90vh;
 	width: 95vw;
 	border: 2px solid black;
 	margin-left: auto;
 	margin-right: auto;
-	margin-top: auto;
+	margin-top: 5vh;
 	margin-bottom: auto;
 	display: flex;
 	flex-direction: column;
 }
 
-.homeButtonContainer{
-	position: relative;
-	width: 5vw;
-	margin-right: 3vw;
-	margin-left: 87vw;
-	justify-content: right;
+.secondRowContainer{
+	display: flex;
+	flex-direction: row;
+	margin-top: 15vh;
 }
 
-.emailDownloadContainer{
+.emailDownloadContainerS{
 	display: flex;
 	flex-direction: column;
 	margin-left: 0vw;
 	width: 70vw;
-	height: 23vh;
+	height: 10vh;
 }
 
-.emailContainer{
+.emailContainerS{
 	width: 50vw;
-	height: 5vh;
+	height: 10vh;
 	font-family: Arial Black;
     font-style: normal;
 	margin-right: 0vw;
 	margin-left: 0vw;
-	margin-top: 5vh;
-	margin-bottom: 2vh;
+	margin-top: 1vh;
+	margin-bottom: 1vh;
 }
 
-.emailText{
+.emailTextS{
 	margin-left: 0vw;
 	font-family: Arial;
 	font-style: normal;
 	font-size: 16;
-	margin-right: 5vw;
+	margin-right: 18vw;
 	width: 6vw;
 }
 
@@ -77,7 +83,7 @@
 .formContainer{
 	display: flex;
 	flex-direction: column;
-	height: 25vh;
+	height: 10vh;
 	width: 50vw;
 	margin-top: 0vh;
 }
@@ -106,7 +112,7 @@
 	flex-direction: row;
 }
 
-.emailInputBox{
+.emailInputBoxS{
 	margin-top: 0vh;
 	margin-right: 0vw;
 	margin-left: auto;
@@ -125,7 +131,7 @@
 	margin-left: 20vw;
 }
 
-.topButtonsContainer{
+.topButtonsContainerS{
 	margin-top: 0vh;
 }
 
@@ -169,13 +175,22 @@
 	padding-bottom: 20px;
 }
 
+.homeButtonAdmin{
+	height: 100px;
+    width: 300px;
+    padding-bottom: 20px;
+}
+
 .contactRequestButton:hover, .editUsersButton:hover, .deactivateAccountButton:hover{
 	transform: scale(1.1);
 }
 
 .toggleButtonsContainer{
+	position: absolute;
 	width: 20vw;
 	margin-top: 2vh;
+	margin-right: 0vw;
+	margin-left: 58vw;
 }
 
 .scrapeHistoryToggle{
@@ -183,6 +198,7 @@
 	width: 15vw;
 	border-radius: 10px;
 	border:#000000;
+	margin-right: 10vw;
 }
 .scrapeHistoryToggleContainer{
 	width: 15vw;
@@ -220,7 +236,8 @@
 .secondRowContainer{
 	display: flex;
 	flex-direction: row;
-	margin-top: 10vh;
+	margin-top: 1vh;
+	height: 20vh;
 }
 
 .scrapeHistoryToggle:hover, .advancedSearchToggle:hover, .emailNotifToggle:hover{
@@ -269,7 +286,7 @@
 	overflow: auto;
 }
 
-.bottomButtonsContainer{
+.bottomButtonsContainerS{
 	display: flex;
 	flex-direction: row;
 	justify-content: center;
@@ -333,10 +350,22 @@
     background: #0094FF;
     border: 1px solid #000000;
     box-sizing: border-box;
+	margin-left: 8vw;
+	margin-right: 0vw;
+}
+
+.logoutButtonContainerS{
 	margin-left: 1vw;
 	margin-right: 20vw;
 	margin-bottom: 0px;
 	margin-top: 1vh;
+}
+
+.saveChangesButtonContainerS{
+	margin-left: 72vw;
+	margin-right: 1vw;
+	margin-bottom: 10px;
+	margin-top: 18vh;
 }
 
 .saveChangesButton{
@@ -352,10 +381,6 @@
     background: #0094FF;
     border: 1px solid #000000;
     box-sizing: border-box;
-	margin-left: 65vw;
-	margin-right: 1vw;
-	margin-bottom: 0px;
-	margin-top: 30vh;
 }
 
 .deactivateAccountButton{
