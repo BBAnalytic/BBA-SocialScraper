@@ -19,35 +19,26 @@ export default class RegisterAccount extends Component {
 		this.handleCreateAccount = this.handleCreateAccount.bind(this);
 	}
 
-	handleCreateAccount(email, name, pass, passConfirm){
-		if(pass == passConfirm){
+	handleCreateAccount(){
+		let email = document.getElementById("s_emailInput").value;
+		let name = document.getElementById("s_nameInput").value;
+		let pass = document.getElementById("s_passInput").value;
+		let passConfirm = document.getElementById("s_pass2Input").value;
 
+		if(!email || !name || !pass || !passConfirm){
+			window.alert("Please fill out all the fields.");
 		}
 		else{
-			window.alert("The passwords do not match.")
+			<Link to='/RegisterAccountConfirm'></Link>
 		}
 	}
-
-	updateEmailInput(email){
-
-	}
-	updateNameInput(name){
-
-	}
-	updatePasswordInput(pass){
-		
-	}
-	updatePassCon(passCon){
-
-	}
-
 
 	render(){
 		return(
 			<div className="registerAccountPageContent">
 				<div className="registerAccountPageTitleContainer">
 					<label className="registerAccountPageTitle">
-						Create Your Account
+						{this.state.title}
 					</label>
 				</div>
 
@@ -57,19 +48,19 @@ export default class RegisterAccount extends Component {
 							<div className="formContainer">
 								<div className="emailContainerR">
 									<label className="emailTextR">Email: </label>
-									<input type="email" className="emailInputBoxR" placeholder="first.last@email.com"></input>
+									<input type="email" id="s_emailInput" className="emailInputBoxR" placeholder="first.last@email.com"></input>
 								</div>
 								<div className="nameContainer">
 									<label className="nameText">Name: </label>
-									<input type="text" className="nameInputBoxR" placeHolder="First M. Last"></input>
+									<input type="text" id="s_nameInput" className="nameInputBoxR" placeHolder="First M. Last"></input>
 								</div>
 								<div className="passwordContainer">
 									<label className="passwordText">Password: </label>
-									<input type="password" className="passwordInputBox" placeHolder="*********"></input>
+									<input type="password" id="s_passInput" className="passwordInputBox" placeHolder="*********"></input>
 								</div>
 								<div className="passwordConfirmContainer">
 									<label className="passwordConfirmText">Re-type Password: </label>
-									<input type="password" className="passwordConfirmInputBox" placeHolder="*********"></input>
+									<input type="password" id="s_pass2Input" className="passwordConfirmInputBox" placeHolder="*********"></input>
 								</div>
 							</div>
 						</form>
@@ -81,9 +72,7 @@ export default class RegisterAccount extends Component {
 						</div>
 
 						<div className="createAccountButtonContainer">
-							<Link to='/RegisterAccountConfirm'>
-								<button className="createAccountButton" onClick={this.handleCreateAccount()}>Create Account</button>
-							</Link>
+							<button className="createAccountButton" onClick={this.handleCreateAccount}>Create Account</button>
 						</div>
 					</div>
 				</div>
