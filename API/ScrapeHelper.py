@@ -100,9 +100,6 @@ class ScrapeHelper:
         # Split dates by '/' to get a 3 element list ['MM','dd','yy']
         s_split_from_date = s_unparsed_from_date.split('/')
         s_split_to_date = s_unparsed_to_date.split('/')
-        # Adding leading 20 to year 
-        s_split_from_date[2] = f'20{s_split_from_date[2]}'
-        s_split_to_date[2] = f'20{s_split_to_date[2]}'
         # Rebuilding the string but following yyyyMMddHHmm format, I add on the hours and minutes
         # 0000 gets added for from date and 2359 gets added for to date
         s_from_date = f'{s_split_from_date[2]}{s_split_from_date[0]}{s_split_from_date[1]}0000'
