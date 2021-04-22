@@ -7,7 +7,7 @@ export default class SettingsPage extends Component {
 	constructor(props){
 		super(props);
 		this.state = {
-			email: 'a@a.a'
+			email: ''
 		};
 
 		this.handleDeleteUser = this.handleDeleteUser.bind(this);
@@ -25,10 +25,6 @@ export default class SettingsPage extends Component {
 				console.log('deleted');
 				// TODO: get the confirmation and error check
 			});
-	}
-
-	handleGetEmail(){
-
 	}
 
 	render(){
@@ -68,9 +64,11 @@ export default class SettingsPage extends Component {
 			)
 		}
 		else{
-			<div>
-				<Redirect to='/LoginPage'></Redirect>
-			</div>
+			return(
+				<div>
+					<Redirect to='/LoginPage'></Redirect>
+				</div>
+			)
 		}
 	}
 }
