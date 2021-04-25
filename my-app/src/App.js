@@ -11,7 +11,7 @@ import AdminSettingsPage from './components/AdminSettingsPage';
 import SettingsAuthenticate from './components/SettingsAuthenticate';
 import RegisterAccount from './components/RegisterAccount';
 import RegisterAccountConfirm from './components/RegisterAccountConfirm';
-//Test
+
 
 // Imports from react-router
 import {
@@ -163,12 +163,12 @@ export default class App extends Component {
             document.location = url
           }) 
       }
-      else {
+      else if(this.state.hashTags != ""){
         fetch(this.state.fetchURL, {
             method: 'POST',
             body: JSON.stringify({
-              email: "d@d.d",
-              search_term: "#ligma",
+              email: this.state.email,
+              search_term: this.state.hashTags,
               search_category: "hashtag"
           })
         })
@@ -177,7 +177,23 @@ export default class App extends Component {
           const url = URL.createObjectURL(blob)
           document.location = url
         })          
-  }
+      }
+      else if(this.state.locations != ""){
+        fetch(this.state.fetchURL, {
+          method: 'POST',
+          body: JSON.stringify({
+            email: this.state.email,
+            search_term: this.state.locations,
+            search_category: "location"
+          })
+        })
+        .then(res => res.blob())
+        .then(blob => {
+          const url = URL.createObjectURL(blob)
+          document.location = url
+        }) 
+      }
+
 }
 
 
@@ -296,7 +312,7 @@ export default class App extends Component {
               title = 'Searching'
               email = { this.state.email }
               user = { this.sendUser }
-              hashTags = { this.state.hashTags /*this.sendHashTags()*/ }
+              hashTags = { this.state.hashTags }
               locations = { this.sendLocations() }
               phrases = { this.sendPhrases() }
             />

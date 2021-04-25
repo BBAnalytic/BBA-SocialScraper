@@ -3,8 +3,6 @@ import { Redirect } from 'react-router'
 
 export default class SettingsAuthenticate extends Component {
     render() {
-        console.log(this.props.userAdmin);
-        console.log("We go to SettingsAuth");
         if(this.props.userAdmin == true){
             return (
                 <div>
