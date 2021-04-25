@@ -40,7 +40,8 @@ export default class App extends Component {
           startDate: '',
           endDate: '',
           fetchURL: '',
-          userAdmin: true
+          userAdmin: true,
+          isHidden: false
       };
 
       this.handleLogin = this.handleLogin.bind(this);
@@ -108,12 +109,18 @@ export default class App extends Component {
 
   handleSelection(newPlatform){
     this.setState({platformSelector: newPlatform.target.value});
-    
     if(newPlatform.target.value == "Twitter"){
-        this.setState({fetchURL: '/api/scrapeTwitter'});
+        this.setState({
+          fetchURL: '/api/scrapeTwitter',
+          isHidden: false
+        });
+        
     }
     else{
-        this.setState({fetchURL: '/api/scrapeInstagram'});
+        this.setState({
+          fetchURL: '/api/scrapeInstagram',
+          isHidden: true
+        });
     }
   }
   handleHashTagsInput(newHashTags){
@@ -280,6 +287,7 @@ export default class App extends Component {
               handleStartDateInput = {this.handleStartDateInput}
               handleEndDateInput = {this.handleEndDateInput}
               handleSearch = {this.handleSearch}
+              hideComponent = {this.state.isHidden}
             />
           </Route>
           <Route exact path = '/SearchingPage'>

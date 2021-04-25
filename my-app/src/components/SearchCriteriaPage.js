@@ -78,6 +78,7 @@ export default class SearchCriteriaPage extends Component {
                                         searchCriteriaValue={this.props.hashTags} 
                                         onSearchCriteriaChange={this.props.handleHashTagsInput}
                                     />
+                                    
                                     <SearchCriteriaInput 
                                         searchCriteriaLabel="Location(s):" 
                                         searchCriteriaExample="Example: #newyork#UnitedStates#bangor,ME" 
@@ -85,26 +86,32 @@ export default class SearchCriteriaPage extends Component {
                                         searchCriteriaValue={this.props.locations} 
                                         onSearchCriteriaChange={this.props.handleLocationsInput}
                                     />
-                                    <SearchCriteriaInput 
-                                        searchCriteriaLabel="Phrase(s):" 
-                                        searchCriteriaExample="Example: #working late#I love blackbears" 
-                                        searchCriteriaPlaceHolder="#Phrase"
-                                        searchCriteriaValue={this.props.phrases} 
-                                        onSearchCriteriaChange={this.props.handlePhrasesInput}
-                                    />
+                                    {
+                                        !this.props.hideComponent &&
+                                        <SearchCriteriaInput 
+                                            searchCriteriaLabel="Phrase(s):" 
+                                            searchCriteriaExample="Example: #working late#I love blackbears" 
+                                            searchCriteriaPlaceHolder="#Phrase"
+                                            searchCriteriaValue={this.props.phrases} 
+                                            onSearchCriteriaChange={this.props.handlePhrasesInput}
+                                        />
+                                    }
                                 </div>
-                                <div className="dateSelectionContainer">
-                                    <SearchCriteriaDate 
-                                        searchCriteriaDateLabel="Start Date:" 
-                                        searchCriteriaDateExample="Example: 01/01/2020" 
-                                        onSearchCriteriaDateChange={this.props.handleStartDateInput} 
-                                    />
-                                    <SearchCriteriaDate
-                                        searchCriteriaDateLabel="End Date:"
-                                        searchCriteriaDateExample="Example: 01/01/2020"
-                                        onSearchCriteriaDateChange={this.props.handleEndDateInput}
-                                    />
-                                </div>
+                                {
+                                    !this.props.hideComponent &&
+                                    <div className="dateSelectionContainer">
+                                        <SearchCriteriaDate 
+                                            searchCriteriaDateLabel="Start Date:" 
+                                            searchCriteriaDateExample="Example: 01/01/2020" 
+                                            onSearchCriteriaDateChange={this.props.handleStartDateInput} 
+                                        />
+                                        <SearchCriteriaDate
+                                            searchCriteriaDateLabel="End Date:"
+                                            searchCriteriaDateExample="Example: 01/01/2020"
+                                            onSearchCriteriaDateChange={this.props.handleEndDateInput}
+                                        />
+                                    </div>
+                                }
                             </div>
                         </div>
                     </div>
