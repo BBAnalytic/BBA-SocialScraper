@@ -3,17 +3,6 @@ import './css/LoginPage.css'
 import { Link, Redirect, withRouter, useHistory } from 'react-router-dom'
 
 export default class LoginPage extends Component {
-    constructor(props){
-        super(props);
-        this.state = {
-            email: '',
-            password: '',
-            submitted: false,
-            link: '/HomePage'
-        };
-
-        const emailRegex = /^[A-Za-z0-9._%+-]+@[A-Za-z0-9.-]+\.[a-z]{2,}$$/;
-    }
 
     render() {
         return (
@@ -36,7 +25,7 @@ export default class LoginPage extends Component {
                         <input type="password" value={this.props.password} placeholder="Password" onChange={this.props.handlePasswordChange} className="passwordInputBox" />
                         <input type="button" value="Forgot Password" className="forgotPasswordButton" />
                         <Link to='/LoginAuthenticate'>
-                            <input type="submit" value="Login" className="loginButton" />
+                            <input type="submit" value="Login" className="loginButton" onClick={this.props.handleLogin}/>
                         </Link>
                     </form>
                 </div>

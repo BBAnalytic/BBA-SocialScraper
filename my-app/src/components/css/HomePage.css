@@ -41,11 +41,56 @@
     align-items: center;
     justify-content: space-between;
 }
-.previousSearchContainer{
+.searchHistoryContainer{
     background-color: #0094FF;
     height: 417px;
     width: 502px;
     margin: 20px;
+    justify-content: center;
+    align-items: center;
+    display: flex;
+}
+.scrapeHistoryTitleContainer{
+    height: 69px;
+    width: 502px;
+    background: #0094FF;
+    border: 3px solid #000000;
+    box-sizing: border-box; 
+    justify-content: center;
+    align-items: center;
+    font-family: Arial Black;
+    font-style: normal;
+    font-weight: normal;
+    font-size: 42px;
+    line-height: 61px;
+    display: flex;
+    align-items: center;
+    text-align: center;
+    color: #FFFFFF;
+}
+.scrapeHistoryButtonContainer{
+    height: 348px;
+    width: 502px;
+    background: #FFFFFF;
+    box-sizing: border-box;
+}
+.scrapeHistoryButtonOne{
+    height: 58px;
+    width: 100%;
+    background: #FFFFFF;
+    border: 3px solid #000000;
+    box-sizing: border-box;
+    font-family: Arial Black;
+    font-style: normal;
+    font-weight: normal;
+    font-size: 24px;
+    line-height: 31px;
+    display: flex;
+    align-items: center;
+    text-align: center;
+    justify-content: center;
+
+color: #000000;
 }
 .buttonContainer{
     display: flex;
@@ -76,6 +121,7 @@
     height: 145px;
     width: 388px;
     margin: 20px;
+    visibility: hidden;
 }
 .currentSearchesButton{
     height: inherit;

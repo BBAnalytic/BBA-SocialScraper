@@ -7,12 +7,19 @@ export default class SettingsButton extends Component {
     
     render() {
         return (
-            <Link to='/SettingsPage' className="settingsButtonContainer">
+            <div className="navButtonContainer">
+                <Link to='/HomePage'>
+                    <button className="homeButton">
+                        Home
+                    </button>
+                </Link>
+            <Link to='/AdminSettingsPage' className="settingsButtonContainer">
                 <button className="settingsButton">
                     <text className="settingsButtonText">Settings</text>
                     <img src={settingsIcon} className="settingsIcon" />
                 </button>
             </Link>
+            </div>
         )
     }
 }

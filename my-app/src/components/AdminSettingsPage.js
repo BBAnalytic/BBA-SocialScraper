@@ -1,6 +1,6 @@
 import React, { Component } from 'react'
 import { Link } from 'react-router-dom';
-import HomeButton from './HomeButton';
+import SettingsButton from './SettingsButton';
 import './css/AdminSettingsPage.css'
 import { confirmAlert } from 'react-confirm-alert'; 
 import 'react-confirm-alert/src/react-confirm-alert.css'
@@ -100,24 +100,9 @@ export default class AdminSettingsPage extends Component {
 					pageLoad: true
 				})
 				
-				//This is not functioning.
-				//alert the user if there has been an error
-				// if(data.result != 'OK'){
-				// 	this.genericErrorAlert(email, 'handleApproveUser', data.result);
-				// }
 			})
 	}
 
-	//This is not functioning. 
-	// genericErrorAlert(s_email, s_funcName,){
-	// 	confirmAlert({
-	// 		title: 'Error Warning',
-	// 		message: 'Unable to complete request. Function ' + s_funcName + ' could not process ' + s_email + ' Please click OK and try refreshing the page.',
-	// 		buttons: [
-	// 			{label: 'OK'}
-	// 		]
-	// 	})
-	// }
 
 	handleAdminUser(email, isAdmin){
 		this.handleApproveUser(email);
@@ -133,7 +118,6 @@ export default class AdminSettingsPage extends Component {
 				this.setState({
 					pageLoad: true						//tell the page it's time to stop
 				})
-				// TODO: get the confirmation and error check
 			});
 	}
 
@@ -198,7 +182,7 @@ export default class AdminSettingsPage extends Component {
 				</div>
 
 				<div className="settingsPageContainer">
-					<HomeButton className="homeButtonAdmin"></HomeButton>
+					<SettingsButton className="settingsButtonAdmin"></SettingsButton>
 					<div className="secondRowContainer">
 						<div className="emailDownloadContainer">
 							<form className="emailDownloadForm">
@@ -216,11 +200,7 @@ export default class AdminSettingsPage extends Component {
 						</div>
 						<div className="approveScrollingContainer">
 							<div className="approveScrollBox">
-								{/* The two following lines are what grab the accounts from the database (calling handleGetUsers()) and display the list (createList)  */}
-								{/* {this.state.pageLoad ? this.handleGetUsers() : console.log("Cannot reload.")}
-								{this.state.usersLoaded ? this.createList() : console.log('No data.')} */}
 
-								{/* The two following lines are the same thing as above, but without the console logging if no data. */}
 								{this.state.pageLoad && this.handleGetUsers()}
 								{this.state.usersLoaded && this.createList()}
 
