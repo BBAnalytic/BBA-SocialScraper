@@ -280,6 +280,16 @@ def json_scrape_twitter():
    # Send the scraped file back to user as attachment, set chache timeout to 2 so it doesn't get returned again on next call
    return send_file(o_scrape_helper.s_zip_name, as_attachment = True, cache_timeout = 2)
 
+@m_app.route('/api/cleanUp,', methods=['GET'])
+def clean_up():
+   json_request_data = json.loads(request.data)
+
+   # Do not need full email so grab bit up to the '@'
+   s_user = json_request_data['email']
+   s_user =  s_user.split('@')
+   s_user = s_user.pop(0)
+   
+
 @m_app.route('/api/getAllAccounts', methods=['GET'])
 def json_get_all_accounts():
    """
