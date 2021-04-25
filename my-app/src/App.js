@@ -153,14 +153,14 @@ export default class App extends Component {
             res.body.getReader().read().then(({ done, value }) => {
               
               
-              var scrapeText = value
-              var blob = new Blob([scrapeText],{ type: 'zip' })
-              FileSaver.saveAs(blob, "test.zip")
+              // var scrapeText = value
+              // var blob = new Blob([scrapeText],{ type: 'zip' })
+              // FileSaver.saveAs(blob, "test.zip")
               
 
-              // var scrapeText = new TextDecoder("utf-8").decode(value)
-              // var blob = new Blob([scrapeText], {type: "text/plain;charset=utf-8"})
-              // FileSaver.saveAs(blob,"SSMediaScrape.csv")
+              var scrapeText = new TextDecoder("utf-8").decode(value)
+              var blob = new Blob([scrapeText], {type: "text/plain;charset=utf-8"})
+              FileSaver.saveAs(blob,"SSMediaScrape.csv")
 
               // var scrapeImage = "127.0.0.1:5000/API/a_24-04-2021_23.25/media/pictureID#00001.jpg"
               // FileSaver.saveAs(scrapeImage, "SSMediaImage.jpg")
@@ -189,7 +189,7 @@ export default class App extends Component {
               var blob = new Blob([scrapeText], {type: "text/plain;charset=utf-8"})
               FileSaver.saveAs(blob,"SSMediaScrape.csv")
 
-              
+
             })
           })
 
