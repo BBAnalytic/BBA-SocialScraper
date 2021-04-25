@@ -116,7 +116,7 @@ export default class App extends Component {
         });
         
     }
-    else{
+    else if(newPlatform.target.value == "Instagram"){
         this.setState({
           fetchURL: '/api/scrapeInstagram',
           isHidden: true
