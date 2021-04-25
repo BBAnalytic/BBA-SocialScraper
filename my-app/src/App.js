@@ -328,12 +328,12 @@ export default class App extends Component {
               title = 'Admin Settings'
               email = {this.state.email}
              />
-            <Route exact path = '/SettingsAuthenticate'>
+          </Route>
+          <Route exact path = '/SettingsAuthenticate'>
               <SettingsAuthenticate
                 userAdmin = {this.state.userAdmin}
               />
             </Route>
-          </Route>
           <Route exact path = '/ContactUsPage'>
             <ContactUsPage title='Contact Us'></ContactUsPage>
           </Route>
