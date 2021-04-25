@@ -1,6 +1,6 @@
 import React, { Component } from 'react'
 import { Link } from 'react-router-dom';
-import HomeButton from './HomeButton';
+import SettingsButton from './SettingsButton';
 import './css/AdminSettingsPage.css'
 import { confirmAlert } from 'react-confirm-alert'; 
 import 'react-confirm-alert/src/react-confirm-alert.css'
@@ -198,7 +198,7 @@ export default class AdminSettingsPage extends Component {
 				</div>
 
 				<div className="settingsPageContainer">
-					<HomeButton className="homeButtonAdmin"></HomeButton>
+					<SettingsButton className="settingsButtonAdmin"></SettingsButton>
 					<div className="secondRowContainer">
 						<div className="emailDownloadContainer">
 							<form className="emailDownloadForm">

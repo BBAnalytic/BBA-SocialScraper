@@ -156,12 +156,6 @@
 	width: 6vw;
 }
 
-.homeButtonAdmin{
-	height: 100px;
-    width: 300px;
-    padding-bottom: 20px;
-}
-
 .deactivateAccountButton:hover{
 	transform: scale(1.1);
 }
