@@ -179,7 +179,7 @@ def json_delete_user():
    else:
       return jsonify({'result': 'NOK User does not exist'})
 
-@m_app.route('/api/scrapeInstagram', methods =['POST','GET'])
+@m_app.route('/api/scrapeInstagram', methods =['POST'])
 def json_scrape_instagram():
    """
    Description: Allows a frontend process to process a request to scrape instagram, given inputs.
@@ -196,6 +196,7 @@ def json_scrape_instagram():
             }
    """
    # Grab inputs
+   print(request.data)
    json_request_data = json.loads(request.data)
    
    # Do not need full email so grab bit up to the '@'
@@ -222,29 +223,31 @@ def json_scrape_instagram():
    o_thread.start()
    o_thread.join()
 
-   tempCSV = "./"+o_scrape_helper.s_top_directory+"scrape.csv"
+   # tempCSV = "./"+o_scrape_helper.s_top_directory+"scrape.csv"
 
-   tempZip = o_scrape_helper.s_zip_name
-   tempZip.lstrip()
-   tempZip = "./"+tempZip
+   # tempZip = o_scrape_helper.s_zip_name
+   # tempZip.lstrip()
+   # tempZip = "./"+tempZip
 
-   print("File: ",tempZip)
+   # print("File: ",tempZip)
 
    # Send the scraped file back to user as attachment, set chache timeout to 2 so it doesn't get returned again on next call
-   return send_file("./"+o_scrape_helper.s_top_directory+"scrape.csv",as_attachment = True, cache_timeout = 2)
+   return send_file(o_scrape_helper.s_zip_name ,as_attachment = True, cache_timeout = 2)
 
 @m_app.route('/api/downloadAttachments', methods=['POST'])
 def json_download_attachments():
    """
    """
 
-   json_request_data = json.loads(request.data)
+   # json_request_data = json.loads(request.data)
 
-   s_scrape_id = json_request_data['s_scrape_id']
-   s_photo_id = json_request_data['s_photo_id']
+   # s_scrape_id = json_request_data['s_scrape_id']
+   # s_photo_id = json_request_data['s_photo_id']
 
-   s_photo_file = "./" + s_scrape_id + "/" + s_photo_id + ".jpg"
-   return send_file(s_photo_file, as_attachment=True)
+   # s_photo_file = "./" + s_scrape_id + "/" + s_photo_id + ".jpg"
+   # return send_file(s_photo_file, as_attachment=True)
+   return send_file("a_twitter_scrape.zip", as_attachment=True, attachment_filename="poopy.zip")
+
 @m_app.route('/api/scrapeTwitter', methods=['POST'])
 def json_scrape_twitter():
    """
