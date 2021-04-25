@@ -22,10 +22,6 @@ import {
   Redirect
 } from "react-router-dom";
 
-import JSZip from 'jszip';
-import saveAs from 'file-saver';
-import FileSaver from 'file-saver';
-
 export default class App extends Component {
   constructor(props){
       super(props);
@@ -121,6 +117,11 @@ export default class App extends Component {
           fetchURL: '/api/scrapeInstagram',
           isHidden: true
         });
+    }
+    else {
+      this.setState({
+        isHidden: false
+      })
     }
   }
   handleHashTagsInput(newHashTags){
