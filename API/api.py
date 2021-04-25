@@ -197,7 +197,7 @@ def json_scrape_instagram():
    """
    # Grab inputs
    json_request_data = json.loads(request.data)
-
+   
    # Do not need full email so grab bit up to the '@'
    s_user = json_request_data['email']
    s_user =  s_user.split('@')
@@ -209,7 +209,6 @@ def json_scrape_instagram():
                                     'instagram',
                                     s_search_term=s_search_term,
                                     s_search_category=s_search_category)
-
 
    o_scrape_helper.b_valid = b_url_extractor(o_scrape_helper)
 
@@ -224,7 +223,7 @@ def json_scrape_instagram():
    o_thread.join()
 
    # Send the scraped file back to user as attachment, set chache timeout to 2 so it doesn't get returned again on next call
-   return send_file(o_scrape_helper.s_zip_name, as_attachment = True, cache_timeout = 2)
+   return send_file(o_scrape_helper.s_zip_name ,as_attachment = True, cache_timeout = 2)
 
 @m_app.route('/api/scrapeTwitter', methods=['POST'])
 def json_scrape_twitter():
@@ -278,7 +277,7 @@ def json_scrape_twitter():
    o_thread.join()
 
    # Send the scraped file back to user as attachment, set chache timeout to 2 so it doesn't get returned again on next call
-   return send_file(o_scrape_helper.s_zip_name, as_attachment = True, cache_timeout = 2)
+   return send_file(o_scrape_helper.s_zip_name, as_attachment = True,cache_timeout = 2)
 
 @m_app.route('/api/getAllAccounts', methods=['GET'])
 def json_get_all_accounts():
@@ -311,7 +310,7 @@ def json_get_account():
    Description: Takes in an email and processes it to find a user in the database and return its values
    Arguements: None, but json body requested needs to look like this:
                {
-                  "s_user_email": "a@a.a",
+                  "email": "a@a.a",
                }
    Outputs: A object containing the user that is found in the database or NOK if user was not found.
                {
@@ -329,7 +328,7 @@ def json_get_account():
    """
    # Grabbing input information
    json_request_data = json.loads(request.data)
-   s_input_email = json_request_data['s_user_email']
+   s_input_email = json_request_data['email']
 
    # Check if the information is within the database
    o_user = o_db.session.query(UserDB).filter_by(s_email = s_input_email).first()
@@ -480,7 +479,7 @@ def json_get_recent_searches():
    platform,mm/dd/yyyy,#keyword#string,#location#string,#phrase#string, start date (mm/dd/yyyy), end date (mm/dd/yyyy)
    Arguements: None, but json body requested needs to look like this:
                {
-                  "s_user_email": "a@a.a",
+                  "email": "a@a.a",
                }
    Outputs: A deserialized version of the 5 most recent scrapes from the database. If a piece of information
             relating to a scrape doesn't exist, that return value will be empty.
@@ -504,7 +503,7 @@ def json_get_recent_searches():
    """
    # Grabbing input information
    json_request_data = json.loads(request.data)
-   s_input_email = json_request_data['s_user_email']
+   s_input_email = json_request_data['email']
 
    # Check for the user
    o_user = o_db.session.query(UserDB).filter_by(s_email = s_input_email).first()
@@ -529,6 +528,8 @@ def json_get_recent_searches():
             l_locations.pop(0)
             l_phrases.pop(0)
 
+            # print(l_hashtags)
+
             # Make one complete entry into the collection so we can add one object to the collection.
             json_object = {'s_platform': s_platform,
                            's_date_scraped': s_date,
@@ -538,6 +539,7 @@ def json_get_recent_searches():
                            's_start_date': s_start_date,
                            's_end_date': s_end_date}
             json_collection += [json_object]
+            # print(json_collection[0])
       return jsonify(json_collection)
    else:
       return jsonify({'result': 'NOK User Not Found'})

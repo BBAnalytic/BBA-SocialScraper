@@ -9,88 +9,98 @@ import React, { Component } from 'react'
 import SearchingDataContent from './SearchingDataContent';
 import SettingsButton from './SettingsButton';
 import './css/SearchingPage.css'
-import { Link } from 'react-router-dom';
+import { Link, Redirect } from 'react-router-dom';
 
 export default class SearchingPage extends Component {
     constructor(props){
         super(props);
         this.state = {
-            scraped: 'Searching and Collecting Data...'  // Number of units that the API has scraped
+            scraped: 'Searching and Collecting Data...',  // Number of units that the API has scraped
+            user: '',
+            hashTags: 'N/A',
+            locations: 'N/A',
+            phrases: 'N/A'
         }
         
-        this.handleScrapeUpdate = this.handleScrapeUpdate.bind(this);
-        this.handleEndSearch = this.handleEndSearch.bind(this);
-        this.handleNewSearch = this.handleNewSearch.bind(this);
     };
 
-    handleScrapeUpdate(){
-        // Every X time unit, update number of scrapes collected
-        const fetchUrl = '/api/scrapeCount/';
-
-        fetch(fetchUrl, {
-            method: 'GET',
-            body: JSON.stringify({
-                
-            })
-        })
-
-        //Get the response, and turn it into readable JSON
-        .then(response => response.json())
-
-        //Set the state of scraped to the API's provided number of units scraped
-        .then (data => this.setState({ scraped: data.count }))
-    }
-
-    handleEndSearch(){
-        //End the API call that initialized scraping data
-        const fetchUrl = '/api/endScrapeAPI/';
-
-        fetch(fetchUrl, {
+    componentDidMount(){
+        const fetchURL = '/api/getAccount';
+        const fetchContent = {
             method: 'POST',
             body: JSON.stringify({
-                endScrapeAPI: true
+                email: this.props.email
             })
-        })
-    }
-    
-    handleNewSearch(){
-        //
+        }
 
+        fetch(fetchURL, fetchContent)
+            .then(Response => Response.json())
+            .then(data => {
+                const name = data.s_first + " " + data.s_last;
+                
+                this.setState({ 
+                    user: name
+                })
+                if (this.props.hashTags !== ""){
+                    this.setState({
+                        hashTags: this.props.hashTags
+                    })
+                }
+                if (this.props.locations !== ""){
+                    this.setState({
+                        locations: this.props.locations
+                    })
+                }
+                if (this.props.phrases !== ""){
+                    this.setState({
+                        phrases: this.props.phrases
+                    })
+                }
+            })
     }
 
     render() {
-        return (
-            <div className="searchingContentContainer">
-                <div className="searchingTitleContainer">
-                    <label className="searchingTitle">
-                        Searching
-                    </label>
-                </div>
-                <div className="searchingContent">
-                    <SettingsButton className="settingsButton"></SettingsButton>
-                    <div className="searchingDataContent">
-                        <SearchingDataContent title="User:" data={this.props.user}></SearchingDataContent>
-                        <SearchingDataContent title="HashTag(s):" data={this.props.hashTags}></SearchingDataContent>
-                        <SearchingDataContent title="Location(s):" data={this.props.locations}></SearchingDataContent>
-                        <SearchingDataContent title="Phrase(s):" data={this.props.phrases}></SearchingDataContent>
+        if (this.props.email != ""){
+            return (
+                <div className="searchingContentContainer">
+                    <div className="searchingTitleContainer">
+                        <label className="searchingTitle">
+                            Searching
+                        </label>
                     </div>
-                    <div className="searchingScrapeDataContent">
-                        <text>{this.state.scraped}</text>
+                    <div className="searchingContent">
+                        <SettingsButton className="settingsButton"></SettingsButton>
+                        <div className="searchingDataContent">
+                            <SearchingDataContent title="User:" data={this.state.user}></SearchingDataContent>
+                            <SearchingDataContent title="HashTag(s):" data={this.props.hashTags}></SearchingDataContent>
+                            <SearchingDataContent title="Location(s):" data={this.props.locations}></SearchingDataContent>
+                            <SearchingDataContent title="Phrase(s):" data={this.props.phrases}></SearchingDataContent>
+                        </div>
+                        <div className="searchingScrapeDataContent">
+                            <text>{this.state.scraped}</text>
+                        </div>
+                    </div>
+                    <div className="searchingButtonsContainer">
+                        <Link to='/HomePage'>
+                            <button className="searchingEndButton" onClick={this.handleEndSearch}>
+                                End Search
+                            </button>
+                        </Link>
+                        <Link to='/SearchCriteriaPage'>
+                            <button className="searchingNewButton" onClick={this.handleNewSearch}>
+                                New Search
+                            </button>
+                        </Link>
                     </div>
                 </div>
-                <div className="searchingButtonsContainer">
-                    <Link to='/HomePage'>
-                        <button className="searchingEndButton" onClick={this.handleEndSearch}>
-                            End Search
-                        </button>
-                    </Link>
-                    <Link to='/SearchCriteriaPage'>
-                        <button className="searchingNewButton" onClick={this.handleNewSearch}>
-                            New Search
-                        </button>
-                    </Link>
+            )
+        }
+        else{
+            return(
+                <div>
+                    <Redirect to='/LoginPage'></Redirect>
                 </div>
-            </div>
-        )
+            )
+        }
     }
 }

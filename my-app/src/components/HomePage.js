@@ -5,12 +5,38 @@ import { Link, Redirect } from 'react-router-dom'
 import NavButtons from './NavButtons'
 
 export default class HomePage extends Component {
+    constructor(props){
+        super(props);
+        this.state = {
+            scrapeHistory: []
+        };
+    }
+
+    componentDidMount(){
+        const fetchURL = '/api/getRecentSearches';
+        const fetchContent = {
+            method: 'POST',
+            body: JSON.stringify({
+                email: this.props.email
+            })
+        }
+
+        fetch(fetchURL, fetchContent)
+            .then(response => response.json())
+            .then(data => {
+                this.setState({
+                    scrapeHistory: data[0]
+                })
+            })
+    }
+
+    handleScrapeHistory(event){
+        //Set state of Search Criteria info
+        //Redirect to Search Criteria Page
+    }
 
     render() {
-        console.log("Home Page Loading...");
-
         if (this.props.email != ""){
-            console.log("Home Page Rendering... Email: " + this.props.email);
             return (
                 <div className="homePageContent">
                     <div className="homePageTitleContainer">
@@ -23,8 +49,42 @@ export default class HomePage extends Component {
                     <SettingsButton className="homeSettingsButton"></SettingsButton>
                         
                         <div className="homePageContentContainer">
-                            <div className="previousSearchContainer">
-                                Test
+                            <div className="scrapeHistoryContainer">
+                                <div className="scrapeHistoryTitleContainer">
+                                    <label>Scrape History</label>
+                                </div>
+                                <div className="scrapeHistoryButtonContainer">
+                                    <button 
+                                        className="scrapeHistoryButtonOne"
+                                        onClick={ this.handleScrapeHistory }
+                                    >
+                                        { 'Twitter: #minecraft' /*this.state.scrapeHistory*/ }
+                                    </button>
+                                    <button 
+                                        className="scrapeHistoryButtonOne"
+                                        onClick={ this.handleScrapeHistory }
+                                    >
+                                        { 'Twitter: #minecraft' /*this.state.scrapeHistory*/ }
+                                    </button>
+                                    <button 
+                                        className="scrapeHistoryButtonOne"
+                                        onClick={ this.handleScrapeHistory }
+                                    >
+                                        { 'Twitter: #minecraft' /*this.state.scrapeHistory*/ }
+                                    </button>
+                                    <button 
+                                        className="scrapeHistoryButtonOne"
+                                        onClick={ this.handleScrapeHistory }
+                                    >
+                                        { 'Twitter: #minecraft' /*this.state.scrapeHistory*/ }
+                                    </button>
+                                    <button 
+                                        className="scrapeHistoryButtonOne"
+                                        onClick={ this.handleScrapeHistory }
+                                    >
+                                        { 'Twitter: #minecraft' /*this.state.scrapeHistory*/ }
+                                    </button>
+                                </div>
                             </div>
                             <div className="buttonContainer">
                                 <Link to='/SearchCriteriaPage' className="newSearchContainer">

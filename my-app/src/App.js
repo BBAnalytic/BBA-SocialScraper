@@ -7,10 +7,11 @@ import HomePage from './components/HomePage'
 import SettingsPage from './components/SettingsPage'
 import ContactUsPage from './components/ContactUsPage'
 import LoginAuthenticate from './components/LoginAuthenticate'
-import SearchSubmit from './components/SearchSubmit'
+import AdminSettingsPage from './components/AdminSettingsPage';
+import SettingsAuthenticate from './components/SettingsAuthenticate';
 import RegisterAccount from './components/RegisterAccount';
 import RegisterAccountConfirm from './components/RegisterAccountConfirm';
-//Test
+
 
 // Imports from react-router
 import {
@@ -20,7 +21,6 @@ import {
   Link,
   Redirect
 } from "react-router-dom";
-import AdminSettingsPage from './components/AdminSettingsPage';
 
 export default class App extends Component {
   constructor(props){
@@ -28,16 +28,20 @@ export default class App extends Component {
       this.state = {
           email: '',
           password: '',
-          isAuthenticated: false,
-          isValidSubmit: false,
+          isAuthenticated: '/LoginPage',
           platformSelector: 'Select',
           hashTags: '',
           locations: '',
           phrases: '',
           startDate: '',
-          endDate: ''
+          endDate: '',
+          fetchURL: '',
+          userAdmin: true,
+          isHidden: false
       };
 
+      this.handleLogin = this.handleLogin.bind(this);
+      this.handleLogout = this.handleLogout.bind(this);
       this.handleEmailChange = this.handleEmailChange.bind(this);
       this.handlePasswordChange = this.handlePasswordChange.bind(this);
       this.handleHashTagsInput = this.handleHashTagsInput.bind(this);
@@ -49,6 +53,48 @@ export default class App extends Component {
       this.handleSelection = this.handleSelection.bind(this);
     }
   
+  handleLogin(event){
+    const fetchUrl = '/api/authenticateLogin';
+        const fetchBody = {
+            method: 'POST',
+            body: JSON.stringify({
+                email: this.state.email,
+                password: this.state.password
+            })
+        }
+        fetch(fetchUrl, fetchBody)
+            .then(response => response.json())
+            .then(data => {
+              if (data.result == "OK Email/Password Validated"){
+                this.setState({isAuthenticated: '/HomePage'})
+              }
+            }) 
+        
+        this.getUserType()
+  }
+  getUserType(){
+    const fetchURL = '/api/getAccount';
+    const fetchBody = {
+      method: 'POST',
+      body: JSON.stringify({
+        email: this.state.email
+      })
+    }
+
+    fetch(fetchURL, fetchBody)
+      .then(response => response.json())
+      .then(data => {
+          this.setState({
+            userAdmin: data.b_admin
+          })
+        }
+      )
+  }
+
+  getAuth(){
+    return this.state.isAuthenticated;
+  }
+  
   handleEmailChange(event){
     this.setState({email: event.target.value});
   }
@@ -59,20 +105,27 @@ export default class App extends Component {
 
   handleSelection(newPlatform){
     this.setState({platformSelector: newPlatform.target.value});
-    
     if(newPlatform.target.value == "Twitter"){
-        this.setState({fetchURL: '/api/scrapeTwitter/'});
+        this.setState({
+          fetchURL: '/api/scrapeTwitter',
+          isHidden: false
+        });
+        
     }
-    else{
-        this.setState({fetchURL: '/api/scrapeInstagram/'});
+    else if(newPlatform.target.value == "Instagram"){
+        this.setState({
+          fetchURL: '/api/scrapeInstagram',
+          isHidden: true
+        });
+    }
+    else {
+      this.setState({
+        isHidden: false
+      })
     }
   }
   handleHashTagsInput(newHashTags){
       this.setState({hashTags: newHashTags});
-
-      if (this.state.platformSelector != 'Select'){
-        this.setState({isValidSubmit: true});
-      }
   }
   handleLocationsInput(newLocations){
       this.setState({locations: newLocations});
@@ -87,7 +140,7 @@ export default class App extends Component {
       this.setState({endDate: newEndDate});
   }
 
-  handleSearch(event){
+  async handleSearch(event){
   //Handles search POST function
   //If Twitter Platform selected, POST Twitter info
   //Else Instagram Platform selected, POST Instagram info
@@ -96,23 +149,114 @@ export default class App extends Component {
           fetch(this.state.fetchURL, {
               method: 'POST',
               body: JSON.stringify({
+                  email: this.state.email,
                   hashTags: this.state.hashTags,
                   locations: this.state.locations,
                   phrases: this.state.phrases,
-                  earliestDate: '',
-                  latestDate: ''
+                  earliestDate: this.state.startDate,
+                  latestDate: this.state.endDate
               })
           })
+          .then(res => res.blob())
+          .then(blob => {
+            const url = URL.createObjectURL(blob)
+            document.location = url
+          }) 
       }
-      else {
-          fetch(this.state.fetchURL, {
-              method: 'POST',
-              body: JSON.stringify({
-                  searchTerm: this.state.hashTags,
-                  searchCategory: 'hashtag'
-              })
+      else if(this.state.hashTags != ""){
+        fetch(this.state.fetchURL, {
+            method: 'POST',
+            body: JSON.stringify({
+              email: this.state.email,
+              search_term: this.state.hashTags,
+              search_category: "hashtag"
           })
+        })
+        .then(res => res.blob())
+        .then(blob => {
+          const url = URL.createObjectURL(blob)
+          document.location = url
+        })          
       }
+      else if(this.state.locations != ""){
+        fetch(this.state.fetchURL, {
+          method: 'POST',
+          body: JSON.stringify({
+            email: this.state.email,
+            search_term: this.state.locations,
+            search_category: "location"
+          })
+        })
+        .then(res => res.blob())
+        .then(blob => {
+          const url = URL.createObjectURL(blob)
+          document.location = url
+        }) 
+      }
+
+}
+
+
+  sendUser(){
+    const fetchURL = '/api/getAccount';
+
+    fetch(fetchURL, {
+      method: 'POST',
+      body: JSON.stringify({
+          email: this.state.email
+      })
+  })
+  .then(results => results.json())
+  .then(data => {
+    return data.s_first + " " + data.s_last;
+  })
+  }
+  sendHashTags(){
+    if (this.state.hashTags !== ""){
+      return this.state.hashTags;
+    }
+
+    return 'N/A';
+  }
+  sendLocations(){
+    if (this.state.locations !== ""){
+      return this.state.locations;
+    }
+
+    return 'N/A';
+  }
+  sendPhrases(){
+    if (this.state.phrases !== ""){
+      return this.state.phrases;
+    }
+
+    return 'N/A';
+  }
+  sendStartDate(){
+    if (this.state.startDate !== ""){
+      return this.state.startDate;
+    }
+
+    return 'N/A';
+  }
+  sendEndDate(){
+    if (this.state.endDate !== ""){
+      return this.state.endDate;
+    }
+
+    return 'N/A';
+  }
+  handleLogout(){
+    this.setState({
+      email: '',
+      password: ''
+    })
+  }
+  componentDidMount(){
+    this.setState({
+      email: '',
+      password: ''
+    })
   }
 
   render(){
@@ -128,6 +272,7 @@ export default class App extends Component {
               handleEmailChange = {this.handleEmailChange} 
               handlePasswordChange = {this.handlePasswordChange} 
               handleLogin = {this.handleLogin} 
+              handleLogout = {this.handleLogout}
             />
           </Route>
           <Route exact path = '/RegisterAccount'>
@@ -145,6 +290,7 @@ export default class App extends Component {
           <Route exact path = '/SearchCriteriaPage'>
             <SearchCriteriaPage 
               title = 'Search Criteria'
+              email = {this.state.email}
               platformSelector = {this.state.platformSelector}
               hashTags = {this.state.hashTags}
               locations = {this.state.locations}
@@ -158,35 +304,36 @@ export default class App extends Component {
               handleStartDateInput = {this.handleStartDateInput}
               handleEndDateInput = {this.handleEndDateInput}
               handleSearch = {this.handleSearch}
+              hideComponent = {this.state.isHidden}
             />
           </Route>
           <Route exact path = '/SearchingPage'>
             <SearchingPage 
               title = 'Searching'
-              user = 'James West'
+              email = { this.state.email }
+              user = { this.sendUser }
               hashTags = { this.state.hashTags }
-              locations = 'N/A'
-              phrases = 'N/A'
+              locations = { this.sendLocations() }
+              phrases = { this.sendPhrases() }
             />
           </Route>
           <Route exact path = '/SettingsPage'>
-            <SettingsPage
+            <SettingsPage 
               title = 'Settings'
-              email = {this.state.email}
-              />
+              email = {this.state.email} 
+            />
           </Route>
           <Route exact path = '/AdminSettingsPage'>
             <AdminSettingsPage
               title = 'Admin Settings'
               email = {this.state.email}
              />
+            <Route exact path = '/SettingsAuthenticate'>
+              <SettingsAuthenticate
+                userAdmin = {this.state.userAdmin}
+              />
+            </Route>
           </Route>
-          {/* <Route exact path = '/RegisterAccount'>
-            <RegisterAccount title = 'Register Account' />
-          </Route>
-          <Route exact path = '/RegisterAccountConfirm'>
-            <RegisterAccountConfirm title = 'Register Account' />
-          </Route> */}
           <Route exact path = '/ContactUsPage'>
             <ContactUsPage title='Contact Us'></ContactUsPage>
           </Route>
@@ -194,12 +341,9 @@ export default class App extends Component {
             <LoginAuthenticate 
               isAuthenticated={this.state.isAuthenticated}
               email = {this.state.email}
-              password = {this.state.email}
-            />
-          </Route>
-          <Route exact path = '/SearchSubmitPage'>
-            <SearchSubmit 
-              isValidSubmit = { this.state.isValidSubmit }
+              password = {this.state.password}
+              getAuth = {this.getAuth()}
+              redirect = {<div><Redirect to={this.state.isAuthenticated}></Redirect></div>}
             />
           </Route>
         </Switch>

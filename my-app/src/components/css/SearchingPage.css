@@ -55,6 +55,7 @@
     width: 100vw;
     margin-top: 20px;
     justify-content: space-evenly;
+    visibility: hidden;
 }
 .searchingEndButton{
     font-family: Arial Black;

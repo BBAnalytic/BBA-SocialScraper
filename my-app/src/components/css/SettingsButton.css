@@ -1,3 +1,13 @@
+.homeButton{
+    position: absolute;
+    top: 2.7vh;
+    right: 15vw;
+}
+
+.homeButton:hover {
+    transform: scale(1.1);
+}
+
 .settingsButton{
     position: absolute;
     top: 2vh;

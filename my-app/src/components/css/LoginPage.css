@@ -128,6 +128,7 @@
     color: #9C9C9C;
     background-color: transparent;
     border: none;
+    visibility: hidden;
 }
 .loginButton{
     font-family: Arial Black;
@@ -168,6 +169,7 @@
     }
     .forgotPasswordButton{
         margin-bottom: 20px;
+        visibility: hidden;
     }
     .loginButton{
         margin-bottom: 20px;

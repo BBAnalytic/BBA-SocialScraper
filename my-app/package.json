@@ -2,11 +2,12 @@
   "name": "my-app",
   "version": "0.1.0",
   "private": true,
-  "proxy": "http://127.0.0.1:5000",
+  "proxy": "http://localhost:5000",
   "dependencies": {
     "@testing-library/jest-dom": "^5.11.8",
     "@testing-library/react": "^11.2.2",
     "@testing-library/user-event": "^12.6.0",
+    "balanced-match": "^1.0.2",
     "react": "^17.0.1",
     "react-confirm-alert": "^2.7.0",
     "react-dom": "^17.0.1",
@@ -40,6 +41,7 @@
     ]
   },
   "devDependencies": {
+    "@babel/helper-define-map": "^7.13.12",
     "web-vitals": "^1.1.1"
   },
   "description": "This project was bootstrapped with [Create React App](https://github.com/facebook/create-react-app).",

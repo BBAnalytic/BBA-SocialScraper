@@ -192,7 +192,7 @@ def v_scrape_tweets_30_day(o_scrape_helper):
         for o_page in tweepy.Cursor(o_scrape_helper.o_api.search_30_day,
                                     environment_name=s_30_day_dev_environment,
                                     query=o_scrape_helper.s_query,
-                                    maxResults=100).pages(5):
+                                    maxResults=100).pages(1):
             l_tweets += o_page
     else: 
         for o_page in tweepy.Cursor(o_scrape_helper.o_api.search_30_day,
@@ -200,7 +200,7 @@ def v_scrape_tweets_30_day(o_scrape_helper):
                                     query=o_scrape_helper.s_query,
                                     maxResults=100,
                                     fromDate=o_scrape_helper.s_from_date,
-                                    toDate=o_scrape_helper.s_to_date).pages(5):
+                                    toDate=o_scrape_helper.s_to_date).pages(1):
             l_tweets += o_page
 
     # Using i as the iterative loop value and tweet id

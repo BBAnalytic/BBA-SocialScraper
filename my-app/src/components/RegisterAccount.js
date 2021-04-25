@@ -60,7 +60,7 @@ export default class RegisterAccount extends Component {
 								</div>
 								<div className="nameContainer">
 									<label className="nameText">Name: </label>
-									<input type="text" id="s_nameInput" className="nameInputBoxR" placeHolder="First M. Last"></input>
+									<input type="text" id="s_nameInput" className="emailInputBoxR" placeHolder="First Last"></input>
 								</div>
 								<div className="passwordContainer">
 									<label className="passwordText">Password: </label>
