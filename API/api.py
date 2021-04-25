@@ -631,7 +631,6 @@ def _json_contact_save_search():
       o_db.session.commit()
    else:
       return jsonify({'result': 'NOK user does not exist'})
-
    # Return OK
    return jsonify({'result': 'OK entry saved'})
 

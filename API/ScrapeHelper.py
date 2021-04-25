@@ -7,7 +7,7 @@ scraping process by allowing access to essential variables needed for a scrape.
 """
 import os, tweepy
 from datetime import datetime
-from TwitterConfig import s_consumer_key, s_consumer_secret_key
+from TwitterConfig import s_consumer_key, s_consumer_secret_key, s_access_token, s_access_token_secret
 from QueryBuilder import s_build_query
 from InstagramKeywordURLExtractor import b_url_extractor
 
@@ -27,8 +27,8 @@ class ScrapeHelper:
                 l_hashtags - list of hashtags
                 l_locations - list of locations
                 l_phrases - list of phrases
-                s_from_date - string of from date, gets passed as MM/dd/yy
-                s_to_date - string of to date, gets passed as MM/dd/yy
+                s_from_date - string of from date, gets passed as MM/dd/yyyy
+                s_to_date - string of to date, gets passed as MM/dd/yyyy
             instagram expects:
                 s_search_term - string that is either single hashtag or a location url
                               - ex. '#blm' or 'www.instagram.com/explore/locations/498870164/new-delhi/'
@@ -64,8 +64,8 @@ class ScrapeHelper:
             l_phrases = kwargs.get('l_phrases', None)
             self.s_query = s_build_query(l_hashtags, l_locations, l_phrases)
 
-            s_unparsed_from_date = kwargs.get('s_from_date', None)
-            s_unparsed_to_date = kwargs.get('s_to_date', None)
+            s_unparsed_from_date = kwargs.get('s_from_date', '')
+            s_unparsed_to_date = kwargs.get('s_to_date', '')
             self._v_parse_and_format_dates(s_unparsed_from_date, s_unparsed_to_date)
 
 
@@ -90,20 +90,21 @@ class ScrapeHelper:
         """
         Makes connection to Twitter API
         """
-        o_auth = tweepy.AppAuthHandler(s_consumer_key,s_consumer_secret_key)
+        o_auth = tweepy.OAuthHandler(s_consumer_key,s_consumer_secret_key)
+        o_auth.set_access_token(s_access_token, s_access_token_secret)
         o_api = tweepy.API(o_auth)
         self.o_api = o_api
 
     def _v_parse_and_format_dates(self, s_unparsed_from_date, s_unparsed_to_date):
         """
-        Parses a yyyyMMddHHmm date from a dd/MM/yy date
+        Parses a yyyyMMddHHmm date from a dd/MM/yyyy date
         """
         # If dates are empty nothing needs to be done so return 
         if s_unparsed_from_date == '' and s_unparsed_to_date == '':
             self.s_from_date = ''
             self.s_to_date = ''
             return
-        # Split dates by '/' to get a 3 element list ['MM','dd','yy']
+        # Split dates by '/' to get a 3 element list ['MM','dd','yyyy']
         s_split_from_date = s_unparsed_from_date.split('/')
         s_split_to_date = s_unparsed_to_date.split('/')
         # Rebuilding the string but following yyyyMMddHHmm format, I add on the hours and minutes
