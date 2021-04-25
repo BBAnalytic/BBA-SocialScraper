@@ -22,6 +22,10 @@ import {
   Redirect
 } from "react-router-dom";
 
+import JSZip from 'jszip';
+import saveAs from 'file-saver';
+import FileSaver from 'file-saver';
+
 export default class App extends Component {
   constructor(props){
       super(props);
@@ -128,19 +132,14 @@ export default class App extends Component {
       this.setState({endDate: newEndDate});
   }
 
-  handleSearch(event){
+  async handleSearch(event){
   //Handles search POST function
   //If Twitter Platform selected, POST Twitter info
   //Else Instagram Platform selected, POST Instagram info
 
       if (this.state.platformSelector == 'Twitter'){
-        console.log("Handle Search Hit: " + this.state.fetchURL)
           fetch(this.state.fetchURL, {
               method: 'POST',
-              headers: {
-                'Accept': 'application/json',
-                'Content-Type': 'application/json',
-              },
               body: JSON.stringify({
                   email: this.state.email,
                   hashTags: this.state.hashTags,
@@ -150,48 +149,95 @@ export default class App extends Component {
                   latestDate: this.state.endDate
               })
           })
-          .then(response => response.json())
-          .then(data => {
-            console.log("Hit Data Return")
-            console.log(data)
+          .then((res) => {
+            res.body.getReader().read().then(({ done, value }) => {
+              
+              
+              var scrapeText = value
+              var blob = new Blob([scrapeText],{ type: 'zip' })
+              FileSaver.saveAs(blob, "test.zip")
+              
+
+              // var scrapeText = new TextDecoder("utf-8").decode(value)
+              // var blob = new Blob([scrapeText], {type: "text/plain;charset=utf-8"})
+              // FileSaver.saveAs(blob,"SSMediaScrape.csv")
+
+              // var scrapeImage = "127.0.0.1:5000/API/a_24-04-2021_23.25/media/pictureID#00001.jpg"
+              // FileSaver.saveAs(scrapeImage, "SSMediaImage.jpg")
+            })
           })
       }
       else {
+        const fileName = 'a_instagram_scrape.zip'
           fetch(this.state.fetchURL, {
               method: 'POST',
+              responseType: 'arraybuffer',
               headers: {
-                'Accept': 'application/json',
-                'Content-Type': 'application/json',
+                  'Content-Type': 'multipart/form-data',
               },
               body: JSON.stringify({
                   email: this.state.email,
                   search_term: this.state.hashTags,
                   search_category: 'hashtag'
               })
-          }).then((response) => {
-            var a = response.body.getReader();
-            a.read().then(({ done, value }) => {
-                // console.log(new TextDecoder("utf-8").decode(value));
-                this.saveAsFile(new TextDecoder("utf-8").decode(value), 'filename');
-              }
-            );
-          });
-      }
+          })
+          .then((res) => {
+
+              res.body.getReader().read().then(({ done, value }) => {
+              
+              var scrapeText = new TextDecoder("utf-8").decode(value)
+              var blob = new Blob([scrapeText], {type: "text/plain;charset=utf-8"})
+              FileSaver.saveAs(blob,"SSMediaScrape.csv")
+
+              
+            })
+          })
+
+
+
+          // .then((res)=>{
+          //   //here is youu want zip data 
+          //   // var zip = new JSZip();
+          //   var zipData = res.body.getReader(); // 
+          //   // var finalData;
+          //   zipData.read().then(({ done, value }) => {
+          //     saveAs(new TextDecoder().readAsDataURL(new Blob(value, { type: 'application/zip' })),"test.zip")
+          //     console.log("Attempted Save")
+
+          //   })
+          //   //   console.log(new TextDecoder("utf-8").decode(value))
+          //   //   console.log(value.buffer)
+          //   //   console.log(value.subarray)
+          //   //   console.log(value.toString)
+          //   //   saveAs(value,"SSMedia.zip")
+            
+          //   let blob = new Blob([res.data], { type: 'application/zip' })
+          //   console.log(blob)
+
+          //   const downloadUrl = URL.createObjectURL(blob)
+          //   console.log(downloadUrl)
+          //   let a = document.createElement("a"); 
+          //   a.href = downloadUrl;
+          //   a.download = fileName;
+          //   document.body.appendChild(a);
+          //   a.click();
+          //   }
+          // );
+
+
+            // Add an top-level, arbitrary text file with contents
+            // zip.folder("response", zipData);
+            
+            // Generate the zip file asynchronously
+            // zip.generateAsync({type:"blob"})
+            // .then(function(content) {
+            //     // Force down of the Zip file
+            //     saveAs(content, "zipFile.zip");
+            // });
+          
   }
-  saveAsFile(text, filename) {
-    // Step 1: Create the blob object with the text you received
-    const type = 'application/text'; // modify or get it from response
-    const blob = new Object([text], {type});
-  
-    // Step 2: Create Blob Object URL for that blob
-    const url = URL.createObjectURL(blob);
-  
-    // Step 3: Trigger downloading the object using that URL
-    const a = document.createElement('a');
-    a.href = url;
-    a.download = filename;
-    a.click(); // triggering it manually
-  }
+}
+
 
   sendUser(){
     const fetchURL = '/api/getAccount';
@@ -206,7 +252,6 @@ export default class App extends Component {
   .then(data => {
     return data.s_first + " " + data.s_last;
   })
-
   }
   sendHashTags(){
     if (this.state.hashTags !== ""){

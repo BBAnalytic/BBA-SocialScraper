@@ -80,7 +80,7 @@ class ScrapeHelper:
             self.s_search_category = s_search_category      # Instagram Search category
             
             self.b_valid = None                 # Bool weather Scrape was valid
-            self.i_num_posts_wanted = 5        # Int Number of posts to be scraped from Instagram
+            self.i_num_posts_wanted = 2        # Int Number of posts to be scraped from Instagram
             self.s_cookies = ''                 # String of cookies gathered from URlExtraction process
 
         self._v_name_working_directories(s_user)
@@ -130,4 +130,4 @@ class ScrapeHelper:
         # Zipping directory
         os.system(f'zip -rqq {self.s_zip_name} {self.s_top_directory}')
         # Removing the directory
-        os.system(f'rm -rf {self.s_top_directory}')
+        # os.system(f'rm -rf {self.s_top_directory}')

@@ -197,13 +197,11 @@ def json_scrape_instagram():
    """
    # Grab inputs
    json_request_data = json.loads(request.data)
-   print("Insta Endpoint hit")
+   
    # Do not need full email so grab bit up to the '@'
    s_user = json_request_data['email']
    s_user =  s_user.split('@')
    s_user = s_user.pop(0)
-
-   print("Insta User: ", s_user)
 
    s_search_term = json_request_data['search_term']
    s_search_category = json_request_data['search_category']
@@ -212,9 +210,6 @@ def json_scrape_instagram():
                                     s_search_term=s_search_term,
                                     s_search_category=s_search_category)
 
-
-   print("Insta Term: ",s_search_term)
-   print("Insta Categ: ",s_search_category)
    o_scrape_helper.b_valid = b_url_extractor(o_scrape_helper)
 
    if o_scrape_helper.b_valid == False:
@@ -227,9 +222,29 @@ def json_scrape_instagram():
    o_thread.start()
    o_thread.join()
 
-   # Send the scraped file back to user as attachment, set chache timeout to 2 so it doesn't get returned again on next call
-   return send_file(o_scrape_helper.s_zip_name, as_attachment = True, cache_timeout = 2)
+   tempCSV = "./"+o_scrape_helper.s_top_directory+"scrape.csv"
 
+   tempZip = o_scrape_helper.s_zip_name
+   tempZip.lstrip()
+   tempZip = "./"+tempZip
+
+   print("File: ",tempZip)
+
+   # Send the scraped file back to user as attachment, set chache timeout to 2 so it doesn't get returned again on next call
+   return send_file("./"+o_scrape_helper.s_top_directory+"scrape.csv",as_attachment = True, cache_timeout = 2)
+
+@m_app.route('/api/downloadAttachments', methods=['POST'])
+def json_download_attachments():
+   """
+   """
+
+   json_request_data = json.loads(request.data)
+
+   s_scrape_id = json_request_data['s_scrape_id']
+   s_photo_id = json_request_data['s_photo_id']
+
+   s_photo_file = "./" + s_scrape_id + "/" + s_photo_id + ".jpg"
+   return send_file(s_photo_file, as_attachment=True)
 @m_app.route('/api/scrapeTwitter', methods=['POST'])
 def json_scrape_twitter():
    """
@@ -252,8 +267,6 @@ def json_scrape_twitter():
    # Grab inputs
    json_request_data = json.loads(request.data)
 
-   print ("Hit Scrape Endpoint")
-
    l_hashTags = json_request_data['hashTags'].split("#")
    l_hashTags.pop(0)
    l_locations = json_request_data['locations'].split("#")
@@ -268,7 +281,6 @@ def json_scrape_twitter():
    s_user =  s_user.split('@')
    s_user = s_user.pop(0)
 
-   print("Hashtags: ", l_hashTags)
    o_scrape_helper = ScrapeHelper(s_user,
                                     'twitter',
                                     l_hashtags=l_hashTags,
@@ -285,7 +297,7 @@ def json_scrape_twitter():
    o_thread.join()
 
    # Send the scraped file back to user as attachment, set chache timeout to 2 so it doesn't get returned again on next call
-   return send_file(o_scrape_helper.s_zip_name, as_attachment = True) #,cache_timeout = 2)
+   return send_file("./"+o_scrape_helper.s_top_directory+"scrape.csv", as_attachment = True,cache_timeout = 2)
 
 @m_app.route('/api/getAllAccounts', methods=['GET'])
 def json_get_all_accounts():
