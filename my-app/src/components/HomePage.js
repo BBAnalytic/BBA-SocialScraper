@@ -13,8 +13,6 @@ export default class HomePage extends Component {
     }
 
     componentDidMount(){
-        console.log('HomePage Mounted')
-        console.log(this.props.email)
         const fetchURL = '/api/getRecentSearches';
         const fetchContent = {
             method: 'POST',

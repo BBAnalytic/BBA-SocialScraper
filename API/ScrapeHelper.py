@@ -131,4 +131,4 @@ class ScrapeHelper:
         # Zipping directory
         os.system(f'zip -rqq {self.s_zip_name} {self.s_top_directory}')
         # Removing the directory
-        # os.system(f'rm -rf {self.s_top_directory}')
+        os.system(f'rm -rf {self.s_top_directory}')

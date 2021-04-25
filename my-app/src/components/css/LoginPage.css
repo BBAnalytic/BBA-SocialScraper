@@ -168,6 +168,7 @@
     }
     .forgotPasswordButton{
         margin-bottom: 20px;
+        visibility: hidden;
     }
     .loginButton{
         margin-bottom: 20px;
