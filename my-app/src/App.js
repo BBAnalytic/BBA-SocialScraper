@@ -141,6 +141,16 @@ export default class App extends Component {
   }
 
   async handleSearch(event){
+    var search = await this.handleSearching();
+    fetch('/api/cleanUp', {
+      method: 'POST',
+      body: JSON.stringify({
+        email: this.state.email
+      })
+    })
+  }
+
+  async handleSearching(event){
   //Handles search POST function
   //If Twitter Platform selected, POST Twitter info
   //Else Instagram Platform selected, POST Instagram info
@@ -161,15 +171,8 @@ export default class App extends Component {
           .then(blob => {
             const url = URL.createObjectURL(blob)
             document.location = url
-          }) 
-          .then(
-            fetch('/api/cleanUp', {
-              method: 'POST',
-              body: JSON.stringify({
-                email: this.state.email
-              })
-            })
-          )
+            
+          })
       }
       else if(this.state.hashTags != ""){
         fetch(this.state.fetchURL, {
@@ -185,14 +188,6 @@ export default class App extends Component {
           const url = URL.createObjectURL(blob)
           document.location = url
         })  
-        .then(
-          fetch('/api/cleanUp', {
-            method: 'POST',
-            body: JSON.stringify({
-              email: this.state.email
-            })
-          })
-        );     
       }
       else if(this.state.locations != ""){
         fetch(this.state.fetchURL, {
@@ -207,15 +202,7 @@ export default class App extends Component {
         .then(blob => {
           const url = URL.createObjectURL(blob)
           document.location = url
-        }) 
-        .then(
-          fetch('/api/cleanUp', {
-            method: 'POST',
-            body: JSON.stringify({
-              email: this.state.email
-            })
-          })
-        )
+        })
       }
 
 }
