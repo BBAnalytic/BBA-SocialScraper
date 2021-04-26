@@ -6,8 +6,9 @@ Description: File contains the database schema for the user database as well as 
 """
 from flask import Flask, jsonify, request, json, send_file
 from flask_sqlalchemy import SQLAlchemy
-import sys, threading, os, re
+import sys, threading, os
 from datetime import date
+from pathlib import Path
 
 from ScrapeHelper import ScrapeHelper
 
@@ -298,10 +299,13 @@ def json_clean_up():
    s_user =  s_user.split('@')
    s_user = s_user.pop(0)
 
-   # Creating regex based of user's email to find the zipfile to delete
-   re_file = re.compile(fr'{s_user}_[a-z]*_scrape\.zip')
-   # Removing file that matches regex
-   os.remove(re_file)
+   # Creating glob to match user's zip file created from scrape
+   o_glob = f'{s_user}*.zip'
+
+   # Searching for that file in current directory
+   for s_p in Path('.').glob(o_glob):
+      # Removing match 
+      s_p.unlink()
    return jsonify({'result': 'OK file deleted'}) 
    
 

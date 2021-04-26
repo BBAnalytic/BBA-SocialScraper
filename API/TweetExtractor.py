@@ -61,7 +61,7 @@ def v_scrape_tweets_full_archive(o_scrape_helper):
         for o_page in tweepy.Cursor(o_scrape_helper.o_api.search_full_archive,
                                     environment_name=s_full_dev_environment,
                                     query=o_scrape_helper.s_query,
-                                    maxResults=500).pages(2):
+                                    maxResults=500).pages(i_full_search_pages):
             l_tweets += o_page
     else: 
         for o_page in tweepy.Cursor(o_scrape_helper.o_api.search_full_archive,
@@ -69,7 +69,7 @@ def v_scrape_tweets_full_archive(o_scrape_helper):
                                     query=o_scrape_helper.s_query,
                                     maxResults=500,
                                     fromDate=o_scrape_helper.s_from_date,
-                                    toDate=o_scrape_helper.s_to_date).pages(2):
+                                    toDate=o_scrape_helper.s_to_date).pages(i_full_search_pages):
             l_tweets += o_page
 
 
@@ -192,7 +192,7 @@ def v_scrape_tweets_30_day(o_scrape_helper):
         for o_page in tweepy.Cursor(o_scrape_helper.o_api.search_30_day,
                                     environment_name=s_30_day_dev_environment,
                                     query=o_scrape_helper.s_query,
-                                    maxResults=100).pages(1):
+                                    maxResults=100).pages(i_30_day_search_pages):
             l_tweets += o_page
     else: 
         for o_page in tweepy.Cursor(o_scrape_helper.o_api.search_30_day,
@@ -200,7 +200,7 @@ def v_scrape_tweets_30_day(o_scrape_helper):
                                     query=o_scrape_helper.s_query,
                                     maxResults=100,
                                     fromDate=o_scrape_helper.s_from_date,
-                                    toDate=o_scrape_helper.s_to_date).pages(1):
+                                    toDate=o_scrape_helper.s_to_date).pages(i_30_day_search_pages):
             l_tweets += o_page
 
     # Using i as the iterative loop value and tweet id
