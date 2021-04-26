@@ -1,5 +1,5 @@
 import React, { Component } from 'react'
-import { Link } from 'react-router-dom';
+import { Link, Redirect } from 'react-router-dom';
 import SettingsButton from './SettingsButton';
 import './css/AdminSettingsPage.css'
 import { confirmAlert } from 'react-confirm-alert'; 
@@ -173,54 +173,64 @@ export default class AdminSettingsPage extends Component {
 	}
 
 	render (){
-		return(
-			<div className="adminSettingsPageContent">
-				<div className="settingsPageTitleContainer">
-					<text className="adminSettingsPageTitle">
-						{this.state.title}
-					</text>
-				</div>
+		if(this.props.email != ""){
 
-				<div className="settingsPageContainer">
-					<SettingsButton className="settingsButtonAdmin"></SettingsButton>
-					<div className="secondRowContainer">
-						<div className="emailDownloadContainer">
-							<form className="emailDownloadForm">
-								<div className="formContainer">
-									<div className="emailContainerS">
-										<text className="emailTextS">Email: {this.props.email}</text>
-									</div>
-								</div>
-							</form>
-						</div>
+			return(
+				<div className="adminSettingsPageContent">
+					<div className="settingsPageTitleContainer">
+						<text className="adminSettingsPageTitle">
+							{this.state.title}
+						</text>
 					</div>
-					<div className="approveAccountsContainer">
-						<div className="approveAccountsTitleContainer">
-							<text className="approveAccountsTitle">Approve Accounts</text >
+	
+					<div className="settingsPageContainer">
+						<SettingsButton className="settingsButtonAdmin"></SettingsButton>
+						<div className="secondRowContainer">
+							<div className="emailDownloadContainer">
+								<form className="emailDownloadForm">
+									<div className="formContainer">
+										<div className="emailContainerS">
+											<text className="emailTextS">Email: {this.props.email}</text>
+										</div>
+									</div>
+								</form>
+							</div>
 						</div>
-						<div className="approveScrollingContainer">
-							<div className="approveScrollBox">
-
-								{this.state.pageLoad && this.handleGetUsers()}
-								{this.state.usersLoaded && this.createList()}
-
+						<div className="approveAccountsContainer">
+							<div className="approveAccountsTitleContainer">
+								<text className="approveAccountsTitle">Approve Accounts</text >
+							</div>
+							<div className="approveScrollingContainer">
+								<div className="approveScrollBox">
+	
+									{this.state.pageLoad && this.handleGetUsers()}
+									{this.state.usersLoaded && this.createList()}
+	
+								</div>
+							</div>
+						</div>
+						<div className="bottomButtonsContainerA">
+							<div className="logoutButtonContainer">
+							<Link to='/LoginPage'>
+								<button className="logoutButton" onClick={this.handleLogout}>Logout</button>
+							</Link>
+							</div>
+							<div className="btn-deactivateContainer">
+								<Link to='/LoginPage'>
+									<button className="deactivateAccountButton" onClick={() => this.handleDeleteUser(this.props.email)}>Deactivate Account</button>
+								</Link>
 							</div>
 						</div>
 					</div>
-					<div className="bottomButtonsContainerA">
-						<div className="logoutButtonContainer">
-						<Link to='/LoginPage'>
-							<button className="logoutButton" onClick={this.handleLogout}>Logout</button>
-						</Link>
-						</div>
-						<div className="btn-deactivateContainer">
-							<Link to='/LoginPage'>
-								<button className="deactivateAccountButton" onClick={() => this.handleDeleteUser(this.props.email)}>Deactivate Account</button>
-							</Link>
-						</div>
-					</div>
 				</div>
-			</div>
-		)
+			)
+		}
+		else{
+			return(
+				<div>
+					<Redirect to='/LoginPage'></Redirect>
+				</div>
+			)
+		}
 	}
 }
