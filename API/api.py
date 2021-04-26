@@ -280,7 +280,7 @@ def json_scrape_twitter():
    return send_file(o_scrape_helper.s_zip_name, as_attachment = True,cache_timeout = 2)
 
 
-@m_app.route('/api/cleanUp,', methods=['GET'])
+@m_app.route('/api/cleanUp', methods=['POST'])
 def json_clean_up():
    """
    Description: Used to clean up zip file once a scrape is completed. Once the file downloads this 

@@ -162,6 +162,14 @@ export default class App extends Component {
             const url = URL.createObjectURL(blob)
             document.location = url
           }) 
+          .then(
+            fetch('/api/cleanUp', {
+              method: 'POST',
+              body: JSON.stringify({
+                email: this.state.email
+              })
+            })
+          )
       }
       else if(this.state.hashTags != ""){
         fetch(this.state.fetchURL, {
@@ -176,7 +184,15 @@ export default class App extends Component {
         .then(blob => {
           const url = URL.createObjectURL(blob)
           document.location = url
-        })          
+        })  
+        .then(
+          fetch('/api/cleanUp', {
+            method: 'POST',
+            body: JSON.stringify({
+              email: this.state.email
+            })
+          })
+        );     
       }
       else if(this.state.locations != ""){
         fetch(this.state.fetchURL, {
@@ -192,6 +208,14 @@ export default class App extends Component {
           const url = URL.createObjectURL(blob)
           document.location = url
         }) 
+        .then(
+          fetch('/api/cleanUp', {
+            method: 'POST',
+            body: JSON.stringify({
+              email: this.state.email
+            })
+          })
+        )
       }
 
 }
