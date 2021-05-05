@@ -13,7 +13,7 @@ export default class SettingsButton extends Component {
                         Home
                     </button>
                 </Link>
-            <Link to='/AdminSettingsPage' className="settingsButtonContainer">
+            <Link to='/SettingsAuthenticate' className="settingsButtonContainer">
                 <button className="settingsButton">
                     <text className="settingsButtonText">Settings</text>
                     <img src={settingsIcon} className="settingsIcon" />

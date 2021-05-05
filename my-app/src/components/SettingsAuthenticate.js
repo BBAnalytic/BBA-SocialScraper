@@ -6,14 +6,14 @@ export default class SettingsAuthenticate extends Component {
         if(this.props.userAdmin == true){
             return (
                 <div>
-                    <Redirect to='AdminSettingsPage'></Redirect>
+                    <Redirect to='/AdminSettingsPage'></Redirect>
                 </div>
             )
         }
         else{
             return (
                 <div>
-                    <Redirect to='SettingsPage'></Redirect>
+                    <Redirect to='/SettingsPage'></Redirect>
                 </div>
             )
         }

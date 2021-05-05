@@ -17,4 +17,6 @@ services:
       - ./my-app:/user/src/app
     depends_on:
       - server
+    links:
+      - server
     command: npm start
